@@ -1,0 +1,33 @@
+{
+  "name": "southern-ratio-wrestle-fhv40",
+  "productName": "southern-ratio-wrestle-fhv40",
+  "description": "My Electron application description",
+  "keywords": [],
+  "main": "./main.js",
+  "version": "1.0.0",
+  "author": "ravik",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.3.1",
+    "@electron-forge/maker-deb": "^7.3.1",
+    "@electron-forge/maker-rpm": "^7.3.1",
+    "@electron-forge/maker-squirrel": "^7.3.1",
+    "@electron-forge/maker-zip": "^7.3.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.3.1",
+    "electron": "^24.8.8",
+    "electron-packager": "^17.1.2"
+  },
+  "dependencies": {
+    "@electron-forge/plugin-fuses": "^7.3.1",
+    "electron-squirrel-startup": "^1.0.0",
+    "express": "^4.19.2"
+  },
+  "build": {
+    "appId": "com.Rk.final",
+    "files": "!build-assets${*/}"
+  }
+}
