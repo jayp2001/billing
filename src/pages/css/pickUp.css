@@ -1,0 +1,99 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body {
+  /* font-family: "Poppins", sans-serif; */
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.right_top_header {
+  margin-top: 10px;
+  align-items: center;
+}
+
+.right_meun {
+  height: calc(100vh - 150px) !important;
+}
+
+.left_bill_menu {
+  width: 60% !important;
+  height: calc(100vh - 140px) !important;
+  overflow: hidden !important;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  cursor: pointer;
+}
+
+ul li:hover {
+  background-color: #f0f0f0;
+}
+
+.css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 10px !important;
+}
+
+.MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon.css-clttge-MuiAutocomplete-root .MuiOutlinedInput-root {
+  padding: 3px !important;
+}
+
+.verticle_divider {
+  width: 1px !important;
+  color: white !important;
+  display: inline-block !important;
+  height: 40px !important;
+}
+
+.clicked {
+  background-color: red !important;
+  color: white;
+}
+
+.main_div {
+  align-items: center;
+}
+
+.Billing_icon {
+  font-size: 110px;
+  color: gray;
+}
+
+.quantity_button {
+  border: 1px solid black !important;
+  width: 30px !important;
+  margin: 0px 5px 0px 5px;
+  background-color: whitesmoke;
+}
+
+.another_1 {
+  background-color: gray !important;
+}
+.main_bill1{
+  width: 100%;
+  height: calc(100vh - 368px);
+}
+
+.bill_tag {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.billin_content{
+  align-self: start !important;
+}
+
+.main_bill_icon {
+  font-size: 20px;
+}
+
+.css-clttge-MuiAutocomplete-root .MuiOutlinedInput-root {
+  padding: 3px !important;
+}
+
+
