@@ -186,6 +186,7 @@ const PickUp = () => {
 
   const handleEnterPressSecond = (e) => {
     if (e.key === 'Enter') {
+      // unitInputRef.current && unitInputRef.current.focus();
       e.preventDefault();
       if (unitOptionsExist(fullFormData.inputName)) {
         unitInputRef.current && unitInputRef.current.focus();
@@ -282,7 +283,7 @@ const PickUp = () => {
     <div className=''>
       <Header />
       <section className='right_section '>
-        <div className="right_top_header gap-6 p-2 flex align-middle">
+        <div className="right_top_header gap-6 p-2 flex">
           <div className='w-32'>
             <TextField
               placeholder='Short Code'
@@ -319,6 +320,7 @@ const PickUp = () => {
             <Autocomplete
               options={unitOptionsExist(fullFormData.inputName) ? data.find(item => item.Name === fullFormData.inputName).unitOptions : []}
               value={fullFormData.inputUnit}
+              inputRef={unitInputRef}
               onFocus={() => {
                 if (!unitOptionsExist(fullFormData.inputName)) {
                   handleUnitChange({ target: { value: '1' } });
