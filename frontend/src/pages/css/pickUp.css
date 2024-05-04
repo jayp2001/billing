@@ -16,7 +16,7 @@ body {
 
 .left_bill_menu {
   width: 60% !important;
-  height: calc(100vh - 140px) !important;
+  height: calc(100vh - 135px) !important;
   overflow: hidden !important;
 }
 
@@ -74,7 +74,7 @@ ul li:hover {
 }
 .main_bill1{
   width: 100%;
-  height: calc(100vh - 368px);
+  height: calc(100vh - 394px);
 }
 
 .bill_tag {
