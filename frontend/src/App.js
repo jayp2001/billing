@@ -27,7 +27,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <Routes>
-        <Route path="/" element={<MainComponent />} />
+        <Route path="/" element={<HotelBill />} />
         <Route path="/printSlectingPage" element={<PrintSlectingPage />} />
         <Route path="/LiveView" element={<LiveView />} />
       </Routes>

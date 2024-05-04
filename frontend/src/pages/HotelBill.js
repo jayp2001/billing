@@ -3,21 +3,21 @@ import './css/Bill.css';
 
 const HotelBill = () => {
     return (
-        <div className='w-fit h-fit'>
-            <div className="box w-fit border border-black m-2  text-center">
-                <div className="header-bill pt-6  pb-0 border-b-2 border-black">
-                    <div className="name font-bold text-base">
+        <div className='w-fit h-fit' style={{width:'fit-content', height:'fit-content'}}>
+            <div style={{width:'fit-content',border:'1px solid black', margin:'4px',textAlign:'center'}}>
+                <div style={{paddingTop:'6px', paddingBottom:'0px', borderBottom:'2px solid black'}}>
+                    <div style={{fontWeight:'700', fontSize:'16px', lineHeight:'24px',paddingBottom:'1rem', paddingTop:'0.6rem'}}>
                         SHRI BHAGAWATI FAST FOOD
                     </div>
-                    <div className="Address font-medium mt-3 text-sm">
+                    <div style={{fontSize:'14px', lineHeight:'20px', fontWeight:'500'}}>
                         PALACE ROAD RAJKOT - 360 001
                     </div>
-                    <div className="phone font-medium text-sm mb-2 pb-1">
+                    <div style={{fontWeight:'500', fontSize:'14px', lineHeight:'20px', marginBottom:'8px',paddingBottom:'4px'}}>
                         PHONE: 2243235(M) : 9825360287
                     </div>
                 </div>
-                <div className="header-bill pb-0 border-b-2 border-black">
-                    <div className="name font-medium text-sm">
+                <div style={{paddingBottom:'0px', borderBottom:'2px solid black'}}>
+                    <div className="name font-medium text-sm" style={{fontWeight:'500'}}>
                         GSTIN: 24BDZPC3972L1ZX
                     </div>
                 </div>

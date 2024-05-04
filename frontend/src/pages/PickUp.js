@@ -2,7 +2,7 @@
 /* eslint-disable no-mixed-operators */
 /* eslint-disable eqeqeq */
 import React, { useState, useRef } from 'react';
-import { TextField, Button, Input } from '@mui/material';
+import { TextField, Button, Input, RadioGroup, FormControlLabel, Radio, InputLabel, NativeSelect } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import './css/pickUp.css';
 import Header from '../components/Header/Header';
@@ -12,9 +12,7 @@ import { MdCancel } from "react-icons/md";
 import { MdOutlineCurrencyExchange } from "react-icons/md";
 import { ReactTransliterate } from "react-transliterate";
 import "react-transliterate/dist/index.css";
-
-
-
+import { FormControl } from '@mui/material';
 
 
 const PickUp = () => {
@@ -47,24 +45,32 @@ const PickUp = () => {
   });
 
   const [items, setItems] = useState([]);
+  const [validationError, setValidationError] = useState(false);
   const [buttonCLicked, setButtonCLicked] = useState('tab1')
   const quantityInputRef = useRef(null);
   const unitInputRef = useRef(null);
   const commentInputRef = useRef(null);
   const first = useRef(null);
+  const second = useRef(null)
   const handleInputCodeChange = (e) => {
     const value = e.target.value;
+    
     setFullFormData(prevState => ({
       ...prevState,
       inputCode: value
     }));
+    const matchingProduct = data.find(item => item.shortCode.toString() === value);
 
     if (e.key === 'Enter') {
       e.preventDefault();
       quantityInputRef.current && quantityInputRef.current.focus();
     }
+    console.log('value' , matchingProduct)
 
-    const matchingProduct = data.find(item => item.shortCode.toString() === value);
+    if(matchingProduct === value){
+      setValidationError(false)
+    }
+
     if (matchingProduct) {
       setFullFormData(prevState => ({
         ...prevState,
@@ -146,11 +152,30 @@ const PickUp = () => {
   };
 
   const handleEnterPressFirst = (e) => {
+    const value = e.target.value;
     if (e.key === 'Enter') {
       e.preventDefault();
-      quantityInputRef.current && quantityInputRef.current.focus();
+      const matchingProduct = data.find(item => item.shortCode.toString() === value);
+      if (!matchingProduct || value === '') {
+        setValidationError(true)
+        second.current && second.current.focus();
+      } else if (value === matchingProduct.shortCode.toString()) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          quantityInputRef.current && quantityInputRef.current.focus();
+        }
+      }
     }
   };
+  const handleEnterPressName = (e) => {
+    const value = e.target.value;
+    if (e.key === 'Enter') {
+      if (!e.target.value === '') {
+        e.preventDefault();
+        quantityInputRef.current && quantityInputRef.current.focus();
+      }
+    }
+  }
 
   const handleEnterPressThird = (e) => {
     if (e.key === 'Enter') {
@@ -266,6 +291,8 @@ const PickUp = () => {
               onKeyDown={handleEnterPressFirst}
               variant="outlined"
               inputRef={first}
+              error={validationError ? true : false}
+              helperText={validationError ? 'Incorrect Code' : ''}
             />
           </div>
           <div className="w-80">
@@ -273,8 +300,9 @@ const PickUp = () => {
               options={data.map((option) => option.Name)}
               value={fullFormData.inputName}
               onChange={handleInputNameChange}
-              onKeyDown={handleEnterPressFirst}
-              renderInput={(params) => <TextField {...params} placeholder="Auto fill the name only" variant="outlined" />}
+              inputRef={second}
+              onKeyDown={handleEnterPressName}
+              renderInput={(params) => <TextField {...params} inputRef={second} placeholder="Auto fill the name only" variant="outlined" />}
             />
           </div>
           <div className="w-28">
@@ -300,14 +328,11 @@ const PickUp = () => {
               renderInput={(params) => <TextField {...params} inputRef={unitInputRef} onChange={handleUnitChange} placeholder="Unit" variant="outlined" />}
             />
           </div>
-
           <div className="w-28">
             <TextField
               value='20'
-
             />
           </div>
-
           <div className="w-96">
             <TextField
               placeholder="Comment"
@@ -320,9 +345,7 @@ const PickUp = () => {
               onKeyDown={handleAddItem}
               className='w-full'
             />
-
           </div>
-
           <div className="w-12">
             <button onClick={handleReset} className="button text-sm px-2 py-1 rounded-sm text-white">RESET</button>
           </div>
@@ -335,7 +358,7 @@ const PickUp = () => {
               <div className="w-full right_meun rounded-md">
                 {
                   buttonCLicked === 'tab1' && (
-                    <div className="w-full h-full overflow-auto  table_no p-2">
+                    <div className="w-full text-base h-full overflow-auto  table_no p-4">
                       <div className="shadow-md my-4 p-2">
                         <p className="w-20">Table No </p>
                         <hr />
@@ -399,7 +422,7 @@ const PickUp = () => {
                 }
                 {
                   (buttonCLicked === 'tab3' || buttonCLicked === 'tab2') && (
-                    <div className="w-full table_no p-2">
+                    <div className="w-full text-base table_no p-2">
                       <div className="shadow-md my-2 p-2">
                         <p className="w-32 mb-2">Customer Details</p>
                         <hr />
@@ -436,7 +459,7 @@ const PickUp = () => {
                 {
                   buttonCLicked === 'tab4' && (
                     <div>
-                      <div className="shadow-md my-4 p-2">
+                      <div className="shadow-md text-base my-4 p-2">
                         <p className="w-full">Hotel Information </p>
                         <hr />
                         <div className="py-2 flex justify-between main_div ">
@@ -453,7 +476,7 @@ const PickUp = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="shadow-md my-4 p-2">
+                      <div className="shadow-md text-base my-4 p-2">
                         <table className="my-2 h-44 w-full">
                           <tbody>
                             <tr className='mb-3'>
@@ -473,26 +496,26 @@ const PickUp = () => {
                 }
               </div>
             </div>
-            <div className="left_bill_menu w-full h-full">
-              <div className="w-full   p-0 text-white">
-                <div className="grid grid-flow-row grid-cols-12 mr-2  bg-gray-700">
-                  <div className={buttonCLicked == 'tab1' ? "clicked col-3 p-0 col-span-3 text-center" : 'col-3 p-0  col-span-3 text-center'}>
-                    <Button onClick={() => setButtonCLicked('tab1')} variant='plain' color='danger' className="w-100 col-auto text-center p-2 px-0">Dine In</Button>
+            <div className="left_bill_menu text-base w-full h-full">
+              <div className="w-full  p-0 text-white">
+                <div className="grid w-full grid-flow-row grid-cols-12 mr-2  bg-gray-700">
+                  <div onClick={() => setButtonCLicked('tab1')} className={buttonCLicked == 'tab1' ? "clicked col-3 p-0 col-span-3 text-center" : 'col-3 p-0 cursor-pointer  col-span-3 text-center'}>
+                    <Button variant='plain' color='danger' className="w-100 col-auto text-center p-2 px-0">Dine In</Button>
                   </div>
-                  <div className={buttonCLicked == 'tab2' ? "clicked col-3 p-0  col-span-3 text-center" : 'col-3 p-0  col-span-3 text-center'}>
-                    <Button onClick={() => setButtonCLicked('tab2')} variant='plain' color='danger' className="w-100 col-auto text-center p-2 px-0">Delivery</Button>
+                  <div onClick={() => setButtonCLicked('tab2')} className={buttonCLicked == 'tab2' ? "clicked col-3 p-0  col-span-3 text-center" : 'col-3 p-0 cursor-pointer  col-span-3 text-center'}>
+                    <Button variant='plain' color='danger' className="w-100 col-auto text-center p-2 px-0">Delivery</Button>
                   </div>
-                  <div className={buttonCLicked == 'tab3' ? "clicked col-3 p-0  col-span-3 text-center" : 'col-3 p-0  col-span-3 text-center'}>
-                    <Button onClick={() => setButtonCLicked('tab3')} variant='plain' color='danger' className="w-100 col-auto text-center p-2 px-0">Pick Up</Button>
+                  <div onClick={() => setButtonCLicked('tab3')} className={buttonCLicked == 'tab3' ? "clicked col-3 p-0  col-span-3 text-center" : 'col-3 p-0 cursor-pointer  col-span-3 text-center'}>
+                    <Button variant='plain' color='danger' className="w-100 col-auto text-center p-2 px-0">Pick Up</Button>
                   </div>
-                  <div className={buttonCLicked == 'tab4' ? "clicked col-3 p-0  col-span-3 text-center" : "col-3 p-0  col-span-3 text-center"}>
-                    <Button onClick={() => setButtonCLicked('tab4')} variant='plain' color='danger' className="w-100 col-auto text-center p-2 px-0">Hotel</Button>
+                  <div onClick={() => setButtonCLicked('tab4')} className={buttonCLicked == 'tab4' ? "clicked col-3 p-0  col-span-3 text-center" : "col-3 p-0 cursor-pointer  col-span-3 text-center"}>
+                    <Button variant='plain' color='danger' className="w-100 col-auto text-center p-2 px-0">Hotel</Button>
                   </div>
                 </div>
               </div>
-              <div className="mr-2 p-0 ">
+              <div className=" p-0 text-base ">
                 <div className="bg-gray-200">
-                  <div className="grid grid-cols-12 p-2">
+                  <div className="grid grid-cols-12 w-full p-2">
                     <div className="col-span-3 justify-self-center underline color-gray-700 pl-3">ITEMS</div>
                     <div className="col-span-3 justify-self-end">COMMENTS</div>
                     <div className="col-span-3 justify-self-center">QTY.</div>
@@ -538,14 +561,14 @@ const PickUp = () => {
                   ))}
                 </div>
               </div>
-              <div className=''>
+              <div className='text-base'>
                 <div className="w-full p-2 h-full bg-gray-700 text-white">
                   <div className="flex w-full justify-around gap-4 main_div">
                     <div>
-                      <Button1>Split</Button1>
+                      <button className='text-base button px-2 py-1 rounded-sm text-white'>Split</button>
                     </div>
                     <div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 text-base">
                         <div>
                           <input type="checkbox" name="" id="" />
                         </div>
@@ -564,24 +587,35 @@ const PickUp = () => {
                   </div>
                 </div>
               </div>
-              <div className=" p-2 flex bg-gray-300  justify-around">
-                <div><input type="radio" name="payment-method" /> <span>Cash</span></div>
-                <div><input type="radio" name="payment-method" /> <span>Card</span></div>
-                <div><input type="radio" name="payment-method" /> <span>Due</span></div>
-                <div><input type="radio" name="payment-method" /> <span>Other</span></div>
-                <div><input type="radio" name="payment-method" /> <span>Port</span></div>
+              <div>
+                <RadioGroup
+                  className='radio_buttons text-base'
+                >
+                  <div>
+                    <FormControlLabel value="Cash" control={<Radio name='radio' />} label="Cash" />
+                  </div>
+                  <div>
+                    <FormControlLabel value="Due" control={<Radio name='radio' />} label="Due" />
+                  </div>
+                  <div>
+                    <FormControlLabel value="Other" control={<Radio name='radio' />} label="Other" />
+                  </div>
+                  <div>
+                    <FormControlLabel value="Complementary" control={<Radio name='radio' />} label="Complementary" />
+                  </div>
+                </RadioGroup>
               </div>
 
-              <div className="w-full flex p-2 justify-center gap-4 bg-gray-500">
+              <div className="w-full text-base flex p-2 justify-center gap-4 bg-gray-500">
                 <div><input type="checkbox" /></div>
                 <div>It's Paid</div>
               </div>
-              <div className="w-full flex justify-between p-1 mt-1 ">
-                <div><Button1>Save</Button1></div>
-                <div><Button1>Print & Bill</Button1></div>
-                <div><Button1 className='another_1'>KOT</Button1></div>
-                <div><Button1 className='another_1'>KOT & PRINT</Button1></div>
-                <div><Button1 className='another_2'>HOLD</Button1></div>
+              <div className="w-full text-base flex justify-center gap-4 p-1 mt-1 ">
+                <div><button className='text-base button save_button py-1 rounded-md text-white'>Save</button></div>
+                <div><button className='text-base button px-2 py-1 rounded-md text-white'>Print & Bill</button></div>
+                <div><button className='another_1 button text-base px-2 py-1 rounded-md text-white'>KOT</button></div>
+                <div><button className='another_1 button text-base px-2 py-1 rounded-md text-white'>KOT & PRINT</button></div>
+                <div><button className='another_2 button text-base px-2 py-1 rounded-md text-white'>HOLD</button></div>
               </div>
             </div>
           </div>
