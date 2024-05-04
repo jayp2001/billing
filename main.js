@@ -1,48 +1,104 @@
-// Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
-const path = require('node:path')
+const { app, BrowserWindow, ipcMain } = require('electron/main')
+const path = require('node:path');
+// const PosPrinter = require('electron-pos-printer')
+const { exec } = require('child_process');
 
-function createWindow () {
-  // Create the browser window.
+function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
     webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true,
+      contextIsolation: false,
       preload: path.join(__dirname, 'preload.js')
     }
   })
+  const data = [
+    {
+      type: 'text', // 'text' | 'barCode' | 'qrCode' | 'image' | 'table
+      value: 'શ્રી ભગવતી ફાસ્ટ ફૂડ',
+      style: {fontWeight: "700", textAlign: 'center', fontSize: "24px"}
+  },
+  {
+    type: 'qrCode',
+    value: 'upi://pay?pa=9825312229@icici&pn=$jay parmar&tn=cftrhwetaw4gta&am=100',
+    height: 10,
+    width: 10,
+    style: { margin: '80 20px 20 20px'}
+}
+  ];
 
-  // and load the index.html of the app.
-  // mainWindow.loadFile(path.join(__dirname, '..', 'frontend', 'build', 'index.html'));
-  // mainWindow.loadFile('frontend/build/index.html')
-  // console.log(mainWindow.loadFile('index.html'))
-  mainWindow.loadURL('http://localhost:3000/')
-  // mainWindow.loadURL('https://admin.bhagwatifastfood.com/login')
+function getPrinterList() {
+  return new Promise((resolve, reject) => {
+    // exec('lpstat -a', (err, stdout) => {
+    //   if (err) {
+    //     reject(err);
+    //     return;
+    //   }
 
+    //   const printerNames = stdout
+    //     .split('\n')
+    //     .map(line => line.trim().split(' ')[0])
+    //     .filter(printer => printer);
 
-  // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+    //   resolve(printerNames);
+    // });
+    exec('wmic printer get name', (err, stdout) => {
+      if (err) {
+        reject(err);
+        return;
+      }
+
+      const printerNames = stdout
+        .split('\r\r\n')
+        .filter(line => line.trim() !== 'Name')
+        .map(line => line.trim());
+
+      resolve(printerNames);
+    });
+  });
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+// Example usage
+
+
+  ipcMain.on('set-title', async(event, title) => {
+    console.log(">>>> ONCLICK")
+    const printWindow = new BrowserWindow({ show: true });
+    await printWindow.loadURL(`data:text/html,`+encodeURIComponent(title));
+    // await printWindow.loadURL(`http://192.168.0.223:3001`);
+    printWindow.webContents.print({
+      silent: true,
+      printBackground: true,
+      margins: {
+        marginType: 'custom',
+        top: 0,  // Specify your custom top margin in millimeters
+        bottom: 0,  // Specify your custom bottom margin in millimeters
+        left: 5,  // Specify your custom left margin in millimeters
+        right: 15  // Specify your custom right margin in millimeters
+      },
+      deviceName: 'EPSON',
+    });
+    getPrinterList()
+    .then(printers => {
+      console.log('Printers:', printers);
+       mainWindow.webContents.send('messageFromMain', printers);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    })
+  })
+  mainWindow.loadURL('http://localhost:3000/');
+  // mainWindow.loadURL('http://admin.bhagwatifastfood.com/')
+}
+
 app.whenReady().then(() => {
   createWindow()
 
   app.on('activate', function () {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit()
+  if (process.platform !== 'darwin') app.quit()
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.

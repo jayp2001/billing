@@ -4,78 +4,67 @@ import './css/RestaurantBill.css'
 
 const KOT = () => {
     return (
-        <div className='w-fit h-fit'>
-            <div className="box w-fit border border-black m-2  text-center">
-                <div className="header-bill py-4 border-b-2 border-black">
-                    <div className="name font-bold text-lg">
-                        DELIVERY 
+        <div style={{ width: 'fit-content', height: 'fit-content', fontFamily: 'Verdana' }}>
+            <div style={{ width: 'fit-content', border: '1px solid black', borderCollapse: 'collapse', margin: '4px', textAlign: 'center' }}>
+                <div style={{ padding: '16px 0px 16px 0px', borderBottom: '2px solid black' }}>
+                    <div style={{ fontWeight: 'bold', fontSize: '16px', lineHeight: '24px' }}>
+                        SHRI BHAGAWATI
                         <br />
-                        KOT
+                        DELIVERY
                     </div>
                 </div>
-
-                <div className="Middle-bill p-1 main_bill  border-black">
-                    <div className="flex justify-between  font-medium text-xs mt-2">
-                        <div className='text-start upper_right'>
-                            <div className='text-start'>
+                <div style={{ padding: '2px', width: '305px', height: 'min-content' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: '500', fontSize: '12px', lineHeight: '16px', margin: '4px', width: '100%' }}>
+                        <div style={{ textAlign: 'start', width: '75%' }}>
+                            <div className='text-start' style={{ textAlign: 'start' }}>
                                 <div>Date : 19/04/2024</div>
                             </div>
-                            <div className='text-start mt-2'>
+                            <div style={{ textAlign: 'start', marginTop: '4px' }}>
                                 <div>Time: 23:38</div>
                             </div>
-                            <div className="mt-2">
-                                CASHIER : Admin
+                            <div style={{ textAlign: 'start', marginTop: '4px' }}>
+                                <div>Cashier:Admin</div>
                             </div>
-                            <div className="mt-2">
-                                TABLE NO : <span className="font-bold text-base">123</span>
+                            <div style={{ textAlign: 'start', marginTop: '4px' }}>
+                                <div>Table No  <span style={{ fontSize: '16px', fontWeight: '700' }}>123</span></div>
                             </div>
                         </div>
-                        <div className='text-start upper_left'>
-                            <div className="border py-1 w-full border-black ">
+                        <div style={{ textAlign: 'start', width: '25%', marginRight: '15px' }}>
+                            <div style={{ border: '1px solid black', paddingTop: '2px', paddingBottom: '2px', width: '100%', textAlign: 'center', width: '100%' }}>
                                 TOKEN NO
                             </div>
-                            <div className="border border-t-0 border-black p-1">
-                                <p className='text-center font-bold text-xl'>H999</p>
+                            <div style={{ border: '1px solid black', borderTop: '0px', padding: '2px', width: '95%' }}>
+                                <p style={{ textAlign: 'center', fontWeight: '700', fontSize: '18px', lineHeight: '18px', width: '100%' }}>H999</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                {/* <div className="Middle-bill p-1 border-t-2 border-black main_bill ">
-                    <div className='text-start'>
-                        <div>PHONE NO : 9879248281 </div>
+                <div style={{ padding: '2px', width: '305px', height: 'min-content',borderTop:'1px solid black' }}>
+                    <div style={{ textAlign: 'start', width: '100%' }}>
+                        <div  style={{ textAlign: 'start', fontSize:'16px' }}>
+                            <div>Commnet: JAIN  PUCHDU FALANU</div>
+                        </div>
                     </div>
-                    <div className='text-start'>
-                        <div>NAME : CHIRAG BHAI </div>
-                    </div>
-                    <div className='text-start'>
-                        <div>ADR:ghare</div>
-                    </div>
-                    <div className='text-start'>
-                        <div>LOCALITY:SHAHER</div>
-                    </div>
-                </div> */}
+                </div>
                 <div className="main_bill h-min">
-                    <table className="table-auto w-full">
+                    <table style={{ borderCollapse: 'collapse', width: '100%' }}>
                         <thead>
                             <tr>
-                                <th className="border py-2 px-1 border-s-0 border-black text-start">ITEMS</th>
-                                <th className="border py-2 border-r-0 border-black text-center">Qty</th>
+                                <th style={{ border: '1px solid black', paddingTop: '2px', paddingBottom: '2px', borderLeft: '0px', textAlign: 'start' }}>Particulars</th>
+                                <th style={{ border: '1px solid black', paddingTop: '4px', paddingBottom: '4px', textAlign: 'center', width: '20%' }}>Qty</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td className="border first_column py-2 max-w-28 px-1 text-lg font-bold border-s-0 border-black text-start">Panerr Tika Masala <br /> <span className="text-xs">(Small text comment)</span> </td>
-                                <td className="border border-r-0  second_column py-2 border-black text-center">99 Full</td>
+                                <td style={{ border: '1px solid black', width: '60%', padding: '4px', borderLeft: '0px', textAlign: 'start' }}>Panerr Tika Masala <br /> <span className="text-xs">(Small text comment)</span> </td>
+                                <td style={{ border: '1px solid black', padding: '4px 0px 4px 0px', textAlign: 'center', width: '20%' }}>99 Full</td>
                             </tr>
                             <tr>
-                                <td className="border first_column   py-2 mx-w-28 px-1 text-lg font-bold  border-s-0 border-black text-start">Butter Milk</td>
-                                <td className="border border-r-0  second_column px-1 py-2 border-black text-center">9 NO</td>
+                                <td style={{ border: '1px solid black', width: '60%', padding: '4px', borderLeft: '0px', textAlign: 'start' }}>Panerr Tika Masala <br /> <span className="text-xs">(Small text comment)</span> </td>
+                                <td style={{ border: '1px solid black', padding: '4px 0px 4px 0px', textAlign: 'center' }}>99 Full</td>
                             </tr>
                             <tr>
-                                <td colSpan='4' className='text-sm font-bold'> Commnet: JAIN  PUCHDU FALANU </td>
-                            </tr>
-                            <tr>
-                                <td colSpan='4' className="text-center font-bold border-t border-black py-2">Thanks</td>
+                                <td colSpan='3' style={{ textAlign: 'center', fontWeight: '700', borderTop: '1px solid black', padding: '4px 0px 4px 0px' }}>Thanks</td>
                             </tr>
                         </tbody>
                     </table>
