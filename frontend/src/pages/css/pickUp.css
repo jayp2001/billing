@@ -6,8 +6,8 @@ body {
 }
 
 .right_top_header {
-  margin-top: 10px;
-  align-items: center;
+  /* margin-top: 10px; */
+  /* align-items: center; */
 }
 
 .right_meun {
@@ -16,7 +16,8 @@ body {
 
 .left_bill_menu {
   width: 60% !important;
-  height: calc(100vh - 135px) !important;
+  background-color: #fff;
+  height: calc(100vh - 125px) !important;
   overflow: hidden !important;
 }
 
@@ -76,6 +77,13 @@ ul li:hover {
   width: 100%;
   height: calc(100vh - 394px);
 }
+.main_billError {
+  width: 100%;
+  height: calc(100vh - 414px);
+}
+.itemBorder{
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
 
 .bill_tag {
   display: flex;
@@ -96,4 +104,15 @@ ul li:hover {
   padding: 3px !important;
 }
 
+.right_section{
+  background-color: #fff;
+}
+
+.sarchTextTEST input{
+  padding: 5px;
+}
+
+.discountPadding{
+  padding-top: 5px;
+}
 

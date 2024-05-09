@@ -14,8 +14,9 @@ import TokenBill from './pages/TokenBill';
 // import Test from './pages/Test';
 import PrintSlectingPage from './pages/PrintSlectingPage';
 import LiveView from './pages/LiveView';
+import LoginPage from './pages/login/login';
 // import Test from './pages/Test';
-// import Test from './pages/Test';
+import Test from './pages/Test';
 
 const App = () => {
   useEffect(() => {
@@ -29,12 +30,13 @@ const App = () => {
   return (
     <Provider store={store}>
       <Routes>
-        <Route path="/" element={<MainComponent />} />
+        {/* <Route path="/main" element={<MainComponent />} /> */}
+        {/* <Route path="/" element={<LoginPage />} /> */}
         {/* <Route path="/" element={<HotelBill />} /> */}
         {/* <Route path="/" element={<Test />} /> */}
         <Route path="/printSlectingPage" element={<PrintSlectingPage />} />
         <Route path="/LiveView" element={<LiveView />} />
-        {/* <Route path="/test" element={<Test />} /> */}
+        <Route path="/" element={<Test />} />
       </Routes>
     </Provider>
   );

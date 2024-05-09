@@ -7,7 +7,7 @@
   "version": "1.0.0",
   "author": "ravik",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "electron .",
     "package": "electron-forge package",
     "make": "electron-forge make"
   },

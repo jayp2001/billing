@@ -65,7 +65,8 @@ function getPrinterList() {
     console.log(">>>> ONCLICK")
     const printWindow = new BrowserWindow({ show: true });
     await printWindow.loadURL(`data:text/html,`+encodeURIComponent(title));
-    // await printWindow.loadURL(`http://192.168.0.223:3001`);
+    // await printWindow.loadURL(`http://localhost:3000`);
+    try{
     printWindow.webContents.print({
       silent: true,
       printBackground: true,
@@ -76,16 +77,19 @@ function getPrinterList() {
         left: 5,  // Specify your custom left margin in millimeters
         right: 15  // Specify your custom right margin in millimeters
       },
-      deviceName: 'EPSON',
-    });
-    getPrinterList()
-    .then(printers => {
-      console.log('Printers:', printers);
-       mainWindow.webContents.send('messageFromMain', printers);
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    })
+      deviceName: 'EPSON TM-T82-S/A 2',
+    });}
+    catch(error){
+      console.log('catchError',error)
+    }
+    // getPrinterList()
+    // .then(printers => {
+    //   console.log('Printers:', printers);
+    //    mainWindow.webContents.send('messageFromMain', printers);
+    // })
+    // .catch(error => {
+    //   console.error('Error:', error);
+    // })
   })
   mainWindow.loadURL('http://localhost:3000/');
   // mainWindow.loadURL('http://admin.bhagwatifastfood.com/')
