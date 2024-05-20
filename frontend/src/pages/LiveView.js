@@ -7,6 +7,7 @@ import './css/LiveView.css'
 import { TbPinned } from "react-icons/tb";
 import { IoIosCall } from "react-icons/io";
 import { GiWaterRecycling } from "react-icons/gi";
+import Header from '../components/Header/Header';
 
 
 
@@ -64,6 +65,8 @@ const Timer = () => {
 
 const LiveView = () => {
   return (
+   <>
+    <Header/>
     <div className="flex flex-col items-center justify-center h-screen">
       <Card className='shadow-md  rounded-md relative w-2/6' sx={{ minWidth: 275 }}>
         <CardContent>
@@ -160,6 +163,7 @@ const LiveView = () => {
         </CardContent>
       </Card>
     </div>
+   </>
   );
 };
 

@@ -98,6 +98,7 @@ const Header = () => {
       </div>
     </Box>
   );
+  const navigate = useNavigate();
   return (
     <>
       <div className="bg-gray-100 px-2 h-12">
@@ -110,7 +111,7 @@ const Header = () => {
               BHAGAWATI
             </div>
             <div className="header_button ml-2 grid content-center">
-              <Button>New Order</Button>
+              <button className="button text-sm px-2 py-1 rounded-sm text-white" onClick={() => {navigate('/main')}}>New Order</button>
             </div>
             <div className="header_search ml-2 grid content-center">
               <Search>
