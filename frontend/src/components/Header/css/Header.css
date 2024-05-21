@@ -37,3 +37,19 @@ body{
 .tabButton.active{
     border-bottom: 4px solid rgb(198, 7, 7);
 }
+
+.recentBillHeader{
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.7);
+}
+
+.recentBillRow:hover{
+    background-color: #e5e7eb;
+}
+
+.recentBillContainer{
+    cursor: pointer;
+}
+.recentBillRow{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.7);
+}

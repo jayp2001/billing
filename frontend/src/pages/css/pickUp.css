@@ -49,6 +49,15 @@ ul li:hover {
   height: 40px !important;
 }
 
+.autocompleteTxt .css-1j0qgw8-MuiAutocomplete-root .MuiOutlinedInput-root{
+  padding: 2px !important;
+}
+.autocompleteTxt .css-1tw9w9k-MuiAutocomplete-root .MuiOutlinedInput-root{
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+  padding-left: 2px !important;
+  padding-right: 24px !important;
+}
 .clicked {
   background-color: red !important;
   color: white;
@@ -114,5 +123,17 @@ ul li:hover {
 
 .discountPadding{
   padding-top: 5px;
+}
+.mobileNo{
+  position: relative;
+}
+
+.suggestions{
+  position: absolute;
+  width: 32%;
+  z-index: 999;
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 0px 5px 5px 5px ;
 }
 

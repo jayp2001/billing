@@ -75,7 +75,7 @@ function createWindow() {
     console.log(">>>> ONCLICK");
     const printer = title.printer;
     const data = title.data;
-    // console.log("titel", title);
+    console.log("titel", data);
     const printWindow = new BrowserWindow({ show: true });
     await printWindow.loadURL(`data:text/html,` + encodeURIComponent(data));
     // await printWindow.loadURL(`http://localhost:3000`);

@@ -11,6 +11,7 @@ import {
   Radio,
   InputLabel,
   NativeSelect,
+  MenuItem,
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
 import "./css/pickUp.css";
@@ -35,9 +36,10 @@ import PercentIcon from "@mui/icons-material/Percent";
 import BlockIcon from "@mui/icons-material/Block";
 import KOT from "./KOT";
 import RestaurantBill from "./RestaurantBill";
+import Chip from "@mui/material/Chip";
+
 import TokenBil from "./TokenBill";
 import { Switch } from "@mui/material";
-import e from "express";
 const { ipcRenderer } = window.require("electron");
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -74,7 +76,9 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
 }));
 const PickUp = () => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const freeSoloValue = React.useRef("");
   const systemPrinter = JSON.parse(localStorage.getItem("printerPreference"));
+  const regex = /^[0-9\b]+$/;
   const pickupkot = systemPrinter.filter(
     (printer) => printer.categoryId == "pickupkot"
   );
@@ -110,6 +114,7 @@ const PickUp = () => {
 
   const [fullFormData, setFullFormData] = useState({
     inputCode: "",
+    commentAutoComplete: [],
     itemId: "",
     inputName: "",
     qty: 1,
@@ -129,6 +134,7 @@ const PickUp = () => {
     settledAmount: "",
     billPayType: "cash",
     billComment: "",
+    billCommentAuto: [],
   });
   const [customerData, setCustomerData] = useState({
     customerId: "",
@@ -141,17 +147,23 @@ const PickUp = () => {
     aniversaryDate: "",
   });
   const [isEnglish, setIsEnglish] = React.useState(false);
+
+  const [customerList, setCustomerList] = React.useState([]);
+  const [commentList, setCommentList] = React.useState([]);
+  const [freeSoloField, setFreeSoloField] = React.useState([]);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [validationError, setValidationError] = useState(false);
   const [buttonCLicked, setButtonCLicked] = useState("tab1");
+  const [openSuggestions, setopenSuggestions] = useState(false);
   const quantityInputRef = useRef(null);
   const [data, setData] = useState([]);
   const unitInputRef = useRef(null);
   const commentInputRef = useRef(null);
   const first = useRef(null);
   const second = useRef(null);
+  const mobileNo = useRef(null);
   const handleInputCodeChange = (e) => {
     const value = e.target.value;
     setFullFormData((prevState) => ({
@@ -193,10 +205,21 @@ const PickUp = () => {
         setData(null);
       });
   };
-
+  const handleCommentAutocomplete = (e, value) => {
+    // setFullFormData((perv) => ({
+    //   ...perv,
+    //   commentAutoComplete: value ? value : "",
+    // }));
+    setBillData((perv) => ({
+      ...perv,
+      billCommentAuto: value ? value : [],
+    }));
+  };
   useEffect(() => {
     first.current.focus();
     getData();
+    getcustomerDDL();
+    getComments();
   }, []);
   const handleInputNameChange = (e, value) => {
     // const filtered = value ? data.filter(item =>
@@ -219,6 +242,27 @@ const PickUp = () => {
       }));
     }
   };
+  const handleFreeSoloChange = (e, value) => {
+    // const filtered = value ? data.filter(item =>
+    //   (item.itemShortKey && item.itemShortKey.toLowerCase().includes(value.toLowerCase())) ||
+    //   (item.itemName && item.itemName.toLowerCase().includes(value.toLowerCase()))
+    // ) : [];
+    console.log("freesoloonchange", value);
+    // setValidationError(false);
+    // setFullFormData((prevState) => ({
+    //   ...prevState,
+    //   inputName: value ? value : "",
+    //   selectedItem: value ? value : "",
+    //   itemId: value && value.itemId ? value.itemId : "",
+    // }));
+
+    // if (value) {
+    //   setFullFormData((prevState) => ({
+    //     ...prevState,
+    //     inputCode: value.itemCode.toString(),
+    //   }));
+    // }
+  };
   const addBillData = async () => {
     setLoading(true);
     const customData = {
@@ -229,11 +273,13 @@ const PickUp = () => {
       printBill: true,
       printKot: true,
       firmId: "A",
-      billComment: "Tikkha Name",
+      billComment: billData.billCommentAuto?.join(", "),
       billStatus: "Print",
       totalDiscount: billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
+      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
+      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
     };
     console.log(
       "DISCOUNT",
@@ -262,6 +308,17 @@ const PickUp = () => {
           selectedUnit: "",
           itemPrice: 0,
           price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
         });
         setBillData({
           subTotal: 0,
@@ -270,6 +327,7 @@ const PickUp = () => {
           settledAmount: "",
           billPayType: "cash",
           billComment: "",
+          billCommentAuto: [],
         });
         const pickupKotPrint = renderToString(<KOT data={res.data} />);
         const pickupBillPrint = renderToString(
@@ -303,6 +361,57 @@ const PickUp = () => {
             ? error.response.data
             : "Network Error ...!!!"
         );
+      });
+  };
+  const debounce = (func) => {
+    let timer;
+    return function (...args) {
+      const context = this;
+      if (timer) clearTimeout(timer);
+      timer = setTimeout(() => {
+        timer = null;
+        func.apply(context, args);
+      }, 700);
+    };
+  };
+
+  const handleSearch = () => {
+    console.log(":::???:::", document.getElementById("searchWord").value);
+    getSourceDDL(document.getElementById("searchWord").value);
+  };
+
+  const debounceFunction = React.useCallback(debounce(handleSearch), []);
+  const getSourceDDL = async () => {
+    await axios
+      .get(`${BACKEND_BASE_URL}billingrouter/searchCustomerData`, config)
+      .then((res) => {
+        setCustomerList(res.data);
+      })
+      .catch((error) => {
+        setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+  };
+  const getcustomerDDL = async () => {
+    await axios
+      .get(
+        `${BACKEND_BASE_URL}billingrouter/searchCustomerData?searchWord=${"9898266"}`,
+        config
+      )
+      .then((res) => {
+        setCustomerList(res.data);
+      })
+      .catch((error) => {
+        setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+  };
+  const getComments = async () => {
+    await axios
+      .get(`${BACKEND_BASE_URL}billingrouter/getComment`, config)
+      .then((res) => {
+        setCommentList(res.data);
+      })
+      .catch((error) => {
+        setError(error.response ? error.response.data : "Network Error ...!!!");
       });
   };
   const saveBill = () => {
@@ -524,6 +633,9 @@ const PickUp = () => {
             itemPrice: fullFormData.itemPrice,
             unit: fullFormData.unit,
             price: fullFormData.price,
+            // comment: fullFormData.commentAutoComplete
+            //   ? fullFormData.commentAutoComplete?.join(", ")
+            //   : "",
             comment: fullFormData.comment,
           };
           // console.log("<>LOG<>",fullFormData.price,fullFormData.itemPrice)
@@ -553,6 +665,7 @@ const PickUp = () => {
             selectedItem: "",
             selectedUnit: "",
             itemPrice: "",
+            commentAutoComplete: [],
           });
           setValidationError(false);
           first.current && first.current.focus();
@@ -566,8 +679,11 @@ const PickUp = () => {
             itemPrice: fullFormData.itemPrice,
             unit: fullFormData.unit,
             price: fullFormData.price,
-            comment: fullFormData.comment,
+            // comment: fullFormData.commentAutoComplete
+            //   ? fullFormData.commentAutoComplete?.join(", ")
+            //   : "",
             itemId: fullFormData.itemId,
+            comment: fullFormData.comment,
           };
           console.log("<>LOG<>", fullFormData.price, fullFormData.itemPrice);
           setBillData((perv) => ({
@@ -585,6 +701,7 @@ const PickUp = () => {
             selectedItem: "",
             selectedUnit: "",
             itemPrice: "",
+            commentAutoComplete: [],
           });
           setValidationError(false);
           first.current && first.current.focus();
@@ -602,6 +719,7 @@ const PickUp = () => {
       qty: 1,
       unit: "",
       comment: "",
+      commentAutoComplete: [],
     });
 
     if (unitOptionsExist(fullFormData.inputName)) {
@@ -653,7 +771,19 @@ const PickUp = () => {
     }));
   };
   const [text, setText] = useState("");
-
+  const handleInputChange = (event, value) => {
+    // if (event) {
+    if ((regex.test(value) || value === "") && value.length < 11) {
+      setCustomerData((perv) => ({
+        ...perv,
+        address: value && value.address ? value.address : "",
+      }));
+      setFreeSoloField(value && value.mobileNo ? value.mobileNo : "");
+    }
+    // } else {
+    //   console.log("error>>");
+    // }
+  };
   const handleDecreaseQuantity = (index, qty1) => {
     console.log("<QTY?>", qty1);
     setItems((prevItems) => {
@@ -732,6 +862,9 @@ const PickUp = () => {
     });
     setError(false);
   }
+  const handleOpenSuggestion = (value) => {
+    setopenSuggestions(true);
+  };
   return (
     <div className="" style={{ background: "#f0f2f5" }}>
       <Header />
@@ -749,13 +882,14 @@ const PickUp = () => {
               helperText={validationError ? "Incorrect Code" : ""}
             />
           </div>
-          <div className="w-80">
+          <div className="w-80 autocompleteTxt">
             <Autocomplete
               options={data ? data : []}
               defaultValue={null}
               getOptionLabel={(options) =>
                 options.itemName ? options.itemName : ""
               }
+              // className={""}
               value={fullFormData.inputName}
               onChange={handleInputNameChange}
               inputRef={second}
@@ -855,7 +989,7 @@ const PickUp = () => {
           <div className="w-28">
             <TextField value={fullFormData.itemPrice} />
           </div>
-          <div className="w-96">
+          <div className="w-96 autocompleteTxt">
             <TextField
               placeholder="Comment"
               variant="outlined"
@@ -869,6 +1003,89 @@ const PickUp = () => {
               onKeyDown={handleAddItem}
               className="w-full"
             />
+            {/* <Autocomplete
+              multiple
+              id="tags-filled"
+              options={commentList ? commentList : []}
+              defaultValue={""}
+              inputRef={commentInputRef}
+              freeSolo
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <div>
+                    <Chip
+                      variant="outlined"
+                      label={option}
+                      {...getTagProps({ index })}
+                    />
+                    {console.log(value)}
+                  </div>
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="filled"
+                  label="freeSolo"
+                  placeholder="Favorites"
+                  id="freeSolo"
+                  inputRef={freeSoloValue}
+                  onKeyDown={(e) => {
+                    const data = freeSoloValue.current.value;
+                    console.log(data);
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      if (data === "") {
+                        handleAddItem(e);
+                      }
+                    }
+                  }}
+                />
+              )}
+            /> */}
+            {/* <Autocomplete
+              multiple
+              id="multiple-limit-tags"
+              limitTags={2}
+              // inputRef={commentInputRef}
+              options={commentList}
+              onChange={handleCommentAutocomplete}
+              value={
+                fullFormData.commentAutoComplete
+                  ? fullFormData.commentAutoComplete
+                  : []
+              }
+              defaultValue={[]}
+              freeSolo
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    variant="outlined"
+                    label={option}
+                    {...getTagProps({ index })}
+                  />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="outlined"
+                  placeholder="Comments"
+                  inputRef={commentInputRef}
+                  onKeyDown={(e) => {
+                    const data = commentInputRef.current.value;
+                    console.log(data);
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      if (data === "") {
+                        commentInputRef.current.value = [];
+                        handleAddItem(e);
+                      }
+                    }
+                  }}
+                />
+              )}
+            /> */}
           </div>
           <div className="w-12">
             <button
@@ -926,19 +1143,40 @@ const PickUp = () => {
                       <tbody>
                         <tr className="mb-3">
                           <td className="w-5">Mobile&nbsp;</td>
-                          <td>
-                            <input
-                              type="number"
-                              className="border-2 w-48 p-1 rounded-sm"
+                          <td className="autocompleteTxt">
+                            {/* <input
+                              type="text"
+                              className="border-2 w-48 p-1 rounded-sm mobileNo"
                               name="mobileNo"
                               value={customerData.mobileNo}
-                              onChange={(e) =>
+                              onChange={(e) => {
                                 setCustomerData((perv) => ({
                                   ...perv,
                                   mobileNo: e.target.value,
-                                }))
-                              }
-                            />
+                                }));
+                                // handleOpenSuggestion(e.target.value);
+                              }}
+                              list="suggestion"
+                              // onBlur={() => setopenSuggestions(false)}
+                            /> */}
+                            {/* <Autocomplete
+                              id="free-solo-demo"
+                              freeSolo
+                              onChange={handleFreeSoloChange}
+                              options={customerList ? customerList : []}
+                              getOptionLabel={(option) => option.address}
+                              value={customerData.address}
+                              // inputValue={freeSoloField}
+                              // onInputChange={handleInputChange}
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  value={freeSoloField}
+                                  placeholder="Mobile No"
+                                  onChange={handleInputChange}
+                                />
+                              )}
+                            /> */}
                           </td>
                         </tr>
                         <tr className="mb-3">
@@ -1042,7 +1280,7 @@ const PickUp = () => {
                           <tr className="mb-3">
                             <td className="w-28">Order Comment&nbsp;</td>
                             <td>
-                              <input
+                              {/* <input
                                 type="text"
                                 className="border-2 w-full p-1 rounded-sm"
                                 value={billData.billComment}
@@ -1052,6 +1290,26 @@ const PickUp = () => {
                                     billComment: e.target.value,
                                   }))
                                 }
+                              /> */}
+                              <Autocomplete
+                                multiple
+                                id="tags-outlined"
+                                options={commentList ? commentList : []}
+                                // getOptionLabel={commentList ? commentList : []}
+                                defaultValue={[]}
+                                freeSolo
+                                value={
+                                  billData.billCommentAuto
+                                    ? billData.billCommentAuto
+                                    : []
+                                }
+                                onChange={handleCommentAutocomplete}
+                                renderInput={(params) => (
+                                  <TextField
+                                    {...params}
+                                    placeholder="Order Comments"
+                                  />
+                                )}
                               />
                             </td>
                           </tr>
