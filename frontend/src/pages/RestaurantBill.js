@@ -107,10 +107,10 @@ const RestaurantBill = (props) => {
           </div>
         )}
         {customerData &&
-        (customerData.mobileNo ||
-          customerData.customerName ||
-          customerData.address ||
-          customerData.locality) ? (
+          (customerData.mobileNo ||
+            customerData.customerName ||
+            customerData.address ||
+            customerData.locality) ? (
           <div
             style={{
               padding: "8px 4px 8px 4px ",
@@ -311,7 +311,7 @@ const RestaurantBill = (props) => {
                       textAlign: "start",
                     }}
                   >
-                    {item.inputName.itemName} <br />
+                    {item.itemName} <br />
                     {item.comment && (
                       <span
                         className="text-xs"
@@ -402,8 +402,8 @@ const RestaurantBill = (props) => {
                         {props.data.discountType == "fixed"
                           ? ""
                           : props.data.discountType == "none"
-                          ? ""
-                          : "%"}
+                            ? ""
+                            : "%"}
                         , {props.data.totalDiscount}
                       </pre>
                     </td>

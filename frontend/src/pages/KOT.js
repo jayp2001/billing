@@ -43,6 +43,8 @@ const KOT = (props) => {
             Delivery
             <br />
             KOT
+            <br />
+            {props.isEdit ? '( NEW BILL )' : ''}
           </div>
         </div>
         <div
@@ -117,10 +119,10 @@ const KOT = (props) => {
           </div>
         </div>
         {customerData &&
-        (customerData.mobileNo ||
-          customerData.customerName ||
-          customerData.address ||
-          customerData.locality) ? (
+          (customerData.mobileNo ||
+            customerData.customerName ||
+            customerData.address ||
+            customerData.locality) ? (
           <div
             style={{
               padding: "8px 4px 8px 4px ",
@@ -205,7 +207,7 @@ const KOT = (props) => {
                       textAlign: "start",
                     }}
                   >
-                    {item.inputName.itemName} <br />{" "}
+                    {item.itemName} <br />{" "}
                     {item.comment && (
                       <span
                         className="text-xs"
