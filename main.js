@@ -30,32 +30,32 @@ function createWindow() {
 
   function getPrinterList() {
     return new Promise((resolve, reject) => {
-      // exec('lpstat -a', (err, stdout) => {
-      //   if (err) {
-      //     reject(err);
-      //     return;
-      //   }
-
-      //   const printerNames = stdout
-      //     .split('\n')
-      //     .map(line => line.trim().split(' ')[0])
-      //     .filter(printer => printer);
-
-      //   resolve(printerNames);
-      // });
-      exec("wmic printer get name", (err, stdout) => {
+      exec('lpstat -a', (err, stdout) => {
         if (err) {
           reject(err);
           return;
         }
 
         const printerNames = stdout
-          .split("\r\r\n")
-          .filter((line) => line.trim() !== "Name")
-          .map((line) => line.trim());
+          .split('\n')
+          .map(line => line.trim().split(' ')[0])
+          .filter(printer => printer);
 
         resolve(printerNames);
       });
+      //   exec("wmic printer get name", (err, stdout) => {
+      //     if (err) {
+      //       reject(err);
+      //       return;
+      //     }
+
+      //     const printerNames = stdout
+      //       .split("\r\r\n")
+      //       .filter((line) => line.trim() !== "Name")
+      //       .map((line) => line.trim());
+
+      //     resolve(printerNames);
+      //   });
     });
   }
 

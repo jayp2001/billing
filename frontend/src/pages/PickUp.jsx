@@ -78,7 +78,7 @@ const PickUp = () => {
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const freeSoloValue = React.useRef("");
   const systemPrinter = JSON.parse(localStorage.getItem("printerPreference"));
-  // const regex = /^[0-9\b]+$/;
+  const regexMobile = /^[0-9\b]+$/;
   const regex = /^-?\d*(?:\.\d*)?$/;
   const pickupkot = systemPrinter?.filter(
     (printer) => printer.categoryId == "pickupkot"
@@ -167,6 +167,11 @@ const PickUp = () => {
   const first = useRef(null);
   const second = useRef(null);
   const mobileNo = useRef(null);
+  const [suggestionData, setSuggestionData] = useState([]);
+  const [suggestionIndex, setSuggestionIndex] = useState(0);
+  const [suggestionSelectedValue, setSuggestionSelectedValue] = useState('');
+  const [inputValue, setInputValue] = useState('');
+  const suggestionListRef = useRef(null);
   const handleInputCodeChange = (e) => {
     const value = e.target.value;
     setFullFormData((prevState) => ({
@@ -365,6 +370,101 @@ const PickUp = () => {
         );
       });
   };
+  const addBillDataDelivery = async () => {
+    setLoading(true);
+    const customData = {
+      customerDetails: {
+        ...customerData,
+      },
+      billType: "Pick Up",
+      printBill: true,
+      printKot: true,
+      firmId: "A",
+      billStatus: "Print",
+      totalDiscount: billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(', '),
+      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
+      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/addDeliveryBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: '',
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        const pickupKotPrint = renderToString(<KOT data={res.data} />);
+        const pickupBillPrint = renderToString(
+          res && res.data && res.data.isOfficial ? (
+            <RestaurantBill data={res.data} />
+          ) : (
+            <TokenBil data={res.data} />
+          )
+        );
+        const printerDataKot = {
+          printer: pickupkot,
+          data: pickupKotPrint,
+        };
+        const printerDataBill = {
+          printer: pickupbill,
+          data: pickupBillPrint,
+        };
+        // const htmlString = renderToString(<RestaurantBill />)
+        if (res && res.data && res.data.printBill && res.data.printKot) {
+          ipcRenderer.send("set-title", printerDataKot);
+          ipcRenderer.send("set-title", printerDataBill);
+        } else if (res && res.data && res.data.printBill) {
+          ipcRenderer.send("set-title", printerDataBill);
+        } else if (res && res.data && res.data.printKot) {
+          ipcRenderer.send("set-title", printerDataKot);
+        }
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
 
   const holdBillData = async () => {
     setLoading(true);
@@ -387,6 +487,101 @@ const PickUp = () => {
     await axios
       .post(
         `${BACKEND_BASE_URL}billingrouter/addPickUpBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: '',
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        // const pickupKotPrint = renderToString(<KOT data={res.data} />);
+        // const pickupBillPrint = renderToString(
+        //   res && res.data && res.data.isOfficial ? (
+        //     <RestaurantBill data={res.data} />
+        //   ) : (
+        //     <TokenBil data={res.data} />
+        //   )
+        // );
+        // const printerDataKot = {
+        //   printer: pickupkot,
+        //   data: pickupKotPrint,
+        // };
+        // const printerDataBill = {
+        //   printer: pickupbill,
+        //   data: pickupBillPrint,
+        // };
+        // // const htmlString = renderToString(<RestaurantBill />)
+        // if (res && res.data && res.data.printBill && res.data.printKot) {
+        //   ipcRenderer.send("set-title", printerDataKot);
+        //   ipcRenderer.send("set-title", printerDataBill);
+        // } else if (res && res.data && res.data.printBill) {
+        //   ipcRenderer.send("set-title", printerDataBill);
+        // } else if (res && res.data && res.data.printKot) {
+        //   ipcRenderer.send("set-title", printerDataKot);
+        // }
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
+  const holdBillDataDelivery = async () => {
+    setLoading(true);
+    const customData = {
+      customerDetails: {
+        ...customerData,
+      },
+      billType: "Pick Up",
+      printBill: true,
+      printKot: true,
+      firmId: "A",
+      billStatus: "Hold",
+      totalDiscount: billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(', '),
+      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
+      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/updateDeliveryBillData`,
         customData,
         config
       )
@@ -556,6 +751,101 @@ const PickUp = () => {
         );
       });
   };
+  const cancleBillDataDelivery = async () => {
+    setLoading(true);
+    const customData = {
+      customerDetails: {
+        ...customerData,
+      },
+      billType: "Pick Up",
+      printBill: true,
+      printKot: true,
+      firmId: "A",
+      billStatus: "Cancle",
+      totalDiscount: billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(', '),
+      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
+      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/updateDeliveryBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: '',
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        // const pickupKotPrint = renderToString(<KOT data={res.data} />);
+        // const pickupBillPrint = renderToString(
+        //   res && res.data && res.data.isOfficial ? (
+        //     <RestaurantBill data={res.data} />
+        //   ) : (
+        //     <TokenBil data={res.data} />
+        //   )
+        // );
+        // const printerDataKot = {
+        //   printer: pickupkot,
+        //   data: pickupKotPrint,
+        // };
+        // const printerDataBill = {
+        //   printer: pickupbill,
+        //   data: pickupBillPrint,
+        // };
+        // // const htmlString = renderToString(<RestaurantBill />)
+        // if (res && res.data && res.data.printBill && res.data.printKot) {
+        //   ipcRenderer.send("set-title", printerDataKot);
+        //   ipcRenderer.send("set-title", printerDataBill);
+        // } else if (res && res.data && res.data.printBill) {
+        //   ipcRenderer.send("set-title", printerDataBill);
+        // } else if (res && res.data && res.data.printKot) {
+        //   ipcRenderer.send("set-title", printerDataKot);
+        // }
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
   const justSaveBillData = async () => {
     setLoading(true);
     const customData = {
@@ -577,6 +867,101 @@ const PickUp = () => {
     await axios
       .post(
         `${BACKEND_BASE_URL}billingrouter/addPickUpBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: '',
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        // const pickupKotPrint = renderToString(<KOT data={res.data} />);
+        // const pickupBillPrint = renderToString(
+        //   res && res.data && res.data.isOfficial ? (
+        //     <RestaurantBill data={res.data} />
+        //   ) : (
+        //     <TokenBil data={res.data} />
+        //   )
+        // );
+        // const printerDataKot = {
+        //   printer: pickupkot,
+        //   data: pickupKotPrint,
+        // };
+        // const printerDataBill = {
+        //   printer: pickupbill,
+        //   data: pickupBillPrint,
+        // };
+        // // const htmlString = renderToString(<RestaurantBill />)
+        // if (res && res.data && res.data.printBill && res.data.printKot) {
+        //   ipcRenderer.send("set-title", printerDataKot);
+        //   ipcRenderer.send("set-title", printerDataBill);
+        // } else if (res && res.data && res.data.printBill) {
+        //   ipcRenderer.send("set-title", printerDataBill);
+        // } else if (res && res.data && res.data.printKot) {
+        //   ipcRenderer.send("set-title", printerDataKot);
+        // }
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
+  const justSaveBillDataDelivery = async () => {
+    setLoading(true);
+    const customData = {
+      customerDetails: {
+        ...customerData,
+      },
+      billType: "Pick Up",
+      printBill: true,
+      printKot: true,
+      firmId: "A",
+      billStatus: "Print",
+      totalDiscount: billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(', '),
+      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
+      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/addDeliveryBillData`,
         customData,
         config
       )
@@ -758,6 +1143,112 @@ const PickUp = () => {
         );
       });
   };
+  const editBillDataFunctionDelivery = async () => {
+    setLoading(true);
+    const customData = {
+      ...editBillData,
+      customerDetails: {
+        ...customerData,
+      },
+      billType: "Pick Up",
+      printBill: true,
+      printKot: true,
+      firmId: "A",
+      billStatus: "Print",
+      totalDiscount: billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
+      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/updateDeliveryBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setIsEdit(false);
+        setEditBillData();
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: '',
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        try {
+          const pickupKotPrint = renderToString(<KOT data={res.data} isEdit={true} />);
+          const pickupBillPrint = renderToString(
+            res && res.data && res.data.isOfficial ? (
+              <RestaurantBill data={res.data} />
+            ) : (
+              <TokenBil data={res.data} />
+            )
+          );
+          const printerDataKot = {
+            printer: pickupkot,
+            data: pickupKotPrint,
+          };
+          const printerDataBill = {
+            printer: pickupbill,
+            data: pickupBillPrint,
+          };
+          // const htmlString = renderToString(<RestaurantBill />)
+          if (res && res.data && res.data.printBill && res.data.printKot) {
+            console.log('>>>edit all')
+            ipcRenderer.send("set-title", printerDataKot);
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printBill) {
+            console.log('>>>edit one')
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printKot) {
+            console.log('>>>edit two')
+            ipcRenderer.send("set-title", printerDataKot);
+          }
+          console.log('>>>edit else', res.data.printBill, res.data.printKot)
+        } catch (error) {
+          console.log('try catch errror', error)
+        }
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
   const justEditBillDataFunction = async () => {
     setLoading(true);
     const customData = {
@@ -780,6 +1271,79 @@ const PickUp = () => {
     await axios
       .post(
         `${BACKEND_BASE_URL}billingrouter/updatePickUpBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setIsEdit(false);
+        setEditBillData();
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: '',
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
+  const justEditBillDataFunctionDelivery = async () => {
+    setLoading(true);
+    const customData = {
+      ...editBillData,
+      customerDetails: {
+        ...customerData,
+      },
+      billType: "Pick Up",
+      printBill: false,
+      printKot: false,
+      firmId: "A",
+      billStatus: "Print",
+      totalDiscount: billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
+      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/updateDeliveryBillData`,
         customData,
         config
       )
@@ -854,6 +1418,112 @@ const PickUp = () => {
     await axios
       .post(
         `${BACKEND_BASE_URL}billingrouter/updatePickUpBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setIsEdit(false);
+        setEditBillData();
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: '',
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        try {
+          const pickupKotPrint = renderToString(<KOT data={res.data} isEdit={true} />);
+          const pickupBillPrint = renderToString(
+            res && res.data && res.data.isOfficial ? (
+              <RestaurantBill data={res.data} />
+            ) : (
+              <TokenBil data={res.data} />
+            )
+          );
+          const printerDataKot = {
+            printer: pickupkot,
+            data: pickupKotPrint,
+          };
+          const printerDataBill = {
+            printer: pickupbill,
+            data: pickupBillPrint,
+          };
+          // const htmlString = renderToString(<RestaurantBill />)
+          if (res && res.data && res.data.printBill && res.data.printKot) {
+            console.log('>>>edit all')
+            ipcRenderer.send("set-title", printerDataKot);
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printBill) {
+            console.log('>>>edit one')
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printKot) {
+            console.log('>>>edit two')
+            ipcRenderer.send("set-title", printerDataKot);
+          }
+          console.log('>>>edit else', res.data.printBill, res.data.printKot)
+        } catch (error) {
+          console.log('try catch errror', error)
+        }
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
+  const editBillPrintDataFunctionDelivery = async () => {
+    setLoading(true);
+    const customData = {
+      ...editBillData,
+      customerDetails: {
+        ...customerData,
+      },
+      billType: "Pick Up",
+      printBill: true,
+      printKot: false,
+      firmId: "A",
+      billStatus: "Print",
+      totalDiscount: billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
+      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/updateDeliveryBillData`,
         customData,
         config
       )
@@ -1044,6 +1714,112 @@ const PickUp = () => {
         );
       });
   };
+  const editKotPrintDataFunctionDelivery = async () => {
+    setLoading(true);
+    const customData = {
+      ...editBillData,
+      customerDetails: {
+        ...customerData,
+      },
+      billType: "Pick Up",
+      printBill: false,
+      printKot: true,
+      firmId: "A",
+      billStatus: "Print",
+      totalDiscount: billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
+      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/updateDeliveryBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setEditBillData();
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: '',
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        try {
+          const pickupKotPrint = renderToString(<KOT data={res.data} isEdit={true} />);
+          const pickupBillPrint = renderToString(
+            res && res.data && res.data.isOfficial ? (
+              <RestaurantBill data={res.data} />
+            ) : (
+              <TokenBil data={res.data} />
+            )
+          );
+          const printerDataKot = {
+            printer: pickupkot,
+            data: pickupKotPrint,
+          };
+          const printerDataBill = {
+            printer: pickupbill,
+            data: pickupBillPrint,
+          };
+          // const htmlString = renderToString(<RestaurantBill />)
+          if (res && res.data && res.data.printBill && res.data.printKot) {
+            console.log('>>>edit all')
+            ipcRenderer.send("set-title", printerDataKot);
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printBill) {
+            console.log('>>>edit one')
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printKot) {
+            console.log('>>>edit two')
+            ipcRenderer.send("set-title", printerDataKot);
+          }
+          console.log('>>>edit else', res.data.printBill, res.data.printKot)
+          setIsEdit(false);
+        } catch (error) {
+          console.log('try catch errror', error)
+        }
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
 
 
   const debounce = (func) => {
@@ -1064,9 +1840,9 @@ const PickUp = () => {
   };
 
   const debounceFunction = React.useCallback(debounce(handleSearch), []);
-  const getSourceDDL = async () => {
+  const getSourceDDL = async (data) => {
     await axios
-      .get(`${BACKEND_BASE_URL}billingrouter/searchCustomerData`, config)
+      .get(`${BACKEND_BASE_URL}billingrouter/searchCustomerData?searchWord=${data}`, config)
       .then((res) => {
         setCustomerList(res.data);
       })
@@ -1077,7 +1853,7 @@ const PickUp = () => {
   const getcustomerDDL = async () => {
     await axios
       .get(
-        `${BACKEND_BASE_URL}billingrouter/searchCustomerData?searchWord=${"9898266"}`,
+        `${BACKEND_BASE_URL}billingrouter/searchCustomerData?searchWord=${""}`,
         config
       )
       .then((res) => {
@@ -1118,6 +1894,27 @@ const PickUp = () => {
       }
     }
   };
+  const saveBillDelivery = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        addBillDataDelivery();
+      }
+    }
+  };
   const justSaveBill = () => {
     if (loading || success) {
     } else {
@@ -1136,6 +1933,27 @@ const PickUp = () => {
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
         justSaveBillData();
+      }
+    }
+  };
+  const justSaveBillDelivery = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        justSaveBillDataDelivery();
       }
     }
   };
@@ -1160,6 +1978,27 @@ const PickUp = () => {
       }
     }
   };
+  const justEditBillDelivery = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        justEditBillDataFunctionDelivery();
+      }
+    }
+  };
   const holdBill = () => {
     if (loading || success) {
     } else {
@@ -1178,6 +2017,27 @@ const PickUp = () => {
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
         holdBillData();
+      }
+    }
+  };
+  const holdBillDelivery = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        holdBillDataDelivery();
       }
     }
   };
@@ -1202,6 +2062,27 @@ const PickUp = () => {
       }
     }
   };
+  const cancleBillDelivery = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        cancleBillDataDelivery();
+      }
+    }
+  };
   const editBillPrint = () => {
     if (loading || success) {
     } else {
@@ -1223,6 +2104,27 @@ const PickUp = () => {
       }
     }
   };
+  const editBillPrintDelivery = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        editBillPrintDataFunctionDelivery();
+      }
+    }
+  };
   const editKotPrint = () => {
     if (loading || success) {
     } else {
@@ -1241,6 +2143,27 @@ const PickUp = () => {
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
         editKotPrintDataFunction();
+      }
+    }
+  };
+  const editKotPrintDelivery = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        editKotPrintDataFunctionDelivery();
       }
     }
   };
@@ -1286,6 +2209,27 @@ const PickUp = () => {
       }
     }
   };
+  const editBillDelivery = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        editBillDataFunctionDelivery();
+      }
+    }
+  };
   const handleQuantityChange = (e) => {
     const value = e.target.value;
     setFullFormData((prevState) => ({
@@ -1302,6 +2246,73 @@ const PickUp = () => {
       }
     }
   };
+  // const datas = [
+  //   {
+  //     "customerId": "customer_1715343985009",
+  //     "customerName": "Hello World",
+  //     "mobileNo": "9898266144",
+  //     "addressId": "12we",
+  //     "address": "China",
+  //     "locality": "Madars"
+  //   },
+  //   {
+  //     "customerId": "customer_1715343985009",
+  //     "customerName": "Hello World",
+  //     "mobileNo": "9898266144",
+  //     "addressId": "addressId_1715343985009",
+  //     "address": "Shanti Palace",
+  //     "locality": "Rajkot"
+  //   },
+  //   {
+  //     "customerId": "customer_1715770029940",
+  //     "customerName": "Krish Dhaduk",
+  //     "mobileNo": "9645878456",
+  //     "addressId": "addressId_1715770029940",
+  //     "address": "North Korea Direct",
+  //     "locality": "Rural"
+  //   },
+  //   {
+  //     "customerId": "customer_1716203597407",
+  //     "customerName": "adasdasd",
+  //     "mobileNo": "982513222",
+  //     "addressId": "addressId_1716203597407",
+  //     "address": "અસદસદસ ",
+  //     "locality": "અસદસડા "
+  //   },
+  //   {
+  //     "customerId": "customer_1716203697858",
+  //     "customerName": "asdasdas",
+  //     "mobileNo": "9898989",
+  //     "addressId": "addressId_1716203697858",
+  //     "address": "અસદસડસડ ",
+  //     "locality": "અસદસદસદિ "
+  //   },
+  //   {
+  //     "customerId": "customer_1716203991510",
+  //     "customerName": "અસદસદ ",
+  //     "mobileNo": "9825112229",
+  //     "addressId": "addressId_1716203991510",
+  //     "address": "આઝાદ ",
+  //     "locality": "અસદડ "
+  //   },
+  //   {
+  //     "customerId": "customer_1716204493977",
+  //     "customerName": "અસદસડ ",
+  //     "mobileNo": "6456464654",
+  //     "addressId": "addressId_1716204493977",
+  //     "address": "ડસસદાસ્દ ",
+  //     "locality": "અસદ્દસાદ "
+  //   },
+  //   {
+  //     "customerId": "customer_1716211451870",
+  //     "customerName": "રવિ ",
+  //     "mobileNo": "9825118883",
+  //     "addressId": "addressId_1716211451870",
+  //     "address": "અસદસદ ",
+  //     "locality": "અડદ "
+  //   }
+  // ];
+
   const handleUnitChange = (e) => {
     const value = e.target.value;
     const options =
@@ -1353,12 +2364,12 @@ const PickUp = () => {
     const value = e.target.value;
     if (e.key === "Enter") {
       e.preventDefault();
-      const matchingProduct = data.find(
+      const matchingProduct = data ? data?.find(
         (item) =>
           item.itemCode.toString() === value ||
           item.itemShortKey.toString().toLocaleLowerCase() ===
           value.toString().toLocaleLowerCase()
-      );
+      ) : []
       console.log("Search Item", matchingProduct);
       //    if (matchingProduct) {
       //   setFullFormData(prevState => ({
@@ -1724,6 +2735,76 @@ const PickUp = () => {
   const handleOpenSuggestion = (value) => {
     setopenSuggestions(true);
   };
+  // const handleFilter = (suggestion) => {
+  //   setInputValue(suggestion);
+  //   if (suggestion === "") {
+  //     setSuggestionData([]);
+  //     return;
+  //   }
+  //   const filteredItem = datas.filter(val => val.mobileNo.includes(suggestion));
+  //   setSuggestionData(filteredItem);
+  //   setSuggestionIndex(0);
+  // };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'ArrowDown') {
+      setSuggestionIndex(prevIndex =>
+        prevIndex === customerList.length - 1 ? 0 : prevIndex + 1
+      );
+    } else if (e.key === 'ArrowUp') {
+      setSuggestionIndex(prevIndex =>
+        prevIndex === 0 ? customerList.length - 1 : prevIndex - 1
+      );
+    } else if (e.key === 'Enter' && customerList.length > 0) {
+      const selectedValue = customerList[suggestionIndex];
+      setSuggestionSelectedValue(selectedValue);
+      // setInputValue(`${val.mobileNo}`);
+      setCustomerData((perv) => ({
+        ...perv,
+        mobileNo: selectedValue.mobileNo,
+        address: selectedValue.address,
+        locality: selectedValue.locality,
+        customerId: selectedValue.customerId,
+        addressId: selectedValue.addressId,
+        customerName: selectedValue.customerName,
+      }))
+      setCustomerList([]);
+    }
+  };
+
+  const handleSuggestionClick = (val) => {
+    setSuggestionSelectedValue(val);
+    // setInputValue(`${val.mobileNo}`);
+    setCustomerData((perv) => ({
+      ...perv,
+      mobileNo: val.mobileNo,
+      address: val.address,
+      locality: val.locality,
+      customerId: val.customerId,
+      addressId: val.addressId,
+      customerName: val.customerName,
+    }))
+    setCustomerList([]);
+  };
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      setCustomerList([]);
+    }, 100);
+  };
+
+  useEffect(() => {
+    if (suggestionListRef.current && customerList.length > 0) {
+      const activeSuggestion = suggestionListRef.current.children[suggestionIndex];
+      if (activeSuggestion) {
+        activeSuggestion.scrollIntoView({
+          behavior: 'smooth',
+          block: 'nearest',
+        });
+      }
+    }
+  }, [suggestionIndex]);
+
   return (
     <div className="" style={{ background: "#f0f2f5" }}>
       <Header setIsEdit={setIsEdit} setBillData={setBillData} setEditBillData={setEditBillData} setItems={setItems} setCustomerData={setCustomerData} />
@@ -2003,39 +3084,56 @@ const PickUp = () => {
                         <tr className="mb-3">
                           <td className="w-5">Mobile&nbsp;</td>
                           <td className="autocompleteTxt">
-                            {/* <input
+                            <input
                               type="text"
-                              className="border-2 w-48 p-1 rounded-sm mobileNo"
+                              className="border-2 w-48 p-1 rounded-sm mobileNo relative"
                               name="mobileNo"
-                              value={customerData.mobileNo}
+                              // value={customerData.mobileNo}
+                              // onChange={(e) => {
+                              //   setCustomerData((perv) => ({
+                              //     ...perv,
+                              //     mobileNo: e.target.value,
+                              //   }));
+                              //   // handleOpenSuggestion(e.target.value);
+                              // }}
+                              // list="suggestion"
+                              id="searchWord"
+                              label="Outlined"
+                              variant="outlined"
                               onChange={(e) => {
+                                // handleFilter(e.target.value);
                                 setCustomerData((perv) => ({
                                   ...perv,
                                   mobileNo: e.target.value,
+                                  customerId: '',
+                                  addressId: ''
                                 }));
-                                // handleOpenSuggestion(e.target.value);
+                                setSuggestionIndex(0);
+                                debounceFunction();
+                                // setInputValue(e.target.value)
                               }}
-                              list="suggestion"
-                              // onBlur={() => setopenSuggestions(false)}
-                            /> */}
-                            {/* <Autocomplete
-                              id="free-solo-demo"
-                              freeSolo
-                              onChange={handleFreeSoloChange}
-                              options={customerList ? customerList : []}
-                              getOptionLabel={(option) => option.address}
-                              value={customerData.address}
-                              // inputValue={freeSoloField}
-                              // onInputChange={handleInputChange}
-                              renderInput={(params) => (
-                                <TextField
-                                  {...params}
-                                  value={freeSoloField}
-                                  placeholder="Mobile No"
-                                  onChange={handleInputChange}
-                                />
-                              )}
-                            /> */}
+                              onBlur={handleBlur}
+                              onKeyDown={handleKeyDown}
+                              value={customerData.mobileNo}
+                              autoComplete='off'
+
+                            // onBlur={() => setopenSuggestions(false)}
+                            />
+                            {customerList.length > 0 && (
+                              <div
+                                className="suggestions"
+                                style={{ maxHeight: '165px', overflowY: 'auto', width: '33%' }}
+                                ref={suggestionListRef}
+                              >
+                                {customerList.map((val, index) => (
+                                  <div key={index} className='cursor-pointer suggestionBorder' onClick={() => handleSuggestionClick(val)}>
+                                    <div className={`suggestionValue px-2 py-1 ${suggestionIndex === index ? 'bg-gray-200' : ''}`}>
+                                      {val.mobileNo} - {val.customerName} - {val.address}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </td>
                         </tr>
                         <tr className="mb-3">
@@ -2080,6 +3178,7 @@ const PickUp = () => {
                                   setCustomerData((perv) => ({
                                     ...perv,
                                     address: text,
+                                    addressId: '',
                                   }));
                                 }}
                                 lang="gu"
@@ -2093,6 +3192,7 @@ const PickUp = () => {
                                   setCustomerData((perv) => ({
                                     ...perv,
                                     address: e.target.value,
+                                    addressId: '',
                                   }));
                                 }}
                               />
@@ -2732,7 +3832,7 @@ const PickUp = () => {
               </div>
               <div className="w-full text-base flex justify-center gap-4 p-1 mt-1 ">
                 <div>
-                  <button className="text-base button px-2 py-1 rounded-md text-white" onClick={() => isEdit ? justEditBill() : justSaveBill()}>
+                  <button className="text-base button px-2 py-1 rounded-md text-white" onClick={() => buttonCLicked == 'tab2' ? isEdit ? justEditBillDelivery() : justSaveBillDelivery() : isEdit ? justEditBill() : justSaveBill()}>
                     Save
                   </button>
                 </div>
@@ -2740,7 +3840,7 @@ const PickUp = () => {
                   <button
                     className="text-base button save_button py-1 rounded-md text-white"
                     onClick={() => {
-                      isEdit ? editBill() : saveBill()
+                      buttonCLicked == 'tab2' ? (isEdit ? editBillDelivery() : saveBillDelivery()) : (isEdit ? editBill() : saveBill())
                     }}
                   >
                     Save & Print
@@ -2749,23 +3849,23 @@ const PickUp = () => {
                 {isEdit ?
                   <>
                     <div>
-                      <button className="another_1 button text-base px-2 py-1 rounded-md text-white" onClick={() => editBillPrint()}>
+                      <button className="another_1 button text-base px-2 py-1 rounded-md text-white" onClick={() => buttonCLicked == 'tab2' ? editBillPrintDelivery() : editBillPrint()}>
                         Save & Bill
                       </button>
                     </div>
                     <div>
-                      <button className="another_1 button text-base px-2 py-1 rounded-md text-white" onClick={() => editKotPrint()}>
+                      <button className="another_1 button text-base px-2 py-1 rounded-md text-white" onClick={() => buttonCLicked == 'tab2' ? editKotPrintDelivery() : editKotPrint()}>
                         Save & KOT
                       </button>
                     </div>
                     <div>
-                      <button className="another_2 button text-base px-2 py-1 rounded-md text-white" onClick={() => cancleBill()}>
+                      <button className="another_2 button text-base px-2 py-1 rounded-md text-white" onClick={() => buttonCLicked == 'tab2' ? cancleBillDelivery() : cancleBill()}>
                         Cancle
                       </button>
                     </div>
                   </> :
                   <div>
-                    <button className="another_2 button text-base px-2 py-1 rounded-md text-white" onClick={() => holdBill()}>
+                    <button className="another_2 button text-base px-2 py-1 rounded-md text-white" onClick={() => buttonCLicked == 'tab2' ? holdBillDelivery() : holdBill()}>
                       HOLD
                     </button>
                   </div>

@@ -133,7 +133,10 @@ ul li:hover {
   width: 32%;
   z-index: 999;
   background-color: white;
-  border: 1px solid black;
+  border: 1px solid gray;
   border-radius: 0px 5px 5px 5px ;
+}
+.suggestionBorder{
+  border-bottom: 1px solid rgb(189, 186, 186);
 }
 
