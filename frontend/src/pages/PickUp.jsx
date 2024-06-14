@@ -14,6 +14,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
+import Popover from '@mui/material/Popover';
 import "./css/pickUp.css";
 import Header from "../components/Header/Header";
 import { IoIosRestaurant } from "react-icons/io";
@@ -127,8 +128,20 @@ const PickUp = () => {
     price: 0,
   });
 
+  const [billError, setBillError] = useState({
+    mobileNo: false,
+    settledAmount: false,
+    discountValue: false
+  })
+
   const [items, setItems] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
+  const [itemComment, setItemComment] = useState({
+    itemComment: [],
+    index: '',
+    comment: '',
+    oldComment: ''
+  })
   const [billData, setBillData] = useState({
     subTotal: 0,
     discountType: "none",
@@ -158,7 +171,7 @@ const PickUp = () => {
   const [error, setError] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [validationError, setValidationError] = useState(false);
-  const [buttonCLicked, setButtonCLicked] = useState("tab1");
+  const [buttonCLicked, setButtonCLicked] = useState("tab2");
   const [openSuggestions, setopenSuggestions] = useState(false);
   const quantityInputRef = useRef(null);
   const [data, setData] = useState([]);
@@ -198,6 +211,56 @@ const PickUp = () => {
     //   }));
     // }
   };
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event, index) => {
+    setAnchorEl(event.currentTarget);
+    setItemComment((perv) => ({
+      ...perv,
+      index: index,
+      oldComment: items && items[index] && items[index].comment ? items[index].comment : '',
+      itemComment: items && items[index] && items[index].comment ? items[index].comment?.split(/,\s*/) : [],
+    }))
+    // console.log('split', items && items[index] && items[index].comment ? items[index].comment?.split(/,\s*/) : [],)
+  };
+  const handleClose = () => {
+    setItemComment({
+      itemComment: [],
+      index: '',
+      comment: '',
+      oldComment: ''
+    });
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
+
+
+  const saveItemComment = async () => {
+    setItems((perv) => (
+      perv.map((data, index) => (
+        index == itemComment.index ? { ...data, comment: itemComment.itemComment?.join(', ') } : data
+      ))
+    ))
+    handleClose();
+    setItemComment({
+      itemComment: [],
+      index: '',
+      comment: '',
+      oldComment: ''
+    })
+  }
+  // const cancleComment = async () => {
+  //   setItemComment({
+  //     itemComment: [],
+  //     index: '',
+  //     comment: '',
+  //     oldComment: ''
+  //   });
+  //   handleClose();
+  // }
 
   const getData = async () => {
     await axios
@@ -376,7 +439,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
-      billType: "Pick Up",
+      billType: "Delivery",
       printBill: true,
       printKot: true,
       firmId: "A",
@@ -567,7 +630,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
-      billType: "Pick Up",
+      billType: "Delivery",
       printBill: true,
       printKot: true,
       firmId: "A",
@@ -757,7 +820,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
-      billType: "Pick Up",
+      billType: "Delivery",
       printBill: true,
       printKot: true,
       firmId: "A",
@@ -947,7 +1010,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
-      billType: "Pick Up",
+      billType: "Delivery",
       printBill: true,
       printKot: true,
       firmId: "A",
@@ -1150,7 +1213,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
-      billType: "Pick Up",
+      billType: "Delivery",
       printBill: true,
       printKot: true,
       firmId: "A",
@@ -1329,7 +1392,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
-      billType: "Pick Up",
+      billType: "Delivery",
       printBill: false,
       printKot: false,
       firmId: "A",
@@ -1509,7 +1572,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
-      billType: "Pick Up",
+      billType: "Delivery",
       printBill: true,
       printKot: false,
       firmId: "A",
@@ -1721,7 +1784,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
-      billType: "Pick Up",
+      billType: "Delivery",
       printBill: false,
       printKot: true,
       firmId: "A",
@@ -1904,8 +1967,15 @@ const PickUp = () => {
         !billData.subTotal ||
         !billData.settledAmount ||
         !billData.discountType ||
-        (billData.discountType != "none" && !billData.discountValue)
+        (billData.discountType != "none" && !billData.discountValue) ||
+        !customerData.mobileNo || customerData.mobileNo.length != 10
       ) {
+        if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
+          setBillError((perv) => ({
+            ...perv,
+            mobileNo: true
+          }))
+        }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -1946,8 +2016,15 @@ const PickUp = () => {
         !billData.subTotal ||
         !billData.settledAmount ||
         !billData.discountType ||
-        (billData.discountType != "none" && !billData.discountValue)
+        (billData.discountType != "none" && !billData.discountValue) ||
+        !customerData.mobileNo || customerData.mobileNo.length != 10
       ) {
+        if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
+          setBillError((perv) => ({
+            ...perv,
+            mobileNo: true
+          }))
+        }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -1988,8 +2065,15 @@ const PickUp = () => {
         !billData.subTotal ||
         !billData.settledAmount ||
         !billData.discountType ||
-        (billData.discountType != "none" && !billData.discountValue)
+        (billData.discountType != "none" && !billData.discountValue) ||
+        !customerData.mobileNo || customerData.mobileNo.length != 10
       ) {
+        if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
+          setBillError((perv) => ({
+            ...perv,
+            mobileNo: true
+          }))
+        }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -2030,8 +2114,15 @@ const PickUp = () => {
         !billData.subTotal ||
         !billData.settledAmount ||
         !billData.discountType ||
-        (billData.discountType != "none" && !billData.discountValue)
+        (billData.discountType != "none" && !billData.discountValue) ||
+        !customerData.mobileNo || customerData.mobileNo.length != 10
       ) {
+        if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
+          setBillError((perv) => ({
+            ...perv,
+            mobileNo: true
+          }))
+        }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -2072,8 +2163,15 @@ const PickUp = () => {
         !billData.subTotal ||
         !billData.settledAmount ||
         !billData.discountType ||
-        (billData.discountType != "none" && !billData.discountValue)
+        (billData.discountType != "none" && !billData.discountValue) ||
+        !customerData.mobileNo || customerData.mobileNo.length != 10
       ) {
+        if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
+          setBillError((perv) => ({
+            ...perv,
+            mobileNo: true
+          }))
+        }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -2114,8 +2212,15 @@ const PickUp = () => {
         !billData.subTotal ||
         !billData.settledAmount ||
         !billData.discountType ||
-        (billData.discountType != "none" && !billData.discountValue)
+        (billData.discountType != "none" && !billData.discountValue) ||
+        !customerData.mobileNo || customerData.mobileNo.length != 10
       ) {
+        if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
+          setBillError((perv) => ({
+            ...perv,
+            mobileNo: true
+          }))
+        }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -2156,8 +2261,15 @@ const PickUp = () => {
         !billData.subTotal ||
         !billData.settledAmount ||
         !billData.discountType ||
-        (billData.discountType != "none" && !billData.discountValue)
+        (billData.discountType != "none" && !billData.discountValue) ||
+        !customerData.mobileNo || customerData.mobileNo.length != 10
       ) {
+        if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
+          setBillError((perv) => ({
+            ...perv,
+            mobileNo: true
+          }))
+        }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -2219,8 +2331,15 @@ const PickUp = () => {
         !billData.subTotal ||
         !billData.settledAmount ||
         !billData.discountType ||
-        (billData.discountType != "none" && !billData.discountValue)
+        (billData.discountType != "none" && !billData.discountValue) ||
+        !customerData.mobileNo || customerData.mobileNo.length != 10
       ) {
+        if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
+          setBillError((perv) => ({
+            ...perv,
+            mobileNo: true
+          }))
+        }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -2807,7 +2926,7 @@ const PickUp = () => {
 
   return (
     <div className="" style={{ background: "#f0f2f5" }}>
-      <Header setIsEdit={setIsEdit} setBillData={setBillData} setEditBillData={setEditBillData} setItems={setItems} setCustomerData={setCustomerData} />
+      <Header setIsEdit={setIsEdit} setBillData={setBillData} setEditBillData={setEditBillData} setItems={setItems} setCustomerData={setCustomerData} setButtonCLicked={setButtonCLicked} />
       <section className="right_section ">
         <div className="right_top_header gap-6 p-2 flex">
           <div className="w-32">
@@ -3086,7 +3205,7 @@ const PickUp = () => {
                           <td className="autocompleteTxt">
                             <input
                               type="text"
-                              className="border-2 w-48 p-1 rounded-sm mobileNo relative"
+                              className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${billError.mobileNo ? 'mobileNoError' : ''}`}
                               name="mobileNo"
                               // value={customerData.mobileNo}
                               // onChange={(e) => {
@@ -3406,7 +3525,7 @@ const PickUp = () => {
               <div className="w-full  p-0 text-white">
                 <div className="grid w-full grid-flow-row grid-cols-12 mr-2  bg-gray-700">
                   <div
-                    onClick={() => setButtonCLicked("tab1")}
+                    onClick={() => items.length <= 0 && setButtonCLicked("tab1")}
                     className={
                       buttonCLicked == "tab1"
                         ? "clicked col-3 p-0 col-span-3 text-center"
@@ -3422,7 +3541,7 @@ const PickUp = () => {
                     </Button>
                   </div>
                   <div
-                    onClick={() => setButtonCLicked("tab2")}
+                    onClick={() => items.length <= 0 && setButtonCLicked("tab2")}
                     className={
                       buttonCLicked == "tab2"
                         ? "clicked col-3 p-0  col-span-3 text-center"
@@ -3438,7 +3557,7 @@ const PickUp = () => {
                     </Button>
                   </div>
                   <div
-                    onClick={() => setButtonCLicked("tab3")}
+                    onClick={() => items.length <= 0 && setButtonCLicked("tab3")}
                     className={
                       buttonCLicked == "tab3"
                         ? "clicked col-3 p-0  col-span-3 text-center"
@@ -3454,7 +3573,7 @@ const PickUp = () => {
                     </Button>
                   </div>
                   <div
-                    onClick={() => setButtonCLicked("tab4")}
+                    onClick={() => items.length <= 0 && setButtonCLicked("tab4")}
                     className={
                       buttonCLicked == "tab4"
                         ? "clicked col-3 p-0  col-span-3 text-center"
@@ -3512,7 +3631,7 @@ const PickUp = () => {
                             className="main_bill_icon text-red-700 ml-1 mt-1 cursor-pointer"
                           />
                         </div>
-                        <div className="col-span-3 justify-self-start">
+                        <div className="col-span-3 justify-self-start itemName" onClick={(e) => handleClick(e, index)}>
                           {item.itemName}
                         </div>
                         <div className="col-span-3 justify-self-center">
@@ -3733,6 +3852,7 @@ const PickUp = () => {
                       value={billData.discountValue}
                       name="discountValue"
                       placeholder="Discount"
+                      error={billData.discountValue <= 0}
                       onChange={(e) => {
                         if ((regex.test(e.target.value) || e.target.value === "")) {
                           setBillData((perv) => ({
@@ -3876,6 +3996,62 @@ const PickUp = () => {
         </div>
       </section >
       <ToastContainer />
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <div className="commentPopUp">
+          <div className="commentHeader">
+            Item Comment
+          </div>
+          <div className="mt-2">
+            <Autocomplete
+              multiple
+              id="tags-outli"
+              options={commentList ? commentList : []}
+              // getOptionLabel={commentList ? commentList : []}
+              defaultValue={[]}
+              freeSolo
+              value={
+                itemComment.itemComment
+                  ? itemComment.itemComment
+                  : []
+              }
+              onChange={(e, value) => {
+                setItemComment((perv) => ({
+                  ...perv,
+                  itemComment: value ? value : []
+                }))
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="Item Comments"
+                />
+              )}
+            />
+          </div>
+          <div className="w-full text-base flex justify-end gap-4 p-1 mt-1 ">
+            <div>
+              <button className="text-base button px-2 py-1 rounded-md text-white" onClick={() => saveItemComment()}>
+                Save
+              </button>
+            </div>
+            <div>
+              <button className="another_2 button text-base px-2 py-1 rounded-md text-white" onClick={() => handleClose()}>
+                Cancle
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* <Typography sx={{ p: 2 }}>The content of the Popover.</Typography> */}
+      </Popover>
     </div >
   );
 };

@@ -69,7 +69,7 @@ const Header = (props) => {
             discountValue: res.data.discountValue,
             settledAmount: res.data.settledAmount,
             totalDiscount: res.data.totalDiscount,
-            billPayType: res.data.billType,
+            billPayType: res.data.billPayType,
             billComment: res.data.billComment,
             billCommentAuto: res.data.billComment ? res.data.billComment.split(', ') : [],
           }
@@ -77,6 +77,7 @@ const Header = (props) => {
         props.setCustomerData(res.data.customerDetails)
         props.setEditBillData(res.data)
         props.setIsEdit(true);
+        props.setButtonCLicked(activeTab == 'Delivery' ? 'tab2' : 'tab3');
       })
       .catch((error) => {
         setError(error.response ? error.response.data : "Network Error ...!!!");
@@ -149,6 +150,7 @@ const Header = (props) => {
       return;
     }
     getRecentToken('Pick Up');
+    setActiveTab('Pick Up')
     setState({ ...state, [anchor]: open });
   };
   if (loading) {
@@ -228,11 +230,11 @@ const Header = (props) => {
           Pick Up
         </div>
         <div
-          // onClick={(event) => {
-          //   event.stopPropagation();
-          //   setActiveTab("Delivery");
-          //   getRecentToken("Delivery");
-          // }}
+          onClick={(event) => {
+            event.stopPropagation();
+            setActiveTab("Delivery");
+            getRecentToken("Delivery");
+          }}
           className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Delivery" ? "active" : ""
             }`}
         >

@@ -139,4 +139,23 @@ ul li:hover {
 .suggestionBorder{
   border-bottom: 1px solid rgb(189, 186, 186);
 }
+.commentPopUp{
+  background-color: #fff;
+  width: 600px;
+  /* height: 150px; */
+  box-shadow: 0 .25rem .375rem -.0625rem rgba(0, 0, 0, .1), 0 .125rem .25rem -.0625rem rgba(0, 0, 0, .06);
+  padding: 10px 15px 10px 15px;
+}
 
+.commentHeader{
+font-size: 18px;
+font-weight: 600;
+}
+
+.itemName:hover{
+  text-decoration: underline;
+  cursor: pointer;
+}
+.mobileNoError{
+  border: 2px solid red;
+}
