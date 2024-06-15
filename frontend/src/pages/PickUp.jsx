@@ -2736,28 +2736,32 @@ const PickUp = () => {
       settledAmount: Math.ceil(billData.subTotal - items[index].price),
     }));
   };
-  const handleIncreaseQuantity = (index) => {
+  const handleIncreaseQuantity = (index, currentQty) => {
+    const newQty = currentQty + 1;
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
-      updatedItems[index].qty += 1;
-      updatedItems[index].price =
-        updatedItems[index].qty * updatedItems[index].itemPrice;
+      updatedItems[index].qty = newQty;
+      updatedItems[index].price = newQty * updatedItems[index].itemPrice;
       return updatedItems;
     });
-    setBillData((perv) => ({
-      ...perv,
-      subTotal: billData.subTotal + items[index].itemPrice,
-      settledAmount: Math.ceil(
-        billData.subTotal +
-        items[index].itemPrice -
-        (billData.discountType == "fixed"
-          ? billData.discountValue
-          : billData.discountType == "percentage"
-            ? (billData.subTotal + items[index].itemPrice) *
-            (billData.discountValue / 100)
-            : 0)),
-    }));
+  
+    setBillData((prev) => {
+      const newSubTotal = items.reduce((sum, item, i) => sum + (i === index ? newQty * item.itemPrice : item.price), 0);
+      return {
+        ...prev,
+        subTotal: newSubTotal,
+        settledAmount: Math.ceil(
+          newSubTotal -
+          (prev.discountType === "fixed"
+            ? prev.discountValue
+            : prev.discountType === "percentage"
+              ? newSubTotal * (prev.discountValue / 100)
+              : 0)
+        )
+      };
+    });
   };
+  
   const [text, setText] = useState("");
   const handleInputChange = (event, value) => {
     // if (event) {
@@ -2807,6 +2811,34 @@ const PickUp = () => {
               : 0),
       )
     }));
+  };
+  const handleOnChangePrice = (index, value) => {
+    const newQty = value;
+    console.log(value)
+    if (!isNaN(newQty) && newQty >= -1) {
+      setItems((prevItems) => {
+        const updatedItems = [...prevItems];
+        updatedItems[index].qty = newQty;
+        updatedItems[index].price = newQty * updatedItems[index].itemPrice;
+        return updatedItems;
+      });
+
+      setBillData((prev) => {
+        const newSubTotal = items.reduce((sum, item, i) => sum + (i === index ? newQty * item.itemPrice : item.price), 0);
+        return {
+          ...prev,
+          subTotal: newSubTotal,
+          settledAmount: Math.ceil(
+            newSubTotal -
+            (prev.discountType === "fixed"
+              ? prev.discountValue
+              : prev.discountType === "percentage"
+                ? newSubTotal * (prev.discountValue / 100)
+                : 0)
+          )
+        };
+      });
+    }
   };
   if (loading) {
     console.log(">>>>??");
@@ -3221,6 +3253,7 @@ const PickUp = () => {
                               variant="outlined"
                               onChange={(e) => {
                                 // handleFilter(e.target.value);
+                                setBillError({ ...billError, mobileNo: false })
                                 setCustomerData((perv) => ({
                                   ...perv,
                                   mobileNo: e.target.value,
@@ -3356,7 +3389,7 @@ const PickUp = () => {
                       <table className=" w-full">
                         <tbody>
                           <tr className="mb-3">
-                            <td className="w-28">Order Comment&nbsp;</td>
+                            <td className="w-24">Order Comment&nbsp;</td>
                             <td>
                               {/* <input
                                 type="text"
@@ -3385,7 +3418,6 @@ const PickUp = () => {
                                 renderInput={(params) => (
                                   <TextField
                                     {...params}
-                                    placeholder="Order Comments"
                                   />
                                 )}
                               />
@@ -3619,20 +3651,18 @@ const PickUp = () => {
                       </div>
                     </div>
                   )}
-                  {items.map((item, index) => (
+                  {items?.map((item, index) => (
                     <div
                       key={index}
                       className="bg-amber-50 billin_content itemBorder p-2 text-lg"
                     >
                       <div className="grid grid-cols-12 content-center gap-2">
-                        <div className="col-span-1 underline">
+                        <div className="col-span-4 flex  justify-self-start itemName" onClick={(e) => handleClick(e, index)}>
                           <MdCancel
                             onClick={() => handleDeleteRow(index)}
-                            className="main_bill_icon text-red-700 ml-1 mt-1 cursor-pointer"
+                            className="main_bill_icon text-red-700 mx-1  mt-1 cursor-pointer"
                           />
-                        </div>
-                        <div className="col-span-3 justify-self-start itemName" onClick={(e) => handleClick(e, index)}>
-                          {item.itemName}
+                          <p className='ml-2'>{item.itemName}</p>
                         </div>
                         <div className="col-span-3 justify-self-center">
                           {item.comment}
@@ -3644,7 +3674,7 @@ const PickUp = () => {
                                 onClick={() =>
                                   handleDecreaseQuantity(index, item.qty)
                                 }
-                                className="border quantity_button p-0"
+                                className="border quantity_button p-0 rounded-md border-black"
                               >
                                 -
                               </button>
@@ -3652,13 +3682,13 @@ const PickUp = () => {
                             <input
                               type="text"
                               value={item.qty}
-                              className="w-8 text-center"
-                              readOnly
+                              className="w-14 border border-black rounded-md text-center"
+                              onChange={(e) => handleOnChangePrice(index, e.target.value)}
                             />
                             <div className="plus_button">
                               <button
-                                onClick={() => handleIncreaseQuantity(index)}
-                                className="quantity_button p-0"
+                                onClick={() => handleIncreaseQuantity(index, item.qty)}
+                                className="border quantity_button p-0 rounded-md border-black"
                               >
                                 +
                               </button>
@@ -3669,10 +3699,10 @@ const PickUp = () => {
                           <p className="pl-2">{item.unit}</p>
                         </div>
                         <div className="col-span-1 justify-self-end">
-                          <p className="pl-2">{item.itemPrice}</p>
+                          <p className="pl-2">{(item.itemPrice).toFixed(2)}</p>
                         </div>
                         <div className="col-span-1 justify-self-end">
-                          <p className="pl-2">{item.price}</p>
+                          <p className="pl-2">{(item.price).toFixed(2)}</p>
                         </div>
                       </div>
                     </div>

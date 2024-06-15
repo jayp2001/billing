@@ -53,12 +53,18 @@ function LoginPage() {
       const printerList = arg?.filter((element) => element != "");
       localStorage.setItem("printers", JSON.stringify(printerList));
     });
+    ipcRenderer.send("findMac")
+    ipcRenderer.on("getMac", (event, arg) => {
+      localStorage.setItem("macAddress", arg)
+    })
 
     // Clean up the listener when the component unmounts
     return () => {
       ipcRenderer.removeAllListeners("getPrinter");
+      ipcRenderer.removeAllListeners("getMac");
     };
   }, []);
+  const macAddress = localStorage.getItem("macAddress");
   const submit = async (e) => {
     e.preventDefault();
     console.log("login", userName, password);
@@ -87,7 +93,15 @@ function LoginPage() {
             ? encryptData(res.data.userRights)
             : res.data.userRights;
           localStorage.setItem("userInfo", JSON.stringify(res.data));
-          console.log("rightsLogin", rights);
+          const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+          const configs = {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${userInfo.token}`,
+            },
+          };
+          getAllPrinterdata(configs)
+
           // if (rights == 6)
           navigate("/main");
           // else
@@ -103,6 +117,10 @@ function LoginPage() {
         );
       });
   };
+  const getAllPrinterdata = async (store) => {
+    const response = await axios.get(`${BACKEND_BASE_URL}billingrouter/getPrinterList?macAddress=${macAddress}`, store);
+    localStorage.setItem("printerPreference", JSON.stringify(response.data));
+  }
   React.useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const role = user && user.userRights ? decryptData(user.userRights) : "";

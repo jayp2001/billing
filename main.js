@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain } = require("electron/main");
 const path = require("node:path");
 // const PosPrinter = require('electron-pos-printer')
 const { exec } = require("child_process");
+const os = require("os");
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -27,40 +28,62 @@ function createWindow() {
       style: { margin: "80 20px 20 20px" },
     },
   ];
-
   function getPrinterList() {
     return new Promise((resolve, reject) => {
-      exec('lpstat -a', (err, stdout) => {
-        if (err) {
-          reject(err);
-          return;
-        }
+      if (process.platform === 'win32') {
+        exec('powershell -Command "Get-Printer | Select-Object Name"', (err, stdout) => {
+          if (err) {
+            reject(err);
+            return;
+          }
 
-        const printerNames = stdout
-          .split('\n')
-          .map(line => line.trim().split(' ')[0])
-          .filter(printer => printer);
+          const printerNames = stdout
+            .split('\r\n')
+            .map(line => line.trim())
+            .filter(printer => printer);
 
-        resolve(printerNames);
-      });
-      //   exec("wmic printer get name", (err, stdout) => {
-      //     if (err) {
-      //       reject(err);
-      //       return;
-      //     }
+          resolve(printerNames);
+        });
+      } else {
+        exec('lpstat -a', (err, stdout) => {
+          if (err) {
+            reject(err);
+            return;
+          }
 
-      //     const printerNames = stdout
-      //       .split("\r\r\n")
-      //       .filter((line) => line.trim() !== "Name")
-      //       .map((line) => line.trim());
+          const printerNames = stdout
+            .split('\n')
+            .map(line => line.trim().split(' ')[0])
+            .filter(printer => printer);
 
-      //     resolve(printerNames);
-      //   });
+          resolve(printerNames);
+        });
+      }
     });
   }
 
+
+
+  function getMacAddress() {
+    const interfaces = os.networkInterfaces();
+    const interfaceName = 'vEthernet (Default Switch)';
+
+    if (interfaces && interfaces[interfaceName]) {
+      const macAddress = interfaces[interfaceName][0].mac;
+      console.log(macAddress)
+      return macAddress;
+    }
+    return null; 
+  }
+  ipcMain.on("findMac", async (event, title) => {
+    const mac = getMacAddress();
+    mainWindow.webContents.send("getMac", mac);
+  });
+
+
   // Example usage
 
+  
   ipcMain.on("findPrinter", async (event, title) => {
     getPrinterList()
       .then((printers) => {
@@ -88,7 +111,7 @@ function createWindow() {
           top: 0, // Specify your custom top margin in millimeters
           bottom: 0, // Specify your custom bottom margin in millimeters
           left: 10, // Specify your custom left margin in millimeters
-          right: 10, // Specify your custom right margin in millimeters
+          right: 5, // Specify your custom right margin in millimeters
         },
         deviceName: printer.printerName,
       });

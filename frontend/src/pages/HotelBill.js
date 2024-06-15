@@ -6,7 +6,7 @@ const HotelBill = () => {
     <div
       className="w-fit h-fit"
       style={{
-        width: "fit-content",
+        width: "260px",
         height: "fit-content",
         fontFamily: "Verdana",
       }}
@@ -14,10 +14,9 @@ const HotelBill = () => {
       <meta charSet="utf-8" />
       <div
         style={{
-          width: "fit-content",
+          width: "260px",
           border: "1px solid black",
           borderCollapse: "collapse",
-          margin: "4px",
           textAlign: "center",
         }}
       >
@@ -31,7 +30,7 @@ const HotelBill = () => {
           <div
             style={{
               fontWeight: "700",
-              fontSize: "1rem",
+              fontSize: "14px",
               lineHeight: "24px",
               paddingBottom: "1rem",
               paddingTop: "0.6rem",
@@ -40,14 +39,14 @@ const HotelBill = () => {
             SHRI BHAGAWATI FAST FOOD
           </div>
           <div
-            style={{ fontSize: "14px", lineHeight: "20px", fontWeight: "500" }}
+            style={{ fontSize: "12px", lineHeight: "20px", fontWeight: "500" }}
           >
             PALACE ROAD RAJKOT - 360 001
           </div>
           <div
             style={{
               fontWeight: "500",
-              fontSize: "14px",
+              fontSize: "12px",
               lineHeight: "20px",
               marginBottom: "8px",
               paddingBottom: "4px",
@@ -59,7 +58,7 @@ const HotelBill = () => {
         <div style={{ paddingBottom: "0px", borderBottom: "2px solid black" }}>
           <div
             className="name font-medium text-sm"
-            style={{ fontWeight: "500" }}
+            style={{ fontWeight: "500",fontSize:'12px' }}
           >
             GSTIN: 24BDZPC3972L1ZX
           </div>
@@ -67,12 +66,12 @@ const HotelBill = () => {
         <div style={{ paddingBottom: "0px", borderBottom: "2px solid black" }}>
           <div
             className="name font-bold text-sm"
-            style={{ fontWeight: "700", fontSize: "14px", lineHeight: "20px" }}
+            style={{ fontWeight: "700", fontSize: "12px", lineHeight: "20px" }}
           >
             BILL OF SUPPLY
           </div>
         </div>
-        <div style={{ padding: "2px", width: "305px", height: "min-content" }}>
+        <div style={{  width: "260px", height: "min-content",padding:'1px' }}>
           <div
             style={{
               display: "flex",
@@ -80,13 +79,14 @@ const HotelBill = () => {
               fontWeight: "500",
               fontSize: "12px",
               lineHeight: "16px",
+              padding:'1px'
             }}
           >
             <div style={{ textAlign: "start" }}>
-              <div>Date : 19/04/2024</div>
+              <div style={{fontSize:'10px'}}>Date : 19/04/2024</div>
             </div>
             <div style={{ textAlign: "start" }}>
-              <div>Time: 23:38</div>
+              <div style={{fontSize:'10px'}}>Time: 23:38</div>
             </div>
           </div>
           <div
@@ -101,21 +101,21 @@ const HotelBill = () => {
           >
             <div
               className="text-start upper_right"
-              style={{ textAlign: "start", maxWidth: "75%" }}
+              style={{ textAlign: "start", maxWidth: "75%",fontSize:'10p' }}
             >
               <div>
                 HOTEL CASH :{" "}
-                <span style={{ fontWeight: "700" }}> 94809902</span>
+                <span style={{ fontWeight: "700",fontSize:'10p' }}> 94809902</span>
               </div>
-              <div style={{ marginTop: "8px" }}>
+              <div style={{ marginTop: "4px",fontSize:'10p' }}>
                 HOTEL : Ever Krishna Palace
               </div>
-              <div style={{ marginTop: "8px" }}>
+              <div style={{ marginTop: "4px",fontSize:'10p' }}>
                 ROOM NO : <span className="font-bold">201</span>
               </div>
               <div
                 style={{
-                  marginTop: "8px",
+                  marginTop: "4px",
                   textAlign: "start",
                   fontWeight: "100",
                   fontSize: "12px",
@@ -123,13 +123,13 @@ const HotelBill = () => {
                 }}
               >
                 ADDRESS :{" "}
-                <span className="text-xs font-thin">
+                <span className="text-xs font-thin" style={{fontSize:'12px'}}>
                   Palcae Road Bhagawati restaurant Rajkot{" "}
                 </span>
               </div>
             </div>
             <div
-              style={{ textAlign: "start", maxWidth: "25%", padding: "2px" }}
+              style={{ textAlign: "start", width: "50%", marginRight:'6px' }}
             >
               <div
                 style={{
@@ -164,10 +164,10 @@ const HotelBill = () => {
 
           <div
             style={{
-              marginTop: "8px",
+              marginTop: "4px",
               textAlign: "start",
               fontWeight: "100",
-              fontSize: "12px",
+              fontSize: "10px",
               lineHeight: "16px",
             }}
           >
@@ -176,13 +176,13 @@ const HotelBill = () => {
         </div>
         <div
           className="main_bill h-min"
-          style={{ width: " 309px", height: "min-content" }}
+          style={{ width: " 260px", height: "min-content" }}
         >
           <table
             className="table-auto w-full"
             style={{
               tableLayout: "auto",
-              width: "100%",
+              width: "260px",
               border: "1px solid black",
               borderCollapse: "collapse",
             }}
@@ -195,8 +195,8 @@ const HotelBill = () => {
                     borderCollapse: "collapse",
                     paddingTop: "8px",
                     paddingBottom: "8px",
-                    borderLeft: "0px",
                     textAlign: "start",
+                    fontSize:'14px'
                   }}
                 >
                   Particulars
@@ -208,6 +208,7 @@ const HotelBill = () => {
                     paddingTop: "8px",
                     paddingBottom: "8px",
                     textAlign: "center",
+                    fontSize:'14px'
                   }}
                 >
                   Qty
@@ -219,6 +220,7 @@ const HotelBill = () => {
                     paddingTop: "8px",
                     paddingBottom: "8px",
                     textAlign: "center",
+                    fontSize:'14px'
                   }}
                 >
                   Amount
@@ -235,6 +237,7 @@ const HotelBill = () => {
                     paddingRight: "2px",
                     paddingLeft: "2px",
                     textAlign: "start",
+                    fontSize:'12px'
                   }}
                 >
                   Panerr Tika Masala{" "}
@@ -245,6 +248,7 @@ const HotelBill = () => {
                     borderCollapse: "collapse",
                     width: "20%",
                     textAlign: "center",
+                    fontSize:'12px'
                   }}
                 >
                   99 Full
@@ -259,6 +263,7 @@ const HotelBill = () => {
                     textAlign: "end",
                     paddingRight: "2px",
                     paddingLeft: "2px",
+                    fontSize:'12px'
                   }}
                 >
                   10555.00
@@ -273,6 +278,7 @@ const HotelBill = () => {
                     paddingRight: "2px",
                     paddingLeft: "2px",
                     textAlign: "start",
+                    fontSize:'10px'
                   }}
                 >
                   Butter Milk{" "}
@@ -283,6 +289,7 @@ const HotelBill = () => {
                     borderCollapse: "collapse",
                     width: "20%",
                     textAlign: "center",
+                    fontSize:'12px'
                   }}
                 >
                   99 Full
@@ -297,6 +304,7 @@ const HotelBill = () => {
                     textAlign: "end",
                     paddingRight: "2px",
                     paddingLeft: "2px",
+                    fontSize:'12px'
                   }}
                 >
                   105.00
@@ -319,6 +327,7 @@ const HotelBill = () => {
                     borderCollapse: "collapse",
                     width: "20%",
                     textAlign: "center",
+                    fontSize:'12px'
                   }}
                 >
                   Total:
@@ -333,6 +342,7 @@ const HotelBill = () => {
                     textAlign: "end",
                     paddingRight: "2px",
                     paddingLeft: "2px",
+                    fontSize:'12px'
                   }}
                 >
                   135000.00
@@ -357,6 +367,7 @@ const HotelBill = () => {
                     textAlign: "end",
                     paddingTop: "8px",
                     paddingBottom: "8px",
+                    fontSize:'14px'
                   }}
                 >
                   Discount:
@@ -366,6 +377,7 @@ const HotelBill = () => {
                     textAlign: "center",
                     paddingTop: "8px",
                     paddingBottom: "8px",
+                    fontSize:'14px'
                   }}
                 >
                   14.00
@@ -379,6 +391,7 @@ const HotelBill = () => {
                     borderTop: "1px solid black",
                     paddingTop: "8px",
                     paddingBottom: "8px",
+                    fontSize:'14px'
                   }}
                 >
                   Grand Total Rs.290.00

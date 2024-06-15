@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import "./css/PrinterSelectingPage.css";
 import Header from "../components/Header/Header";
 import TextField from "@mui/material/TextField";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import {
   Box,
   IconButton,
@@ -13,7 +12,6 @@ import {
   TableRow,
   Tooltip,
 } from "@mui/material";
-import { CheckCircleOutline } from "@mui/icons-material";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
 import Modal from "@mui/material/Modal";
@@ -21,6 +19,9 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import axios from 'axios';
+import { BACKEND_BASE_URL } from "../url";
+import { ToastContainer, toast } from "react-toastify";
 const { ipcRenderer } = window.require("electron");
 
 const style = {
@@ -51,7 +52,16 @@ const PrintSelectingPage = () => {
     },
   ]);
   const [assignPrinterPopUp, setAssignPrinterPopUp] = useState(false);
-  const [selectPrinter, setSelectPrinter] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [selectPrinter, setSelectPrinter] = useState({});
+  const [marginData, setMarginData] = useState({
+    top: '0',
+    right: '0',
+    bottom: '0',
+    left: '0'
+  });
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const config = {
     headers: {
@@ -59,49 +69,82 @@ const PrintSelectingPage = () => {
       Authorization: `Bearer ${userInfo.token}`,
     },
   };
+
   const printers = JSON.parse(localStorage.getItem("printers"));
+  const macAddress = localStorage.getItem("macAddress");
+
   const handleAssigningPopup = (index, data) => {
     setSelectPrinter({
       ...data,
       index: index,
     });
+    setMarginData({
+      top: data?.marginTop || '0',
+      right: data?.marginRight || '0',
+      bottom: data?.marginBottom || '0',
+      left: data?.marginLeft || '0',
+    });
     setAssignPrinterPopUp(true);
   };
 
-  const handleSetPrinter = () => {
-    const updatedData = categoryList?.map((data, index) => {
-      return selectPrinter?.index == index
-        ? {
-            ...data,
-            printerName: selectPrinter.printerName,
-            footer: selectPrinter.footer,
-          }
-        : data;
-    });
-    localStorage.setItem("printerPreference", JSON.stringify(updatedData));
-    setCategoryList(updatedData);
-    handleClose();
+  const getAllData = async () => {
+    try {
+      const response = await axios.get(`${BACKEND_BASE_URL}billingrouter/getPrinterList?macAddress=${macAddress}`, config);
+      setCategoryList(response.data);
+      localStorage.setItem("printerPreference", JSON.stringify(response.data));
+    } catch (error) {
+      console.log(error);
+    }
   };
-  // useEffect(() => {
-  //   const fetchPrinters = async () => {
-  //     try {
-  //       const devices = await navigator.mediaDevices.enumerateDevices();
-  //       const printerNames = devices
-  //         .filter((device) => device.kind === "printer")
-  //         .map((printer) => printer.label);
-  //       // setPrinters(printerNames);
-  //     } catch (error) {
-  //       console.error("Error fetching printers:", error);
-  //     }
-  //   };
 
-  //   fetchPrinters();
-  // }, []);
+  const handleSetPrinter = async () => {
+    try {
+      const updatedData = categoryList.map((data, index) =>
+        selectPrinter.index === index
+          ? {
+              ...data,
+              printerName: selectPrinter.printerName,
+              footer: selectPrinter.footer,
+            }
+          : data
+      );
+
+      const data = {
+        printerName: selectPrinter.printerName,
+        marginTop: marginData.top,
+        marginRight: marginData.right,
+        marginBottom: marginData.bottom,
+        marginLeft: marginData.left,
+        macAddress: macAddress,
+        categoryId: selectPrinter.categoryId,
+      };
+
+      const response = await axios.post(
+        `${BACKEND_BASE_URL}billingrouter/updatePrinterData`,
+        data,
+        config
+      );
+
+      if (response.data === 'Printer Updated Successfully') {
+        setSuccess(true); 
+        setCategoryList(updatedData);
+        getAllData();
+        handleClose();
+      }
+    } catch (error) {
+      console.error("Error updating printer list:", error);
+      setError(true);
+    }
+  };
 
   const handleClose = () => {
-    setSelectPrinter();
+    setSelectPrinter({});
     setAssignPrinterPopUp(false);
   };
+
+  useEffect(() => {
+    getAllData();
+  }, []);
 
   return (
     <div>
@@ -119,29 +162,16 @@ const PrintSelectingPage = () => {
           </TableHead>
           <TableBody>
             {categoryList?.map((data, index) => (
-              <TableRow>
-                <TableCell component="th" scope="row" className="table_row">
-                  {index}
-                </TableCell>
-                <TableCell component="th" scope="row" className="table_row">
-                  {data.categoryName}
-                </TableCell>
-                <TableCell component="th" scope="row" className="table_row">
-                  {data.printerName}
-                </TableCell>
-                <TableCell component="th" scope="row" className="table_row">
-                  {data.footer}
-                </TableCell>
-                <TableCell component="th" scope="row" className="table_row">
-                  <div className="flex w-100">
-                    {/* <div className="rounded-lg bg-gray-100 p-2 ml-4 cursor-pointer table_Actions_icon2 hover:bg-green-600">
-                      <CheckCircleOutline className="text-gray-600 table_icon2" />
-                    </div> */}
+              <TableRow key={data.categoryId}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{data.categoryName}</TableCell>
+                <TableCell>{data.printerName}</TableCell>
+                <TableCell>{data.footer}</TableCell>
+                <TableCell>
+                  <div className="flex">
                     <div
-                      onClick={() => {
-                        handleAssigningPopup(index, data);
-                      }}
                       className="rounded-lg bg-gray-100 ml-4 cursor-pointer table_Actions_icon2 hover:bg-blue-600"
+                      onClick={() => handleAssigningPopup(index, data)}
                     >
                       <Tooltip title="Assign Printer">
                         <IconButton>
@@ -167,38 +197,23 @@ const PrintSelectingPage = () => {
       >
         <Box sx={style}>
           <div>
-            <div
-              style={{
-                fontSize: "18px",
-                marginBottom: "20px",
-              }}
-            >
-              Select Printer for{" "}
-              {selectPrinter && selectPrinter.categoryName
-                ? selectPrinter.categoryName
-                : ""}
+            <div style={{ fontSize: "18px", marginBottom: "20px" }}>
+              Select Printer for {selectPrinter.categoryName || ""}
             </div>
             <div className="grid grid-cols-12 gap-4">
               <div className="col-span-4">
                 <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">
-                    Printers
-                  </InputLabel>
+                  <InputLabel id="demo-simple-select-label">Printers</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
-                    value={
-                      selectPrinter && selectPrinter.printerName
-                        ? selectPrinter.printerName
-                        : ""
-                    }
-                    label="Printers"
-                    onChange={(e) => {
-                      setSelectPrinter((perv) => ({
-                        ...perv,
+                    value={selectPrinter.printerName || ""}
+                    onChange={(e) =>
+                      setSelectPrinter((prev) => ({
+                        ...prev,
                         printerName: e.target.value,
-                      }));
-                    }}
+                      }))
+                    }
                   >
                     {printers?.map((data) => (
                       <MenuItem key={data} value={data}>
@@ -208,56 +223,87 @@ const PrintSelectingPage = () => {
                   </Select>
                 </FormControl>
               </div>
-              <div className="col-span-4 textFields">
-                <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
-                  <InputLabel htmlFor="outlined-adornment-password">
-                    Footer
-                  </InputLabel>
-                  <OutlinedInput
-                    name="footer"
-                    autoComplete="off"
-                    label="Footer"
-                    value={
-                      selectPrinter && selectPrinter.footer
-                        ? selectPrinter.footer
-                        : ""
-                    }
-                    onChange={(e) =>
-                      setSelectPrinter((perv) => ({
-                        ...perv,
-                        footer: e.target.value,
-                      }))
-                    }
-                    // InputProps={{ style: { fontSize: 18 } }}
-                    // InputLabelProps={{ style: { fontSize: 18 } }}
-                    fullWidth
-                    id="outlined-adornment-password"
-                    type={"text"}
-                  />
-                </FormControl>
+              <div className="col-span-2 textFields">
+                <TextField
+                  id="outlined-basic"
+                  value={marginData.top}
+                  label="Top"
+                  variant="outlined"
+                  onChange={(e) =>
+                    setMarginData((prev) => ({
+                      ...prev,
+                      top: e.target.value,
+                    }))
+                  }
+                />
               </div>
-              <div className="col-span-2">
-                <button
-                  className="addCategorySaveBtn"
-                  onClick={() => handleSetPrinter()}
-                >
-                  Set
-                </button>
+              <div className="col-span-2 textFields">
+                <TextField
+                  id="outlined-basic"
+                  value={marginData.right}
+                  label="Right"
+                  variant="outlined"
+                  onChange={(e) =>
+                    setMarginData((prev) => ({
+                      ...prev,
+                      right: e.target.value,
+                    }))
+                  }
+                />
               </div>
-              <div className="col-span-2">
-                <button
-                  className="addCategoryCancleBtn"
-                  onClick={() => {
-                    handleClose();
-                  }}
-                >
-                  Cancle
-                </button>
+              <div className="col-span-2 textFields">
+                <TextField
+                  id="outlined-basic"
+                  value={marginData.bottom}
+                  label="Bottom"
+                  variant="outlined"
+                  onChange={(e) =>
+                    setMarginData((prev) => ({
+                      ...prev,
+                      bottom: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className="col-span-2 textFields">
+                <TextField
+                  id="outlined-basic"
+                  value={marginData.left}
+                  label="Left"
+                  variant="outlined"
+                  onChange={(e) =>
+                    setMarginData((prev) => ({
+                      ...prev,
+                      left: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+            <div className="flex justify-end mt-6">
+              <div className="flex justify-end gap-6 w-1/3">
+                <div className="col-span-4 w-full">
+                  <button
+                    className="addCategorySaveBtn"
+                    onClick={() => handleSetPrinter()}
+                  >
+                    Set
+                  </button>
+                </div>
+                <div className="col-span-4 w-full">
+                  <button
+                    className="addCategoryCancleBtn"
+                    onClick={() => handleClose()}
+                  >
+                    Cancel
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </Box>
       </Modal>
+      <ToastContainer />
     </div>
   );
 };

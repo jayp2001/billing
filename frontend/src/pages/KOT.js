@@ -14,17 +14,16 @@ const KOT = (props) => {
   return (
     <div
       style={{
-        width: "fit-content",
+        width: "260px",
         height: "fit-content",
         fontFamily: "Verdana",
       }}
     >
       <div
         style={{
-          width: "fit-content",
+          width: "260px",
           border: "1px solid black",
           borderCollapse: "collapse",
-          margin: "4px",
           textAlign: "center",
         }}
       >
@@ -35,7 +34,7 @@ const KOT = (props) => {
           }}
         >
           <div
-            style={{ fontWeight: "bold", fontSize: "20px", lineHeight: "24px" }}
+            style={{ fontWeight: "bold", fontSize: "16px", lineHeight: "24px" }}
           >
             <meta charSet="utf-8" />
             {/* {props.data.billPayType == 'cash'?'SHRI BHAGAWATI':props.data.firmData.firmName} */}
@@ -50,7 +49,7 @@ const KOT = (props) => {
         <div
           style={{
             padding: "8px 4px 8px 4px ",
-            width: "305px",
+            width: "260px",
             height: "min-content",
           }}
         >
@@ -59,17 +58,17 @@ const KOT = (props) => {
               display: "flex",
               justifyContent: "space-between",
               fontWeight: "500",
-              fontSize: "14px",
+              fontSize: "12px",
               lineHeight: "16px",
               alignItems: "center",
             }}
           >
             <div style={{ textAlign: "start" }}>
-              <div>Date : {props.data.billDate}</div>
-              <div style={{ textAlign: "start", marginTop: "6px" }}>
+              <div style={{ textAlign: "start", fontSize: '13px' }}>Date : {props.data.billDate}</div>
+              <div style={{ textAlign: "start", marginTop: "6px", fontSize: '13px' }}>
                 <div>Time: {props.data.billTime}</div>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "14px" }}>
+              <div style={{ marginTop: "6px", fontSize: "13px" }}>
                 Cashier : {props.data.cashier}
               </div>
               {props.data.billType == "Dine In" && (
@@ -85,7 +84,7 @@ const KOT = (props) => {
             </div>
 
             <div
-              style={{ textAlign: "start", maxWidth: "34%", padding: "2px" }}
+              style={{ textAlign: "start", maxWidth: "34%", marginRight: '10px' }}
             >
               <div
                 style={{
@@ -108,7 +107,7 @@ const KOT = (props) => {
                   style={{
                     textAlign: "center",
                     fontWeight: "700",
-                    fontSize: "20px",
+                    fontSize: "16px",
                     lineHeight: "18px",
                   }}
                 >
@@ -126,33 +125,33 @@ const KOT = (props) => {
           <div
             style={{
               padding: "8px 4px 8px 4px ",
-              width: "309px",
+              width: "260px",
               height: "min-content",
               borderTop: "2px solid black",
             }}
           >
             <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "14px" }}
+              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
             >
               <div>Phone No : {customerData.mobileNo} </div>
             </div>
             <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "14px" }}
+              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
             >
               <div>Name : {customerData.customerName} </div>
             </div>
             <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "14px" }}
+              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
             >
               <div>Address : {customerData.address}</div>
             </div>
             <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "14px" }}
+              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
             >
               <div>Locality : {customerData.locality}</div>
             </div>
             <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "14px" }}
+              style={{ textAlign: "start", marginTop: "6px", fontSize: "10px" }}
             >
               <div>Locality : હેલો આ મારું સરનામું છે</div>
             </div>
@@ -161,7 +160,7 @@ const KOT = (props) => {
           <></>
         )}
         <div className="main_bill h-min">
-          <table style={{ borderCollapse: "collapse", width: "100%" }}>
+          <table style={{ borderCollapse: "collapse", width: "260px" }}>
             <thead>
               <tr>
                 <th
@@ -171,6 +170,7 @@ const KOT = (props) => {
                     paddingBottom: "2px",
                     borderLeft: "0px",
                     textAlign: "start",
+                    fontSize: '14px'
                   }}
                 >
                   Items
@@ -182,7 +182,8 @@ const KOT = (props) => {
                     paddingBottom: "4px",
                     borderRight: "0px",
                     textAlign: "center",
-                    width: "20%",
+                    width: "30%",
+                    fontSize: '14px'
                   }}
                 >
                   Qty
@@ -195,35 +196,37 @@ const KOT = (props) => {
                   <td
                     style={{
                       border: "1px solid black",
-                      width: "80%",
+                      width: "70%",
                       fontWeight: "700",
                       paddingTop: "6px",
-                      lineHeight: "30px",
+                      lineHeight: "15px",
                       paddingLeft: "4px",
                       paddingRight: "4px",
-                      paddingBottom: "6px",
-                      fontSize: "18px",
+                      paddingBottom: "2px",
+                      fontSize: "14px",
                       borderLeft: "0px",
                       textAlign: "start",
                     }}
                   >
-                    {item.itemName} <br />{" "}
+                    {item.itemName}{" "}
                     {item.comment && (
-                      <span
+                      <div
                         className="text-xs"
-                        style={{ fontSize: "16px", marginTop: "4px" }}
+                        style={{ fontSize: "12px", marginTop: "4px", marginBottom: '6px' }}
                       >
                         ({item.comment})
-                      </span>
+                      </div>
                     )}{" "}
                   </td>
                   <td
                     style={{
                       border: "1px solid black",
-                      padding: "4px 0px 4px 0px",
+                      padding: "2px 0px 6px 0px",
                       borderRight: "0px",
                       textAlign: "center",
-                      width: "20%",
+                      width: "30%",
+                      fontSize: '14px',
+
                     }}
                   >
                     {item.qty} {item.unit}
@@ -241,16 +244,15 @@ const KOT = (props) => {
           <div
             style={{
               padding: "2px",
-              width: "313px",
+              width: "260px",
               height: "min-content",
-              borderTop: "1px solid black",
             }}
           >
             <div style={{ textAlign: "start", width: "100%" }}>
               <div
                 style={{
                   textAlign: "start",
-                  fontSize: "16px",
+                  fontSize: "14px",
                   fontWeight: "500",
                 }}
               >
