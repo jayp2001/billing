@@ -14,7 +14,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import Autocomplete from "@mui/material/Autocomplete";
-import Popover from '@mui/material/Popover';
+import Popover from "@mui/material/Popover";
 import "./css/pickUp.css";
 import Header from "../components/Header/Header";
 import { IoIosRestaurant } from "react-icons/io";
@@ -88,6 +88,12 @@ const PickUp = () => {
   const pickupbill = systemPrinter?.filter(
     (printer) => printer.categoryId == "pickupbill"
   );
+  const deliverykot = systemPrinter?.filter(
+    (printer) => printer.categoryId == "deliveryKot"
+  );
+  const deliverybill = systemPrinter?.filter(
+    (printer) => printer.categoryId == "deliveryBill"
+  );
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -132,17 +138,17 @@ const PickUp = () => {
   const [billError, setBillError] = useState({
     mobileNo: false,
     settledAmount: false,
-    discountValue: false
-  })
+    discountValue: false,
+  });
 
   const [items, setItems] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [itemComment, setItemComment] = useState({
     itemComment: [],
-    index: '',
-    comment: '',
-    oldComment: ''
-  })
+    index: "",
+    comment: "",
+    oldComment: "",
+  });
   const [billData, setBillData] = useState({
     subTotal: 0,
     discountType: "none",
@@ -183,8 +189,8 @@ const PickUp = () => {
   const mobileNo = useRef(null);
   const [suggestionData, setSuggestionData] = useState([]);
   const [suggestionIndex, setSuggestionIndex] = useState(0);
-  const [suggestionSelectedValue, setSuggestionSelectedValue] = useState('');
-  const [inputValue, setInputValue] = useState('');
+  const [suggestionSelectedValue, setSuggestionSelectedValue] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const suggestionListRef = useRef(null);
   const handleInputCodeChange = (e) => {
     const value = e.target.value;
@@ -220,39 +226,46 @@ const PickUp = () => {
     setItemComment((perv) => ({
       ...perv,
       index: index,
-      oldComment: items && items[index] && items[index].comment ? items[index].comment : '',
-      itemComment: items && items[index] && items[index].comment ? items[index].comment?.split(/,\s*/) : [],
-    }))
+      oldComment:
+        items && items[index] && items[index].comment
+          ? items[index].comment
+          : "",
+      itemComment:
+        items && items[index] && items[index].comment
+          ? items[index].comment?.split(/,\s*/)
+          : [],
+    }));
     // console.log('split', items && items[index] && items[index].comment ? items[index].comment?.split(/,\s*/) : [],)
   };
   const handleClose = () => {
     setItemComment({
       itemComment: [],
-      index: '',
-      comment: '',
-      oldComment: ''
+      index: "",
+      comment: "",
+      oldComment: "",
     });
     setAnchorEl(null);
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
-
+  const id = open ? "simple-popover" : undefined;
 
   const saveItemComment = async () => {
-    setItems((perv) => (
-      perv.map((data, index) => (
-        index == itemComment.index ? { ...data, comment: itemComment.itemComment?.join(', ') } : data
-      ))
-    ))
+    setItems((perv) =>
+      perv.map((data, index) =>
+        index == itemComment.index
+          ? { ...data, comment: itemComment.itemComment?.join(", ") }
+          : data
+      )
+    );
     handleClose();
     setItemComment({
       itemComment: [],
-      index: '',
-      comment: '',
-      oldComment: ''
-    })
-  }
+      index: "",
+      comment: "",
+      oldComment: "",
+    });
+  };
   // const cancleComment = async () => {
   //   setItemComment({
   //     itemComment: [],
@@ -303,7 +316,7 @@ const PickUp = () => {
     setFullFormData((prevState) => ({
       ...prevState,
       inputName: value ? value : "",
-      itemName: value && value.itemName ? value.itemName : '',
+      itemName: value && value.itemName ? value.itemName : "",
       selectedItem: value ? value : "",
       itemId: value && value.itemId ? value.itemId : "",
     }));
@@ -337,8 +350,8 @@ const PickUp = () => {
     // }
   };
   const joinArray = (array) => {
-    return array.join(', ')
-  }
+    return array.join(", ");
+  };
   const addBillData = async () => {
     setLoading(true);
     const customData = {
@@ -353,9 +366,9 @@ const PickUp = () => {
       totalDiscount: billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
-      billComment: billData.billCommentAuto?.join(', '),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -371,7 +384,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -409,11 +422,11 @@ const PickUp = () => {
           )
         );
         const printerDataKot = {
-          printer: pickupkot,
+          printer: pickupkot[0],
           data: pickupKotPrint,
         };
         const printerDataBill = {
-          printer: pickupbill,
+          printer: pickupbill[0],
           data: pickupBillPrint,
         };
         // const htmlString = renderToString(<RestaurantBill />)
@@ -448,9 +461,9 @@ const PickUp = () => {
       totalDiscount: billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
-      billComment: billData.billCommentAuto?.join(', '),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -466,7 +479,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -504,11 +517,11 @@ const PickUp = () => {
           )
         );
         const printerDataKot = {
-          printer: pickupkot,
+          printer: deliverykot[0],
           data: pickupKotPrint,
         };
         const printerDataBill = {
-          printer: pickupbill,
+          printer: deliverybill[0],
           data: pickupBillPrint,
         };
         // const htmlString = renderToString(<RestaurantBill />)
@@ -544,9 +557,9 @@ const PickUp = () => {
       totalDiscount: billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
-      billComment: billData.billCommentAuto?.join(', '),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -562,7 +575,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -639,9 +652,9 @@ const PickUp = () => {
       totalDiscount: billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
-      billComment: billData.billCommentAuto?.join(', '),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -657,7 +670,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -734,9 +747,9 @@ const PickUp = () => {
       totalDiscount: billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
-      billComment: billData.billCommentAuto?.join(', '),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -752,7 +765,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -829,10 +842,10 @@ const PickUp = () => {
       totalDiscount: billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
-      billComment: billData.billCommentAuto?.join(', '),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
-      billPayType: "Cancle"
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: "Thank You",
+      footerBill: "Thank You",
+      billPayType: "Cancle",
     };
     await axios
       .post(
@@ -848,7 +861,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -925,9 +938,9 @@ const PickUp = () => {
       totalDiscount: billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
-      billComment: billData.billCommentAuto?.join(', '),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -943,7 +956,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -1020,9 +1033,9 @@ const PickUp = () => {
       totalDiscount: billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
-      billComment: billData.billCommentAuto?.join(', '),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      billComment: billData.billCommentAuto?.join(", "),
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -1038,7 +1051,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -1118,8 +1131,8 @@ const PickUp = () => {
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -1137,7 +1150,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -1167,7 +1180,9 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         try {
-          const pickupKotPrint = renderToString(<KOT data={res.data} isEdit={true} />);
+          const pickupKotPrint = renderToString(
+            <KOT data={res.data} isEdit={true} />
+          );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
               <RestaurantBill data={res.data} />
@@ -1176,28 +1191,28 @@ const PickUp = () => {
             )
           );
           const printerDataKot = {
-            printer: pickupkot,
+            printer: pickupkot[0],
             data: pickupKotPrint,
           };
           const printerDataBill = {
-            printer: pickupbill,
+            printer: pickupbill[0],
             data: pickupBillPrint,
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log('>>>edit all')
+            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log('>>>edit one')
+            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log('>>>edit two')
+            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log('>>>edit else', res.data.printBill, res.data.printKot)
+          console.log(">>>edit else", res.data.printBill, res.data.printKot);
         } catch (error) {
-          console.log('try catch errror', error)
+          console.log("try catch errror", error);
         }
       })
       .catch((error) => {
@@ -1224,8 +1239,8 @@ const PickUp = () => {
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -1243,7 +1258,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -1273,7 +1288,9 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         try {
-          const pickupKotPrint = renderToString(<KOT data={res.data} isEdit={true} />);
+          const pickupKotPrint = renderToString(
+            <KOT data={res.data} isEdit={true} />
+          );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
               <RestaurantBill data={res.data} />
@@ -1282,28 +1299,28 @@ const PickUp = () => {
             )
           );
           const printerDataKot = {
-            printer: pickupkot,
+            printer: pickupkot[0],
             data: pickupKotPrint,
           };
           const printerDataBill = {
-            printer: pickupbill,
+            printer: pickupbill[0],
             data: pickupBillPrint,
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log('>>>edit all')
+            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log('>>>edit one')
+            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log('>>>edit two')
+            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log('>>>edit else', res.data.printBill, res.data.printKot)
+          console.log(">>>edit else", res.data.printBill, res.data.printKot);
         } catch (error) {
-          console.log('try catch errror', error)
+          console.log("try catch errror", error);
         }
       })
       .catch((error) => {
@@ -1330,8 +1347,8 @@ const PickUp = () => {
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -1349,7 +1366,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -1403,8 +1420,8 @@ const PickUp = () => {
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -1422,7 +1439,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -1477,8 +1494,8 @@ const PickUp = () => {
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -1496,7 +1513,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -1526,7 +1543,9 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         try {
-          const pickupKotPrint = renderToString(<KOT data={res.data} isEdit={true} />);
+          const pickupKotPrint = renderToString(
+            <KOT data={res.data} isEdit={true} />
+          );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
               <RestaurantBill data={res.data} />
@@ -1535,28 +1554,28 @@ const PickUp = () => {
             )
           );
           const printerDataKot = {
-            printer: pickupkot,
+            printer: pickupkot[0],
             data: pickupKotPrint,
           };
           const printerDataBill = {
-            printer: pickupbill,
+            printer: pickupbill[0],
             data: pickupBillPrint,
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log('>>>edit all')
+            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log('>>>edit one')
+            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log('>>>edit two')
+            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log('>>>edit else', res.data.printBill, res.data.printKot)
+          console.log(">>>edit else", res.data.printBill, res.data.printKot);
         } catch (error) {
-          console.log('try catch errror', error)
+          console.log("try catch errror", error);
         }
       })
       .catch((error) => {
@@ -1583,8 +1602,8 @@ const PickUp = () => {
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -1602,7 +1621,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -1632,7 +1651,9 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         try {
-          const pickupKotPrint = renderToString(<KOT data={res.data} isEdit={true} />);
+          const pickupKotPrint = renderToString(
+            <KOT data={res.data} isEdit={true} />
+          );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
               <RestaurantBill data={res.data} />
@@ -1641,28 +1662,28 @@ const PickUp = () => {
             )
           );
           const printerDataKot = {
-            printer: pickupkot,
+            printer: pickupkot[0],
             data: pickupKotPrint,
           };
           const printerDataBill = {
-            printer: pickupbill,
+            printer: pickupbill[0],
             data: pickupBillPrint,
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log('>>>edit all')
+            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log('>>>edit one')
+            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log('>>>edit two')
+            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log('>>>edit else', res.data.printBill, res.data.printKot)
+          console.log(">>>edit else", res.data.printBill, res.data.printKot);
         } catch (error) {
-          console.log('try catch errror', error)
+          console.log("try catch errror", error);
         }
       })
       .catch((error) => {
@@ -1689,8 +1710,8 @@ const PickUp = () => {
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -1707,7 +1728,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -1737,7 +1758,9 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         try {
-          const pickupKotPrint = renderToString(<KOT data={res.data} isEdit={true} />);
+          const pickupKotPrint = renderToString(
+            <KOT data={res.data} isEdit={true} />
+          );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
               <RestaurantBill data={res.data} />
@@ -1746,29 +1769,29 @@ const PickUp = () => {
             )
           );
           const printerDataKot = {
-            printer: pickupkot,
+            printer: pickupkot[0],
             data: pickupKotPrint,
           };
           const printerDataBill = {
-            printer: pickupbill,
+            printer: pickupbill[0],
             data: pickupBillPrint,
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log('>>>edit all')
+            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log('>>>edit one')
+            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log('>>>edit two')
+            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log('>>>edit else', res.data.printBill, res.data.printKot)
+          console.log(">>>edit else", res.data.printBill, res.data.printKot);
           setIsEdit(false);
         } catch (error) {
-          console.log('try catch errror', error)
+          console.log("try catch errror", error);
         }
       })
       .catch((error) => {
@@ -1795,8 +1818,8 @@ const PickUp = () => {
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
-      footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      footerKot: "Thank You",
+      footerBill: "Thank You",
     };
     await axios
       .post(
@@ -1813,7 +1836,7 @@ const PickUp = () => {
           inputCode: "",
           itemId: "",
           inputName: "",
-          itemName: '',
+          itemName: "",
           qty: 1,
           unit: "",
           comment: "",
@@ -1843,7 +1866,9 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         try {
-          const pickupKotPrint = renderToString(<KOT data={res.data} isEdit={true} />);
+          const pickupKotPrint = renderToString(
+            <KOT data={res.data} isEdit={true} />
+          );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
               <RestaurantBill data={res.data} />
@@ -1852,29 +1877,29 @@ const PickUp = () => {
             )
           );
           const printerDataKot = {
-            printer: pickupkot,
+            printer: deliverykot[0],
             data: pickupKotPrint,
           };
           const printerDataBill = {
-            printer: pickupbill,
+            printer: deliverybill[0],
             data: pickupBillPrint,
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log('>>>edit all')
+            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log('>>>edit one')
+            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log('>>>edit two')
+            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log('>>>edit else', res.data.printBill, res.data.printKot)
+          console.log(">>>edit else", res.data.printBill, res.data.printKot);
           setIsEdit(false);
         } catch (error) {
-          console.log('try catch errror', error)
+          console.log("try catch errror", error);
         }
       })
       .catch((error) => {
@@ -1885,7 +1910,6 @@ const PickUp = () => {
         );
       });
   };
-
 
   const debounce = (func) => {
     let timer;
@@ -1907,7 +1931,10 @@ const PickUp = () => {
   const debounceFunction = React.useCallback(debounce(handleSearch), []);
   const getSourceDDL = async (data) => {
     await axios
-      .get(`${BACKEND_BASE_URL}billingrouter/searchCustomerData?searchWord=${data}`, config)
+      .get(
+        `${BACKEND_BASE_URL}billingrouter/searchCustomerData?searchWord=${data}`,
+        config
+      )
       .then((res) => {
         setCustomerList(res.data);
       })
@@ -1970,13 +1997,14 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         (billData.discountType != "none" && !billData.discountValue) ||
-        !customerData.mobileNo || customerData.mobileNo.length != 10
+        !customerData.mobileNo ||
+        customerData.mobileNo.length != 10
       ) {
         if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
           setBillError((perv) => ({
             ...perv,
-            mobileNo: true
-          }))
+            mobileNo: true,
+          }));
         }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -2019,13 +2047,14 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         (billData.discountType != "none" && !billData.discountValue) ||
-        !customerData.mobileNo || customerData.mobileNo.length != 10
+        !customerData.mobileNo ||
+        customerData.mobileNo.length != 10
       ) {
         if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
           setBillError((perv) => ({
             ...perv,
-            mobileNo: true
-          }))
+            mobileNo: true,
+          }));
         }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -2068,13 +2097,14 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         (billData.discountType != "none" && !billData.discountValue) ||
-        !customerData.mobileNo || customerData.mobileNo.length != 10
+        !customerData.mobileNo ||
+        customerData.mobileNo.length != 10
       ) {
         if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
           setBillError((perv) => ({
             ...perv,
-            mobileNo: true
-          }))
+            mobileNo: true,
+          }));
         }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -2117,13 +2147,14 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         (billData.discountType != "none" && !billData.discountValue) ||
-        !customerData.mobileNo || customerData.mobileNo.length != 10
+        !customerData.mobileNo ||
+        customerData.mobileNo.length != 10
       ) {
         if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
           setBillError((perv) => ({
             ...perv,
-            mobileNo: true
-          }))
+            mobileNo: true,
+          }));
         }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -2166,13 +2197,14 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         (billData.discountType != "none" && !billData.discountValue) ||
-        !customerData.mobileNo || customerData.mobileNo.length != 10
+        !customerData.mobileNo ||
+        customerData.mobileNo.length != 10
       ) {
         if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
           setBillError((perv) => ({
             ...perv,
-            mobileNo: true
-          }))
+            mobileNo: true,
+          }));
         }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -2215,13 +2247,14 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         (billData.discountType != "none" && !billData.discountValue) ||
-        !customerData.mobileNo || customerData.mobileNo.length != 10
+        !customerData.mobileNo ||
+        customerData.mobileNo.length != 10
       ) {
         if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
           setBillError((perv) => ({
             ...perv,
-            mobileNo: true
-          }))
+            mobileNo: true,
+          }));
         }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -2264,13 +2297,14 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         (billData.discountType != "none" && !billData.discountValue) ||
-        !customerData.mobileNo || customerData.mobileNo.length != 10
+        !customerData.mobileNo ||
+        customerData.mobileNo.length != 10
       ) {
         if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
           setBillError((perv) => ({
             ...perv,
-            mobileNo: true
-          }))
+            mobileNo: true,
+          }));
         }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -2334,13 +2368,14 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         (billData.discountType != "none" && !billData.discountValue) ||
-        !customerData.mobileNo || customerData.mobileNo.length != 10
+        !customerData.mobileNo ||
+        customerData.mobileNo.length != 10
       ) {
         if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
           setBillError((perv) => ({
             ...perv,
-            mobileNo: true
-          }))
+            mobileNo: true,
+          }));
         }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -2438,11 +2473,11 @@ const PickUp = () => {
     const value = e.target.value;
     const options =
       fullFormData &&
-        fullFormData.selectedItem &&
-        fullFormData.selectedItem.variantsList
+      fullFormData.selectedItem &&
+      fullFormData.selectedItem.variantsList
         ? fullFormData &&
-        fullFormData.selectedItem &&
-        fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
         : [];
 
     if (!isNaN(value)) {
@@ -2485,12 +2520,14 @@ const PickUp = () => {
     const value = e.target.value;
     if (e.key === "Enter") {
       e.preventDefault();
-      const matchingProduct = data ? data?.find(
-        (item) =>
-          item.itemCode.toString() === value ||
-          item.itemShortKey.toString().toLocaleLowerCase() ===
-          value.toString().toLocaleLowerCase()
-      ) : []
+      const matchingProduct = data
+        ? data?.find(
+            (item) =>
+              item.itemCode.toString() === value ||
+              item.itemShortKey.toString().toLocaleLowerCase() ===
+                value.toString().toLocaleLowerCase()
+          )
+        : [];
       console.log("Search Item", matchingProduct);
       //    if (matchingProduct) {
       //   setFullFormData(prevState => ({
@@ -2505,12 +2542,12 @@ const PickUp = () => {
           ...prevState,
           selectedItem: "",
           inputName: "",
-          itemName: ''
+          itemName: "",
         }));
       } else if (
         value === matchingProduct.itemCode.toString() ||
         matchingProduct.itemShortKey.toString().toLocaleLowerCase() ===
-        value.toString().toLocaleLowerCase()
+          value.toString().toLocaleLowerCase()
       ) {
         e.preventDefault();
         setValidationError(false);
@@ -2519,7 +2556,10 @@ const PickUp = () => {
           inputCode: matchingProduct.itemCode,
           itemId: matchingProduct.itemId,
           inputName: matchingProduct,
-          itemName: matchingProduct && matchingProduct.itemName ? matchingProduct.itemName : "",
+          itemName:
+            matchingProduct && matchingProduct.itemName
+              ? matchingProduct.itemName
+              : "",
           selectedItem: matchingProduct,
         }));
         quantityInputRef.current && quantityInputRef.current.focus();
@@ -2551,26 +2591,26 @@ const PickUp = () => {
         ...perv,
         unit:
           fullFormData &&
-            fullFormData.selectedItem &&
-            fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].unit
             : "",
         itemPrice:
           fullFormData &&
-            fullFormData.selectedItem &&
-            fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].price
             : 0,
         selectedUnit:
           fullFormData &&
-            fullFormData.selectedItem &&
-            fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0]
             : {},
         price:
           (fullFormData &&
-            fullFormData.selectedItem &&
-            fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].price
             : 0) * fullFormData.qty,
       }));
@@ -2578,8 +2618,8 @@ const PickUp = () => {
       e.preventDefault();
       if (
         fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+        fullFormData.selectedItem &&
+        fullFormData.selectedItem.variantsList
           ? fullFormData.selectedItem.variantsList.length > 1
             ? true
             : false
@@ -2588,8 +2628,8 @@ const PickUp = () => {
         unitInputRef.current && unitInputRef.current.focus();
       } else if (
         fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+        fullFormData.selectedItem &&
+        fullFormData.selectedItem.variantsList
           ? fullFormData.selectedItem.variantsList.length == 1
             ? true
             : false
@@ -2633,19 +2673,21 @@ const PickUp = () => {
             prevItems?.map((data, index) =>
               isExist == index
                 ? {
-                  ...data,
-                  qty: parseFloat(data.qty) + parseFloat(fullFormData.qty),
-                  comment: data.comment ? data.comment + ", " + fullFormData.comment : fullFormData.comment,
-                  price:
-                    data.price + fullFormData.qty * fullFormData.itemPrice,
-                }
+                    ...data,
+                    qty: parseFloat(data.qty) + parseFloat(fullFormData.qty),
+                    comment: data.comment
+                      ? data.comment + ", " + fullFormData.comment
+                      : fullFormData.comment,
+                    price:
+                      data.price + fullFormData.qty * fullFormData.itemPrice,
+                  }
                 : data
             )
           );
           setFullFormData({
             inputCode: "",
             inputName: "",
-            itemName: '',
+            itemName: "",
             qty: 1,
             unit: "",
             comment: "",
@@ -2683,7 +2725,7 @@ const PickUp = () => {
           setFullFormData({
             inputCode: "",
             inputName: "",
-            itemName: '',
+            itemName: "",
             qty: 1,
             unit: "",
             comment: "",
@@ -2705,7 +2747,7 @@ const PickUp = () => {
     setFullFormData({
       inputCode: "",
       inputName: "",
-      itemName: '',
+      itemName: "",
       qty: 1,
       unit: "",
       comment: "",
@@ -2748,22 +2790,25 @@ const PickUp = () => {
     });
 
     setBillData((prev) => {
-      const newSubTotal = items.reduce((sum, item, i) => sum + (i === index ? newQty * item.itemPrice : item.price), 0);
+      const newSubTotal = items.reduce(
+        (sum, item, i) =>
+          sum + (i === index ? newQty * item.itemPrice : item.price),
+        0
+      );
       return {
         ...prev,
         subTotal: newSubTotal,
         settledAmount: Math.ceil(
           newSubTotal -
-          (prev.discountType === "fixed"
-            ? prev.discountValue
-            : prev.discountType === "percentage"
+            (prev.discountType === "fixed"
+              ? prev.discountValue
+              : prev.discountType === "percentage"
               ? newSubTotal * (prev.discountValue / 100)
               : 0)
-        )
+        ),
       };
     });
   };
-
 
   const [text, setText] = useState("");
   const handleInputChange = (event, value) => {
@@ -2799,20 +2844,20 @@ const PickUp = () => {
       settledAmount: Math.ceil(
         qty1 > 1
           ? billData.subTotal -
-          items[index].itemPrice -
-          (billData.discountType == "fixed"
-            ? billData.discountValue
-            : billData.discountType == "percentage"
-              ? (billData.subTotal - items[index].itemPrice) *
-              (billData.discountValue / 100)
-              : 0)
+              items[index].itemPrice -
+              (billData.discountType == "fixed"
+                ? billData.discountValue
+                : billData.discountType == "percentage"
+                ? (billData.subTotal - items[index].itemPrice) *
+                  (billData.discountValue / 100)
+                : 0)
           : billData.subTotal -
-          (billData.discountType == "fixed"
-            ? billData.discountValue
-            : billData.discountType == "percentage"
-              ? billData.subTotal * (billData.discountValue / 100)
-              : 0),
-      )
+              (billData.discountType == "fixed"
+                ? billData.discountValue
+                : billData.discountType == "percentage"
+                ? billData.subTotal * (billData.discountValue / 100)
+                : 0)
+      ),
     }));
   };
   const handleOnChangePrice = (index, value) => {
@@ -2826,18 +2871,23 @@ const PickUp = () => {
         return updatedItems;
       });
       setBillData((prev) => {
-        const newSubTotal = items.reduce((sum, item, i) => sum + (i === index ? newQty * item.itemPrice : item.price), 0);
+        const newSubTotal = items.reduce(
+          (sum, item, i) =>
+            sum + (i === index ? newQty * item.itemPrice : item.price),
+          0
+        );
         return {
           ...prev,
           subTotal: newSubTotal,
           settledAmount: Math.ceil(
             newSubTotal -
-            (prev.discountType === "fixed"
-              ? prev.discountValue
-              : prev.discountType === "percentage"
+              (prev.discountType === "fixed"
+                ? prev.discountValue
+                : prev.discountType === "percentage"
                 ? newSubTotal * (prev.discountValue / 100)
-                : 0).toFixed(2)
-          )
+                : 0
+              ).toFixed(2)
+          ),
         };
       });
     }
@@ -2900,15 +2950,15 @@ const PickUp = () => {
   // };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'ArrowDown') {
-      setSuggestionIndex(prevIndex =>
+    if (e.key === "ArrowDown") {
+      setSuggestionIndex((prevIndex) =>
         prevIndex === customerList.length - 1 ? 0 : prevIndex + 1
       );
-    } else if (e.key === 'ArrowUp') {
-      setSuggestionIndex(prevIndex =>
+    } else if (e.key === "ArrowUp") {
+      setSuggestionIndex((prevIndex) =>
         prevIndex === 0 ? customerList.length - 1 : prevIndex - 1
       );
-    } else if (e.key === 'Enter' && customerList.length > 0) {
+    } else if (e.key === "Enter" && customerList.length > 0) {
       const selectedValue = customerList[suggestionIndex];
       setSuggestionSelectedValue(selectedValue);
       // setInputValue(`${val.mobileNo}`);
@@ -2920,7 +2970,7 @@ const PickUp = () => {
         customerId: selectedValue.customerId,
         addressId: selectedValue.addressId,
         customerName: selectedValue.customerName,
-      }))
+      }));
       setCustomerList([]);
     }
   };
@@ -2936,7 +2986,7 @@ const PickUp = () => {
       customerId: val.customerId,
       addressId: val.addressId,
       customerName: val.customerName,
-    }))
+    }));
     setCustomerList([]);
   };
 
@@ -2948,11 +2998,12 @@ const PickUp = () => {
 
   useEffect(() => {
     if (suggestionListRef.current && customerList.length > 0) {
-      const activeSuggestion = suggestionListRef.current.children[suggestionIndex];
+      const activeSuggestion =
+        suggestionListRef.current.children[suggestionIndex];
       if (activeSuggestion) {
         activeSuggestion.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
+          behavior: "smooth",
+          block: "nearest",
         });
       }
     }
@@ -2960,7 +3011,14 @@ const PickUp = () => {
 
   return (
     <div className="" style={{ background: "#f0f2f5" }}>
-      <Header setIsEdit={setIsEdit} setBillData={setBillData} setEditBillData={setEditBillData} setItems={setItems} setCustomerData={setCustomerData} setButtonCLicked={setButtonCLicked} />
+      <Header
+        setIsEdit={setIsEdit}
+        setBillData={setBillData}
+        setEditBillData={setEditBillData}
+        setItems={setItems}
+        setCustomerData={setCustomerData}
+        setButtonCLicked={setButtonCLicked}
+      />
       <section className="right_section ">
         <div className="right_top_header gap-6 p-2 flex">
           <div className="w-32">
@@ -3001,7 +3059,14 @@ const PickUp = () => {
             <TextField
               placeholder="Quantity"
               value={fullFormData.qty}
-              onChange={(e) => { if ((isValidInput.test(e.target.value) || e.target.value === "")) { handleQuantityChange(e) } }}
+              onChange={(e) => {
+                if (
+                  isValidInput.test(e.target.value) ||
+                  e.target.value === ""
+                ) {
+                  handleQuantityChange(e);
+                }
+              }}
               onKeyDown={handleEnterPressSecond}
               inputRef={quantityInputRef}
               variant="outlined"
@@ -3032,8 +3097,8 @@ const PickUp = () => {
                 onBlur={(e) => {
                   const json = fullFormData.selectedItem.variantsList
                     ? fullFormData.selectedItem.variantsList?.filter(
-                      (varient) => varient.unit == e.target.value
-                    )
+                        (varient) => varient.unit == e.target.value
+                      )
                     : {};
                   setFullFormData((perv) => ({
                     ...perv,
@@ -3048,8 +3113,8 @@ const PickUp = () => {
                 onChange={(e) => {
                   const json = fullFormData.selectedItem.variantsList
                     ? fullFormData.selectedItem.variantsList?.filter(
-                      (varient) => varient.unit == e.target.value
-                    )
+                        (varient) => varient.unit == e.target.value
+                      )
                     : {};
                   setFullFormData((perv) => ({
                     ...perv,
@@ -3242,7 +3307,9 @@ const PickUp = () => {
                           <td className="autocompleteTxt">
                             <input
                               type="text"
-                              className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${billError.mobileNo ? 'mobileNoError' : ''}`}
+                              className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${
+                                billError.mobileNo ? "mobileNoError" : ""
+                              }`}
                               name="mobileNo"
                               // value={customerData.mobileNo}
                               // onChange={(e) => {
@@ -3258,13 +3325,13 @@ const PickUp = () => {
                               variant="outlined"
                               onChange={(e) => {
                                 // handleFilter(e.target.value);
-                                setBillError({ ...billError, mobileNo: false })
+                                setBillError({ ...billError, mobileNo: false });
                                 if (regex.test(e.target.value)) {
                                   setCustomerData((perv) => ({
                                     ...perv,
                                     mobileNo: e.target.value,
-                                    customerId: '',
-                                    addressId: ''
+                                    customerId: "",
+                                    addressId: "",
                                   }));
                                   setSuggestionIndex(0);
                                   debounceFunction();
@@ -3274,20 +3341,35 @@ const PickUp = () => {
                               onBlur={handleBlur}
                               onKeyDown={handleKeyDown}
                               value={customerData.mobileNo}
-                              autoComplete='off'
+                              autoComplete="off"
 
-                            // onBlur={() => setopenSuggestions(false)}
+                              // onBlur={() => setopenSuggestions(false)}
                             />
                             {customerList.length > 0 && (
                               <div
                                 className="suggestions"
-                                style={{ maxHeight: '165px', overflowY: 'auto', width: '33%' }}
+                                style={{
+                                  maxHeight: "165px",
+                                  overflowY: "auto",
+                                  width: "33%",
+                                }}
                                 ref={suggestionListRef}
                               >
                                 {customerList.map((val, index) => (
-                                  <div key={index} className='cursor-pointer suggestionBorder' onClick={() => handleSuggestionClick(val)}>
-                                    <div className={`suggestionValue px-2 py-1 ${suggestionIndex === index ? 'bg-gray-200' : ''}`}>
-                                      {val.mobileNo} - {val.customerName} - {val.address}
+                                  <div
+                                    key={index}
+                                    className="cursor-pointer suggestionBorder"
+                                    onClick={() => handleSuggestionClick(val)}
+                                  >
+                                    <div
+                                      className={`suggestionValue px-2 py-1 ${
+                                        suggestionIndex === index
+                                          ? "bg-gray-200"
+                                          : ""
+                                      }`}
+                                    >
+                                      {val.mobileNo} - {val.customerName} -{" "}
+                                      {val.address}
                                     </div>
                                   </div>
                                 ))}
@@ -3337,7 +3419,7 @@ const PickUp = () => {
                                   setCustomerData((perv) => ({
                                     ...perv,
                                     address: text,
-                                    addressId: '',
+                                    addressId: "",
                                   }));
                                 }}
                                 lang="gu"
@@ -3351,7 +3433,7 @@ const PickUp = () => {
                                   setCustomerData((perv) => ({
                                     ...perv,
                                     address: e.target.value,
-                                    addressId: '',
+                                    addressId: "",
                                   }));
                                 }}
                               />
@@ -3396,7 +3478,7 @@ const PickUp = () => {
                       <table className=" w-full">
                         <tbody>
                           <tr className="mb-3">
-                            <td colSpan='2'>
+                            <td colSpan="2">
                               {/* <input
                                 type="text"
                                 className="border-2 w-full p-1 rounded-sm"
@@ -3564,7 +3646,9 @@ const PickUp = () => {
               <div className="w-full  p-0 text-white">
                 <div className="grid w-full grid-flow-row grid-cols-12 mr-2  bg-gray-700">
                   <div
-                    onClick={() => items.length <= 0 && setButtonCLicked("tab1")}
+                    onClick={() =>
+                      items.length <= 0 && setButtonCLicked("tab1")
+                    }
                     className={
                       buttonCLicked == "tab1"
                         ? "clicked col-3 p-0 col-span-3 text-center"
@@ -3580,7 +3664,9 @@ const PickUp = () => {
                     </Button>
                   </div>
                   <div
-                    onClick={() => items.length <= 0 && setButtonCLicked("tab2")}
+                    onClick={() =>
+                      items.length <= 0 && setButtonCLicked("tab2")
+                    }
                     className={
                       buttonCLicked == "tab2"
                         ? "clicked col-3 p-0  col-span-3 text-center"
@@ -3596,7 +3682,9 @@ const PickUp = () => {
                     </Button>
                   </div>
                   <div
-                    onClick={() => items.length <= 0 && setButtonCLicked("tab3")}
+                    onClick={() =>
+                      items.length <= 0 && setButtonCLicked("tab3")
+                    }
                     className={
                       buttonCLicked == "tab3"
                         ? "clicked col-3 p-0  col-span-3 text-center"
@@ -3612,7 +3700,9 @@ const PickUp = () => {
                     </Button>
                   </div>
                   <div
-                    onClick={() => items.length <= 0 && setButtonCLicked("tab4")}
+                    onClick={() =>
+                      items.length <= 0 && setButtonCLicked("tab4")
+                    }
                     className={
                       buttonCLicked == "tab4"
                         ? "clicked col-3 p-0  col-span-3 text-center"
@@ -3661,15 +3751,20 @@ const PickUp = () => {
                   {items?.map((item, index) => (
                     <div
                       key={index}
-                      className="bg-amber-50 billin_content itemBorder p-2 text-lg"
+                      className=" billin_content itemBorder p-2 text-lg"
                     >
                       <div className="grid grid-cols-12 content-center gap-2">
-                        <div className="col-span-4 flex  justify-self-start itemName" >
+                        <div className="col-span-4 flex  justify-self-start itemName">
                           <MdCancel
                             onClick={() => handleDeleteRow(index)}
                             className="main_bill_icon text-red-700 mx-1  mt-1 cursor-pointer"
                           />
-                          <p className='ml-2' onClick={(e) => handleClick(e, index)}>{item.itemName}</p>
+                          <p
+                            className="ml-2"
+                            onClick={(e) => handleClick(e, index)}
+                          >
+                            {item.itemName}
+                          </p>
                         </div>
                         <div className="col-span-3 justify-self-center">
                           {item.comment}
@@ -3677,28 +3772,32 @@ const PickUp = () => {
                         <div className="col-span-2 justify-self-start">
                           <div className="flex h-full align-star main_div">
                             <div className="plus_button">
-                              <button
+                              <div
                                 onClick={() =>
                                   handleDecreaseQuantity(index, item.qty)
                                 }
-                                className="border quantity_button p-0 rounded-md border-black"
+                                className="border quantity_button flex justify-center p-0 rounded-md border-black"
                               >
-                                -
-                              </button>
+                                <span className="w-fit">-</span>
+                              </div>
                             </div>
                             <input
                               type="text"
                               value={item.qty}
                               className="w-14 border border-black rounded-md text-center"
-                              onChange={(e) => handleOnChangePrice(index, e.target.value)}
+                              onChange={(e) =>
+                                handleOnChangePrice(index, e.target.value)
+                              }
                             />
                             <div className="plus_button">
-                              <button
-                                onClick={() => handleIncreaseQuantity(index, item.qty)}
-                                className="border quantity_button p-0 rounded-md border-black"
+                              <div
+                                onClick={() =>
+                                  handleIncreaseQuantity(index, item.qty)
+                                }
+                                className="border quantity_button flex justify-center text-md  items-center p-0 rounded-md border-black"
                               >
-                                +
-                              </button>
+                                <span className="w-fit">+</span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -3706,10 +3805,10 @@ const PickUp = () => {
                           <p className="pl-2">{item.unit}</p>
                         </div>
                         <div className="col-span-1 justify-self-end">
-                          <p className="pl-2">{(item.itemPrice).toFixed(0)}</p>
+                          <p className="pl-2">{item.itemPrice.toFixed(0)}</p>
                         </div>
                         <div className="col-span-1 justify-self-end">
-                          <p className="pl-2">{(item.price).toFixed(0)}</p>
+                          <p className="pl-2">{item.price.toFixed(0)}</p>
                         </div>
                       </div>
                     </div>
@@ -3891,15 +3990,18 @@ const PickUp = () => {
                       placeholder="Discount"
                       error={billData.discountValue <= 0}
                       onChange={(e) => {
-                        if ((regex.test(e.target.value) || e.target.value === "")) {
+                        if (
+                          regex.test(e.target.value) ||
+                          e.target.value === ""
+                        ) {
                           setBillData((perv) => ({
                             ...perv,
                             discountValue: e.target.value,
                             settledAmount: Math.ceil(
                               billData.discountType == "fixed"
                                 ? billData.subTotal - e.target.value
-                                : billData.subTotal * (1 - e.target.value / 100),
-                            )
+                                : billData.subTotal * (1 - e.target.value / 100)
+                            ),
                           }));
                         }
                       }}
@@ -3954,16 +4056,14 @@ const PickUp = () => {
                     name="discountValue"
                     id="discountValue"
                     variant="outlined"
-                    onChange={
-                      (e) => {
-                        if ((regex.test(e.target.value) || e.target.value === "")) {
-                          setBillData((perv) => ({
-                            ...perv,
-                            settledAmount: e.target.value
-                          }))
-                        }
+                    onChange={(e) => {
+                      if (regex.test(e.target.value) || e.target.value === "") {
+                        setBillData((perv) => ({
+                          ...perv,
+                          settledAmount: e.target.value,
+                        }));
                       }
-                    }
+                    }}
                     sx={{ width: "140px" }}
                     // label="Discount"
                     error={billData.settledAmount <= 0 && billData.subTotal > 0}
@@ -3989,7 +4089,18 @@ const PickUp = () => {
               </div>
               <div className="w-full text-base flex justify-center gap-4 p-1 mt-1 ">
                 <div>
-                  <button className="text-base button px-2 py-1 rounded-md text-white" onClick={() => buttonCLicked == 'tab2' ? isEdit ? justEditBillDelivery() : justSaveBillDelivery() : isEdit ? justEditBill() : justSaveBill()}>
+                  <button
+                    className="text-base button px-2 py-1 rounded-md text-white"
+                    onClick={() =>
+                      buttonCLicked == "tab2"
+                        ? isEdit
+                          ? justEditBillDelivery()
+                          : justSaveBillDelivery()
+                        : isEdit
+                        ? justEditBill()
+                        : justSaveBill()
+                    }
+                  >
                     Save
                   </button>
                 </div>
@@ -3997,41 +4108,76 @@ const PickUp = () => {
                   <button
                     className="text-base button save_button py-1 rounded-md text-white"
                     onClick={() => {
-                      buttonCLicked == 'tab2' ? (isEdit ? editBillDelivery() : saveBillDelivery()) : (isEdit ? editBill() : saveBill())
+                      buttonCLicked == "tab2"
+                        ? isEdit
+                          ? editBillDelivery()
+                          : saveBillDelivery()
+                        : isEdit
+                        ? editBill()
+                        : saveBill();
                     }}
                   >
                     Save & Print
                   </button>
                 </div>
-                {isEdit ?
+                {isEdit ? (
                   <>
                     <div>
-                      <button className="another_1 button text-base px-2 py-1 rounded-md text-white" onClick={() => buttonCLicked == 'tab2' ? editBillPrintDelivery() : editBillPrint()}>
+                      <button
+                        className="another_1 button text-base px-2 py-1 rounded-md text-white"
+                        onClick={() =>
+                          buttonCLicked == "tab2"
+                            ? editBillPrintDelivery()
+                            : editBillPrint()
+                        }
+                      >
                         Save & Bill
                       </button>
                     </div>
                     <div>
-                      <button className="another_1 button text-base px-2 py-1 rounded-md text-white" onClick={() => buttonCLicked == 'tab2' ? editKotPrintDelivery() : editKotPrint()}>
+                      <button
+                        className="another_1 button text-base px-2 py-1 rounded-md text-white"
+                        onClick={() =>
+                          buttonCLicked == "tab2"
+                            ? editKotPrintDelivery()
+                            : editKotPrint()
+                        }
+                      >
                         Save & KOT
                       </button>
                     </div>
                     <div>
-                      <button className="another_2 button text-base px-2 py-1 rounded-md text-white" onClick={() => buttonCLicked == 'tab2' ? cancleBillDelivery() : cancleBill()}>
+                      <button
+                        className="another_2 button text-base px-2 py-1 rounded-md text-white"
+                        onClick={() =>
+                          buttonCLicked == "tab2"
+                            ? cancleBillDelivery()
+                            : cancleBill()
+                        }
+                      >
                         Cancle
                       </button>
                     </div>
-                  </> :
+                  </>
+                ) : (
                   <div>
-                    <button className="another_2 button text-base px-2 py-1 rounded-md text-white" onClick={() => buttonCLicked == 'tab2' ? holdBillDelivery() : holdBill()}>
+                    <button
+                      className="another_2 button text-base px-2 py-1 rounded-md text-white"
+                      onClick={() =>
+                        buttonCLicked == "tab2"
+                          ? holdBillDelivery()
+                          : holdBill()
+                      }
+                    >
                       HOLD
                     </button>
                   </div>
-                }
+                )}
               </div>
             </div>
           </div>
         </div>
-      </section >
+      </section>
       <ToastContainer />
       <Popover
         id={id}
@@ -4039,14 +4185,12 @@ const PickUp = () => {
         anchorEl={anchorEl}
         onClose={handleClose}
         anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
+          vertical: "bottom",
+          horizontal: "left",
         }}
       >
         <div className="commentPopUp">
-          <div className="commentHeader">
-            Item Comment
-          </div>
+          <div className="commentHeader">Item Comment</div>
           <div className="mt-2">
             <Autocomplete
               multiple
@@ -4055,33 +4199,32 @@ const PickUp = () => {
               // getOptionLabel={commentList ? commentList : []}
               defaultValue={[]}
               freeSolo
-              value={
-                itemComment.itemComment
-                  ? itemComment.itemComment
-                  : []
-              }
+              value={itemComment.itemComment ? itemComment.itemComment : []}
               onChange={(e, value) => {
                 setItemComment((perv) => ({
                   ...perv,
-                  itemComment: value ? value : []
-                }))
+                  itemComment: value ? value : [],
+                }));
               }}
               renderInput={(params) => (
-                <TextField
-                  {...params}
-                  placeholder="Item Comments"
-                />
+                <TextField {...params} placeholder="Item Comments" />
               )}
             />
           </div>
           <div className="w-full text-base flex justify-end gap-4 p-1 mt-1 ">
             <div>
-              <button className="text-base button px-2 py-1 rounded-md text-white" onClick={() => saveItemComment()}>
+              <button
+                className="text-base button px-2 py-1 rounded-md text-white"
+                onClick={() => saveItemComment()}
+              >
                 Save
               </button>
             </div>
             <div>
-              <button className="another_2 button text-base px-2 py-1 rounded-md text-white" onClick={() => handleClose()}>
+              <button
+                className="another_2 button text-base px-2 py-1 rounded-md text-white"
+                onClick={() => handleClose()}
+              >
                 Cancle
               </button>
             </div>
@@ -4089,7 +4232,7 @@ const PickUp = () => {
         </div>
         {/* <Typography sx={{ p: 2 }}>The content of the Popover.</Typography> */}
       </Popover>
-    </div >
+    </div>
   );
 };
 

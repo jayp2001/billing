@@ -3,6 +3,7 @@ const path = require("node:path");
 // const PosPrinter = require('electron-pos-printer')
 const { exec } = require("child_process");
 const os = require("os");
+const { machineIdSync } = require("node-machine-id");
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -30,31 +31,34 @@ function createWindow() {
   ];
   function getPrinterList() {
     return new Promise((resolve, reject) => {
-      if (process.platform === 'win32') {
-        exec('powershell -Command "Get-Printer | Select-Object Name"', (err, stdout) => {
-          if (err) {
-            reject(err);
-            return;
+      if (process.platform === "win32") {
+        exec(
+          'powershell -Command "Get-Printer | Select-Object Name"',
+          (err, stdout) => {
+            if (err) {
+              reject(err);
+              return;
+            }
+
+            const printerNames = stdout
+              .split("\r\n")
+              .map((line) => line.trim())
+              .filter((printer) => printer);
+
+            resolve(printerNames);
           }
-
-          const printerNames = stdout
-            .split('\r\n')
-            .map(line => line.trim())
-            .filter(printer => printer);
-
-          resolve(printerNames);
-        });
+        );
       } else {
-        exec('lpstat -a', (err, stdout) => {
+        exec("lpstat -a", (err, stdout) => {
           if (err) {
             reject(err);
             return;
           }
 
           const printerNames = stdout
-            .split('\n')
-            .map(line => line.trim().split(' ')[0])
-            .filter(printer => printer);
+            .split("\n")
+            .map((line) => line.trim().split(" ")[0])
+            .filter((printer) => printer);
 
           resolve(printerNames);
         });
@@ -62,28 +66,24 @@ function createWindow() {
     });
   }
 
-
-
   function getMacAddress() {
-    const interfaces = os.networkInterfaces();
-    const interfaceName = 'vEthernet (Default Switch)';
-
-    if (interfaces && interfaces[interfaceName]) {
-      const macAddress = interfaces[interfaceName][0].mac;
-      console.log(macAddress)
-      return macAddress;
-    }
-    return null; 
+    return machineIdSync();
   }
   ipcMain.on("findMac", async (event, title) => {
     const mac = getMacAddress();
     mainWindow.webContents.send("getMac", mac);
   });
 
+  // contextBridge.exposeInMainWorld("electronAPI", {
+  //   getMachineId: () => machineIdSync(),
+  // });
+  console.log(">>>", machineIdSync());
+  console.log("<<<<<");
+
+  getMacAddress();
 
   // Example usage
 
-  
   ipcMain.on("findPrinter", async (event, title) => {
     getPrinterList()
       .then((printers) => {

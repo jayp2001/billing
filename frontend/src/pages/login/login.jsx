@@ -53,10 +53,11 @@ function LoginPage() {
       const printerList = arg?.filter((element) => element != "");
       localStorage.setItem("printers", JSON.stringify(printerList));
     });
-    ipcRenderer.send("findMac")
+    ipcRenderer.send("findMac");
     ipcRenderer.on("getMac", (event, arg) => {
-      localStorage.setItem("macAddress", arg)
-    })
+      localStorage.setItem("macAddress", arg);
+      console.log("MACC", arg);
+    });
 
     // Clean up the listener when the component unmounts
     return () => {
@@ -100,7 +101,7 @@ function LoginPage() {
               Authorization: `Bearer ${userInfo.token}`,
             },
           };
-          getAllPrinterdata(configs)
+          getAllPrinterdata(configs);
 
           // if (rights == 6)
           navigate("/main");
@@ -118,9 +119,12 @@ function LoginPage() {
       });
   };
   const getAllPrinterdata = async (store) => {
-    const response = await axios.get(`${BACKEND_BASE_URL}billingrouter/getPrinterList?macAddress=${macAddress}`, store);
+    const response = await axios.get(
+      `${BACKEND_BASE_URL}billingrouter/getPrinterList?macAddress=${macAddress}`,
+      store
+    );
     localStorage.setItem("printerPreference", JSON.stringify(response.data));
-  }
+  };
   React.useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const role = user && user.userRights ? decryptData(user.userRights) : "";
