@@ -3625,14 +3625,12 @@ const PickUp = () => {
                       className="bg-amber-50 billin_content itemBorder p-2 text-lg"
                     >
                       <div className="grid grid-cols-12 content-center gap-2">
-                        <div className="col-span-1 underline">
+                        <div className="col-span-4 flex items-center justify-self-start itemName" onClick={(e) => handleClick(e, index)}>
                           <MdCancel
                             onClick={() => handleDeleteRow(index)}
-                            className="main_bill_icon text-red-700 ml-1 mt-1 cursor-pointer"
+                            className="main_bill_icon text-red-700 mx-1  mt-1 cursor-pointer"
                           />
-                        </div>
-                        <div className="col-span-3 justify-self-start itemName" onClick={(e) => handleClick(e, index)}>
-                          {item.itemName}
+                          <p className='ml-2'>{item.itemName}</p>
                         </div>
                         <div className="col-span-3 justify-self-center">
                           {item.comment}
@@ -3644,7 +3642,7 @@ const PickUp = () => {
                                 onClick={() =>
                                   handleDecreaseQuantity(index, item.qty)
                                 }
-                                className="border quantity_button p-0"
+                                className="border quantity_button p-0 rounded-md border-black"
                               >
                                 -
                               </button>
@@ -3652,13 +3650,12 @@ const PickUp = () => {
                             <input
                               type="text"
                               value={item.qty}
-                              className="w-8 text-center"
-                              readOnly
+                              className="w-14 border border-black rounded-md text-center"
                             />
                             <div className="plus_button">
                               <button
                                 onClick={() => handleIncreaseQuantity(index)}
-                                className="quantity_button p-0"
+                                className="border quantity_button p-0 rounded-md border-black"
                               >
                                 +
                               </button>

@@ -13,19 +13,19 @@ const TokenBil = (props) => {
   return (
     <div
       style={{
-        width: "fit-content",
+        width: "260px",
         height: "fit-content",
         fontFamily: "Verdana",
       }}
-    >
+      >
       <meta charSet="utf-8" />
       <div
         style={{
-          width: "fit-content",
+          width: "260px",
           border: "1px solid black",
           borderCollapse: "collapse",
-          margin: "4px",
           textAlign: "center",
+          overflow:'hidden'
         }}
       >
         <div
@@ -35,7 +35,7 @@ const TokenBil = (props) => {
           }}
         >
           <div
-            style={{ fontWeight: "bold", fontSize: "16px", lineHeight: "24px" }}
+            style={{ fontWeight: "bold", fontSize: "14px", lineHeight: "24px" }}
           >
             SHRI BHAGAWATI
             {/* {props.data.billPayType == 'cash'?'SHRI BHAGAWATI':props.data.firmData.firmName} */}
@@ -46,7 +46,7 @@ const TokenBil = (props) => {
         <div
           style={{
             padding: "8px 4px 8px 4px ",
-            width: "305px",
+            width: "260px",
             height: "min-content",
           }}
         >
@@ -55,23 +55,23 @@ const TokenBil = (props) => {
               display: "flex",
               justifyContent: "space-between",
               fontWeight: "500",
-              fontSize: "14px",
+              fontSize: "12px",
               lineHeight: "16px",
               alignItems: "center",
             }}
           >
             <div style={{ textAlign: "start" }}>
-              <div>Date : {props.data.billDate}</div>
-              <div style={{ textAlign: "start", marginTop: "6px" }}>
+              <div style={{ textAlign: "start", fontSize: '12px' }}>Date : {props.data.billDate}</div>
+              <div style={{ textAlign: "start", marginTop: "6px", fontSize: '12px' }}>
                 <div>Time: {props.data.billTime}</div>
               </div>
-              <div style={{ marginTop: "6px", fontSize: "14px" }}>
+              <div style={{ marginTop: "6px", fontSize: "12px" }}>
                 Cashier : {props.data.cashier}
               </div>
             </div>
 
             <div
-              style={{ textAlign: "start", maxWidth: "34%", padding: "2px" }}
+              style={{ textAlign: "start", maxWidth: "34%", padding: "2px", marginRight: '10px' }}
             >
               <div
                 style={{
@@ -86,7 +86,6 @@ const TokenBil = (props) => {
                 style={{
                   border: "1px solid black",
                   borderCollapse: "collapse",
-                  borderTop: "0px",
                   padding: "2px",
                 }}
               >
@@ -94,7 +93,7 @@ const TokenBil = (props) => {
                   style={{
                     textAlign: "center",
                     fontWeight: "700",
-                    fontSize: "20px",
+                    fontSize: "16px",
                     lineHeight: "18px",
                   }}
                 >
@@ -112,28 +111,28 @@ const TokenBil = (props) => {
           <div
             style={{
               padding: "8px 4px 8px 4px ",
-              width: "309px",
+              width: "260px",
               height: "min-content",
               borderTop: "2px solid black",
             }}
           >
             <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "16px" }}
+              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
             >
               <div>Phone No : {customerData.mobileNo} </div>
             </div>
             <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "16px" }}
+              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
             >
               <div>Name : {customerData.customerName} </div>
             </div>
             <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "16px" }}
+              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
             >
               <div>Address : {customerData.address}</div>
             </div>
             <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "16px" }}
+              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
             >
               <div>Locality : {customerData.locality}</div>
             </div>
@@ -141,7 +140,7 @@ const TokenBil = (props) => {
         ) : (
           <></>
         )}
-        <div style={{ width: "316px", height: "min-height" }}>
+        <div style={{ width: "260px", height: "min-height" }}>
           <table style={{ borderCollapse: "collapse", width: "100%" }}>
             <thead>
               <tr>
@@ -152,6 +151,7 @@ const TokenBil = (props) => {
                     paddingBottom: "2px",
                     borderLeft: "0px",
                     textAlign: "start",
+                    fontSize: '14px'
                   }}
                 >
                   Particulars
@@ -163,6 +163,7 @@ const TokenBil = (props) => {
                     paddingBottom: "4px",
                     textAlign: "center",
                     width: "20%",
+                    fontSize: '14px'
                   }}
                 >
                   Qty
@@ -174,6 +175,7 @@ const TokenBil = (props) => {
                     paddingBottom: "4px",
                     borderRight: "0px",
                     textAlign: "center",
+                    fontSize: '14px'
                   }}
                 >
                   Amount
@@ -190,11 +192,12 @@ const TokenBil = (props) => {
                       padding: "8px 4px 8px 4px",
                       borderLeft: "0px",
                       textAlign: "start",
+                      fontSize: "14px",
                     }}
                   >
                     {item.itemName} <br />{" "}
                     {item.comment && (
-                      <span className="text-xs" style={{ fontSize: "14px" }}>
+                      <span className="text-xs" style={{ fontSize: "10px" }}>
                         ({item.comment})
                       </span>
                     )}{" "}
@@ -205,6 +208,7 @@ const TokenBil = (props) => {
                       padding: "4px 0px 4px 0px",
                       textAlign: "center",
                       width: "20%",
+                      fontSize: '14px'
                     }}
                   >
                     {item.qty} {item.unit}
@@ -217,9 +221,10 @@ const TokenBil = (props) => {
                       borderRight: "0px",
                       textAlign: "end",
                       paddingRight: "2px",
+                      fontSize: "14px",
                     }}
                   >
-                    {item.price}
+                    {(item.price).toFixed(2)}
                   </td>
                 </tr>
               ))}
@@ -251,7 +256,7 @@ const TokenBil = (props) => {
                     paddingRight: "2px",
                   }}
                 >
-                  {props.data.subTotal}
+                  {(props.data.subTotal).toFixed(2)}
                 </td>
               </tr>
               <tr style={{ padding: "5px" }}>
@@ -264,7 +269,7 @@ const TokenBil = (props) => {
                     borderLeft: "0px",
                     textAlign: "right",
                     borderRight: "0px",
-                    fontSize: "18px",
+                    fontSize: "14px",
                   }}
                 >
                   <pre style={{ fontFamily: "Verdana" }}>
@@ -283,7 +288,7 @@ const TokenBil = (props) => {
                         textAlign: "end",
                         padding: "10px 4px 10px 0px",
                         borderTop: "1px solid black",
-                        fontSize: "18px",
+                        fontSize: "14px",
                       }}
                       colSpan="4"
                     >
@@ -294,7 +299,7 @@ const TokenBil = (props) => {
                           : props.data.discountType == "none"
                             ? ""
                             : "%"}
-                        , {props.data.totalDiscount}
+                        , {(props.data.totalDiscount).toFixed(2)}
                       </pre>
                     </td>
                   </>
@@ -309,7 +314,7 @@ const TokenBil = (props) => {
                     borderBottom: "1px solid black",
                     padding: "10px 4px 10px 0px",
                     fontWeight: "bold",
-                    fontSize: "18px",
+                    fontSize: "14px",
                   }}
                 >
                   <pre style={{ fontFamily: "Verdana" }}>

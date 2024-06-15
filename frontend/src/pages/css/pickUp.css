@@ -73,10 +73,9 @@ ul li:hover {
 }
 
 .quantity_button {
-  border: 1px solid black !important;
   width: 30px !important;
   margin: 0px 5px 0px 5px;
-  background-color: whitesmoke;
+  background-color: transparent;
 }
 
 .another_1 {
@@ -85,6 +84,7 @@ ul li:hover {
 .main_bill1{
   width: 100%;
   height: calc(100vh - 394px);
+  overflow-y: auto;
 }
 .main_billError {
   width: 100%;
@@ -106,7 +106,7 @@ ul li:hover {
 }
 
 .main_bill_icon {
-  font-size: 20px;
+  font-size: 23px;
 }
 
 .css-clttge-MuiAutocomplete-root .MuiOutlinedInput-root {
@@ -158,4 +158,22 @@ font-weight: 600;
 }
 .mobileNoError{
   border: 2px solid red;
+}
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
