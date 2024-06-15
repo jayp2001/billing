@@ -81,6 +81,7 @@ const PickUp = () => {
   const systemPrinter = JSON.parse(localStorage.getItem("printerPreference"));
   const regexMobile = /^[0-9\b]+$/;
   const regex = /^-?\d*(?:\.\d*)?$/;
+  const isValidInput = /^(?:\d{1,4}(?:\.\d{0,3})?|\.\d{1,3})$/;
   const pickupkot = systemPrinter?.filter(
     (printer) => printer.categoryId == "pickupkot"
   );
@@ -831,6 +832,7 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(', '),
       footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
       footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
+      billPayType: 'Cancle'
     };
     await axios
       .post(
@@ -2737,14 +2739,14 @@ const PickUp = () => {
     }));
   };
   const handleIncreaseQuantity = (index, currentQty) => {
-    const newQty = currentQty + 1;
+    const newQty = parseFloat(currentQty) + 1;
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
       updatedItems[index].qty = newQty;
       updatedItems[index].price = newQty * updatedItems[index].itemPrice;
       return updatedItems;
     });
-  
+
     setBillData((prev) => {
       const newSubTotal = items.reduce((sum, item, i) => sum + (i === index ? newQty * item.itemPrice : item.price), 0);
       return {
@@ -2761,7 +2763,8 @@ const PickUp = () => {
       };
     });
   };
-  
+
+
   const [text, setText] = useState("");
   const handleInputChange = (event, value) => {
     // if (event) {
@@ -2814,15 +2817,14 @@ const PickUp = () => {
   };
   const handleOnChangePrice = (index, value) => {
     const newQty = value;
-    console.log(value)
-    if (!isNaN(newQty) && newQty >= -1) {
+    const isValidInput = /^(?:\d{1,4}(?:\.\d{0,3})?|\.\d{1,3})$/.test(value);
+    if (!isNaN(newQty) && newQty >= -1 && isValidInput) {
       setItems((prevItems) => {
         const updatedItems = [...prevItems];
         updatedItems[index].qty = newQty;
         updatedItems[index].price = newQty * updatedItems[index].itemPrice;
         return updatedItems;
       });
-
       setBillData((prev) => {
         const newSubTotal = items.reduce((sum, item, i) => sum + (i === index ? newQty * item.itemPrice : item.price), 0);
         return {
@@ -2941,7 +2943,7 @@ const PickUp = () => {
   const handleBlur = () => {
     setTimeout(() => {
       setCustomerList([]);
-    }, 100);
+    }, 500);
   };
 
   useEffect(() => {
@@ -2999,7 +3001,7 @@ const PickUp = () => {
             <TextField
               placeholder="Quantity"
               value={fullFormData.qty}
-              onChange={(e) => { if ((regex.test(e.target.value) || e.target.value === "")) { handleQuantityChange(e) } }}
+              onChange={(e) => { if ((isValidInput.test(e.target.value) || e.target.value === "")) { handleQuantityChange(e) } }}
               onKeyDown={handleEnterPressSecond}
               inputRef={quantityInputRef}
               variant="outlined"
@@ -3253,15 +3255,17 @@ const PickUp = () => {
                               variant="outlined"
                               onChange={(e) => {
                                 // handleFilter(e.target.value);
-                                setBillError({ ...billError, mobileNo: false })
-                                setCustomerData((perv) => ({
-                                  ...perv,
-                                  mobileNo: e.target.value,
-                                  customerId: '',
-                                  addressId: ''
-                                }));
-                                setSuggestionIndex(0);
-                                debounceFunction();
+                                if (regex.test(e.target.value) || e.target.value === "") {
+                                  setBillError({ ...billError, mobileNo: false })
+                                  setCustomerData((perv) => ({
+                                    ...perv,
+                                    mobileNo: e.target.value,
+                                    customerId: '',
+                                    addressId: ''
+                                  }));
+                                  setSuggestionIndex(0);
+                                  debounceFunction();
+                                }
                                 // setInputValue(e.target.value)
                               }}
                               onBlur={handleBlur}
@@ -3389,8 +3393,7 @@ const PickUp = () => {
                       <table className=" w-full">
                         <tbody>
                           <tr className="mb-3">
-                            <td className="w-24">Order Comment&nbsp;</td>
-                            <td>
+                            <td colSpan='2'>
                               {/* <input
                                 type="text"
                                 className="border-2 w-full p-1 rounded-sm"
@@ -3418,6 +3421,7 @@ const PickUp = () => {
                                 renderInput={(params) => (
                                   <TextField
                                     {...params}
+                                    placeholder="Order Comment"
                                   />
                                 )}
                               />
@@ -3657,12 +3661,12 @@ const PickUp = () => {
                       className="bg-amber-50 billin_content itemBorder p-2 text-lg"
                     >
                       <div className="grid grid-cols-12 content-center gap-2">
-                        <div className="col-span-4 flex  justify-self-start itemName" onClick={(e) => handleClick(e, index)}>
+                        <div className="col-span-4 flex  justify-self-start itemName" >
                           <MdCancel
                             onClick={() => handleDeleteRow(index)}
                             className="main_bill_icon text-red-700 mx-1  mt-1 cursor-pointer"
                           />
-                          <p className='ml-2'>{item.itemName}</p>
+                          <p className='ml-2' onClick={(e) => handleClick(e, index)}>{item.itemName}</p>
                         </div>
                         <div className="col-span-3 justify-self-center">
                           {item.comment}
@@ -3699,10 +3703,10 @@ const PickUp = () => {
                           <p className="pl-2">{item.unit}</p>
                         </div>
                         <div className="col-span-1 justify-self-end">
-                          <p className="pl-2">{(item.itemPrice).toFixed(2)}</p>
+                          <p className="pl-2">{(item.itemPrice).toFixed(0)}</p>
                         </div>
                         <div className="col-span-1 justify-self-end">
-                          <p className="pl-2">{(item.price).toFixed(2)}</p>
+                          <p className="pl-2">{(item.price).toFixed(0)}</p>
                         </div>
                       </div>
                     </div>
@@ -3925,8 +3929,8 @@ const PickUp = () => {
                   )}
                 </div>
                 <div
-                  className="discountPadding flex gap-3"
-                  style={{ width: "200px", textAlign: "end" }}
+                  className="discountPadding flex gap-3 w-1/2"
+                  style={{ textAlign: "end" }}
                 >
                   <div className="text-white text-xl mt-1 w-full">
                     {"Total Discount : " +

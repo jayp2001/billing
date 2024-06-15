@@ -361,6 +361,7 @@ const Header = (props) => {
                 className="button text-sm px-2 py-1 rounded-sm text-white"
                 onClick={() => {
                   navigate("/main");
+                  window.location.reload();
                 }}
               >
                 New Order
