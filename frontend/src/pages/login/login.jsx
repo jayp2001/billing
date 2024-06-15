@@ -138,7 +138,7 @@ function LoginPage() {
       <div className="grid grid-cols-12 h-full grid content-center">
         <div className="tablet:col-span-6 tablet1:col-span-6 mobile:col-span-12">
           <div className="grid grid-cols-12">
-            <div className="tablet1:col-span-8 mobile:col-start-4 mobile:col-span-6 tablet1:col-start-3">
+            <div className="tablet1:col-span-8 text-m mobile:col-start-4 mobile:col-span-6 tablet1:col-start-3">
               <div className="logoMobile">
                 {/* <img src={bhagwatiLogo} alt="bhagwati logo" /> */}
               </div>
