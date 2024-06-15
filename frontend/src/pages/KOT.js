@@ -182,7 +182,7 @@ const KOT = (props) => {
                     paddingBottom: "4px",
                     borderRight: "0px",
                     textAlign: "center",
-                    width: "20%",
+                    width: "30%",
                     fontSize: '14px'
                   }}
                 >
@@ -196,7 +196,7 @@ const KOT = (props) => {
                   <td
                     style={{
                       border: "1px solid black",
-                      width: "80%",
+                      width: "70%",
                       fontWeight: "700",
                       paddingTop: "6px",
                       lineHeight: "15px",
@@ -224,7 +224,7 @@ const KOT = (props) => {
                       padding: "2px 0px 6px 0px",
                       borderRight: "0px",
                       textAlign: "center",
-                      width: "20%",
+                      width: "30%",
                       fontSize: '14px',
 
                     }}
