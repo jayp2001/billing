@@ -53,3 +53,17 @@ body{
 .recentBillRow{
     border-bottom: 1px solid rgba(0, 0, 0, 0.7);
 }
+.popoverSearch{
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid black;
+}
+.anotherSearch{
+    border: 1px solid black;
+    padding: 6px;
+    border-radius: 5px;
+    width: 100%;
+}
+input:focus {
+    outline: none;
+}
