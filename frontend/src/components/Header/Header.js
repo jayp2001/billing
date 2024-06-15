@@ -28,6 +28,7 @@ const Header = (props) => {
   const naviagate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const [loading, setLoading] = React.useState(false);
+  const [search, setSearch] = useState('')
   const [error, setError] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const config = {
@@ -140,6 +141,7 @@ const Header = (props) => {
   const [openHold, setOpenHold] = useState(false);
   const [activeTab, setActiveTab] = useState('Pick Up');
   const [recentBill, setRecentBill] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [holdBills, setHoldBills] = useState([]);
 
   const toggleDrawer = (anchor, open) => (event) => {
@@ -196,79 +198,95 @@ const Header = (props) => {
     });
     setError(false);
   }
+
+
   const list = (anchor) => (
     <Box
       sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 400 }}
       role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
+    // onClick={toggleDrawer(anchor, false)}
     >
-      <div className="p-2 my-1  text-base">Recent</div>
-      <hr className="mb-2"></hr>
+      <div className="p-2 my-1 text-base">Recent</div>
+      <hr className="mb-2" />
+
       <div className="flex p-2 my-1">
         <div
-          // onClick={
-          //   (event) => {
-          //   event.stopPropagation();
-          //   setActiveTab("Dine In");
-          //   getRecentToken("Dine In");
-          // }}
           className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Dine In" ? "active" : ""
             }`}
+          onClick={(event) => {
+            event.stopPropagation();
+            setActiveTab("Dine In");
+            getRecentToken("Dine In");
+            setSearchTerm("")
+          }}
         >
           Dine In
         </div>
         <div
+          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Pick Up" ? "active" : ""
+            }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Pick Up");
             getRecentToken("Pick Up");
+            setSearchTerm("")
           }}
-          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Pick Up" ? "active" : ""
-            }`}
         >
           Pick Up
         </div>
         <div
+          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Delivery" ? "active" : ""
+            }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Delivery");
             getRecentToken("Delivery");
+            setSearchTerm("")
           }}
-          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Delivery" ? "active" : ""
-            }`}
         >
           Delivery
         </div>
-        {/* <div
-          onClick={(event) => {
-            event.stopPropagation();
-            setActiveTab("KOT");
-            getRecentToken("KOT");
-          }}
-          className={`tabButton py-2 w-full text-center cursor-pointer ${
-            activeTab === "KOT" ? "active" : ""
-          }`}
-        >
-          KOT
-        </div> */}
       </div>
+
+      <div className="w-full px-3">
+          <input
+            type="search"
+            placeholder="Search…"
+            inputProps={{ "aria-label": "search" }}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+            }}
+            className="py-2 anotherSearch"
+            value={searchTerm}
+          />
+      </div>
+      <hr className="my-2" />
       <div className="flex pl-6 pr-6 mt-1 justify-between recentBillHeader">
         <div>Token No</div>
         <div>Rs.</div>
       </div>
-      <div className="recentBillContainer ">
-        {recentBill?.map((data, index) => (
-          <div className="recentBillRow pb-2 pt-2 flex justify-between" key={index} onClick={() => {
-            getBbill(data.billId);
-          }}>
-            <div className="pl-6">{data.tokenNo}</div>
-            <div className="pr-4">{data.totalAmount}</div>
-          </div>
-        ))}
+
+      <div className="recentBillContainer">
+        {recentBill
+          .filter((val) =>
+            val.tokenNo.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+          .map((data, index) => (
+            <div
+              className="recentBillRow pb-2 pt-2 flex justify-between cursor-pointer"
+              key={index}
+              onClick={() => {
+                getBbill(data.billId);
+              }}
+            >
+              <div className="pl-6">{data.tokenNo}</div>
+              <div className="pr-4">{data.totalAmount}</div>
+            </div>
+          ))}
       </div>
     </Box>
   );
+
   const listHold = (anchor) => (
     <Box
       sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 400 }}
@@ -345,6 +363,38 @@ const Header = (props) => {
     </Box>
   );
   const navigate = useNavigate();
+  const handleCommonSearch = async () => {
+    await axios
+      .get(
+        `${BACKEND_BASE_URL}billingrouter/getBillDataByToken?tokenNo=${search}`,
+        config
+      )
+      .then((res) => {
+        console.log(res)
+        props.setItems(res.data.itemData);
+        props.setBillData(
+          {
+            subTotal: res.data.totalAmount,
+            discountType: res.data.discountType,
+            discountValue: res.data.discountValue,
+            settledAmount: res.data.settledAmount,
+            totalDiscount: res.data.totalDiscount,
+            billPayType: res.data.billPayType,
+            billComment: res.data.billComment,
+            billCommentAuto: res.data.billComment ? res.data.billComment.split(', ') : [],
+          }
+        );
+        props.setCustomerData(res.data.customerDetails)
+        props.setEditBillData(res.data)
+        props.setIsEdit(true);
+        const billType = res.data.billType;
+        props.setButtonCLicked(billType === 'Delivery' ? 'tab2' : 'tab3');
+        setSearch('')
+      })
+      .catch((error) => {
+        setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+  }
   return (
     <>
       <div className="bg-gray-100 px-2 h-12">
@@ -361,22 +411,25 @@ const Header = (props) => {
                 className="button text-sm px-2 py-1 rounded-sm text-white"
                 onClick={() => {
                   navigate("/main");
-                  window.location.reload();
                 }}
               >
                 New Order
               </button>
             </div>
             <div className="header_search ml-2 grid content-center">
-              <Search>
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  placeholder="Search…"
-                  inputProps={{ "aria-label": "search" }}
-                />
-              </Search>
+              <input
+                type="search"
+                placeholder="Search…"
+                inputProps={{ "aria-label": "search" }}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleCommonSearch();
+                  }
+                }}
+                className="popoverSearch"
+                value={search}
+              />
             </div>
             <div className="header_toggle ml-2 grid content-center ">
               <div>

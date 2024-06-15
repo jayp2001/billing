@@ -832,7 +832,7 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(', '),
       footerKot: pickupkot.footer ? pickupkot.footer : "Thank You",
       footerBill: pickupbill.footer ? pickupbill.footer : "Thank You",
-      billPayType: 'Cancle'
+      billPayType: "Cancle"
     };
     await axios
       .post(
@@ -2817,7 +2817,7 @@ const PickUp = () => {
   };
   const handleOnChangePrice = (index, value) => {
     const newQty = value;
-    const isValidInput = /^(?:\d{1,4}(?:\.\d{0,3})?|\.\d{1,3})$/.test(value);
+    const isValidInput = /^\d*\.?\d{0,3}$/.test(value);
     if (!isNaN(newQty) && newQty >= -1 && isValidInput) {
       setItems((prevItems) => {
         const updatedItems = [...prevItems];
@@ -2836,7 +2836,7 @@ const PickUp = () => {
               ? prev.discountValue
               : prev.discountType === "percentage"
                 ? newSubTotal * (prev.discountValue / 100)
-                : 0)
+                : 0).toFixed(2)
           )
         };
       });
@@ -3005,6 +3005,9 @@ const PickUp = () => {
               onKeyDown={handleEnterPressSecond}
               inputRef={quantityInputRef}
               variant="outlined"
+              onFocus={(e) => {
+                e.target.select();
+              }}
             />
           </div>
           <div className="w-28">
@@ -3255,8 +3258,8 @@ const PickUp = () => {
                               variant="outlined"
                               onChange={(e) => {
                                 // handleFilter(e.target.value);
-                                if (regex.test(e.target.value) || e.target.value === "") {
-                                  setBillError({ ...billError, mobileNo: false })
+                                setBillError({ ...billError, mobileNo: false })
+                                if (regex.test(e.target.value)) {
                                   setCustomerData((perv) => ({
                                     ...perv,
                                     mobileNo: e.target.value,
@@ -3934,7 +3937,7 @@ const PickUp = () => {
                 >
                   <div className="text-white text-xl mt-1 w-full">
                     {"Total Discount : " +
-                      (billData.subTotal - billData.settledAmount)}
+                      (billData.subTotal - billData.settledAmount).toFixed(2)}
                   </div>
                 </div>
               </div>
