@@ -80,10 +80,11 @@ ul li:hover {
   width: 100%;
   height: calc(100vh - 394px);
   overflow-y: auto;
-}
-.main_billError {
-  width: 100%;
-  height: calc(100vh - 414px);
+  }
+  .main_billError {
+    width: 100%;
+    height: calc(100vh - 414px);
+    overflow-y: auto;
 }
 .itemBorder{
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
@@ -99,9 +100,16 @@ ul li:hover {
 .billin_content{
   align-self: start !important;
 }
+.commentsDefault{
+    white-space: nowrap; 
+    width: 70%; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
 
 .main_bill_icon {
-  font-size: 23px;
+  font-size: 23px  !important;
+  width: 8%;
 }
 
 .css-clttge-MuiAutocomplete-root .MuiOutlinedInput-root {

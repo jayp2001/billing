@@ -95,10 +95,10 @@ function createWindow() {
   });
 
   ipcMain.on("set-title", async (event, title) => {
-    console.log(">>>> ONCLICK");
+    console.log(">>>> ONCLICK", title);
     const printer = title.printer;
     const data = title.data;
-    console.log("titel", data);
+    console.log("titel", printer.marginTop);
     const printWindow = new BrowserWindow({ show: true });
     await printWindow.loadURL(`data:text/html,` + encodeURIComponent(data));
     // await printWindow.loadURL(`http://localhost:3000`);
@@ -108,10 +108,10 @@ function createWindow() {
         printBackground: true,
         margins: {
           marginType: "custom",
-          top: 0, // Specify your custom top margin in millimeters
-          bottom: 0, // Specify your custom bottom margin in millimeters
-          left: 10, // Specify your custom left margin in millimeters
-          right: 5, // Specify your custom right margin in millimeters
+          top: printer.marginTop, // Specify your custom top margin in millimeters
+          bottom: printer.marginBottom, // Specify your custom bottom margin in millimeters
+          left: printer.marginLeft, // Specify your custom left margin in millimeters
+          right: printer.marginRight, // Specify your custom right margin in millimeters
         },
         deviceName: printer.printerName,
       });

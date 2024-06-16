@@ -25,6 +25,7 @@ const KOT = (props) => {
           border: "1px solid black",
           borderCollapse: "collapse",
           textAlign: "center",
+          overflow: "hidden",
         }}
       >
         <div
@@ -43,7 +44,7 @@ const KOT = (props) => {
             <br />
             KOT
             <br />
-            {props.isEdit ? '( NEW BILL )' : ''}
+            {props.isEdit ? "( NEW BILL )" : ""}
           </div>
         </div>
         <div
@@ -64,8 +65,16 @@ const KOT = (props) => {
             }}
           >
             <div style={{ textAlign: "start" }}>
-              <div style={{ textAlign: "start", fontSize: '13px' }}>Date : {props.data.billDate}</div>
-              <div style={{ textAlign: "start", marginTop: "6px", fontSize: '13px' }}>
+              <div style={{ textAlign: "start", fontSize: "13px" }}>
+                Date : {props.data.billDate}
+              </div>
+              <div
+                style={{
+                  textAlign: "start",
+                  marginTop: "6px",
+                  fontSize: "13px",
+                }}
+              >
                 <div>Time: {props.data.billTime}</div>
               </div>
               <div style={{ marginTop: "6px", fontSize: "13px" }}>
@@ -84,7 +93,11 @@ const KOT = (props) => {
             </div>
 
             <div
-              style={{ textAlign: "start", maxWidth: "34%", marginRight: '10px' }}
+              style={{
+                textAlign: "start",
+                maxWidth: "34%",
+                marginRight: "10px",
+              }}
             >
               <div
                 style={{
@@ -118,10 +131,10 @@ const KOT = (props) => {
           </div>
         </div>
         {customerData &&
-          (customerData.mobileNo ||
-            customerData.customerName ||
-            customerData.address ||
-            customerData.locality) ? (
+        (customerData.mobileNo ||
+          customerData.customerName ||
+          customerData.address ||
+          customerData.locality) ? (
           <div
             style={{
               padding: "8px 4px 8px 4px ",
@@ -170,7 +183,7 @@ const KOT = (props) => {
                     paddingBottom: "2px",
                     borderLeft: "0px",
                     textAlign: "start",
-                    fontSize: '14px'
+                    fontSize: "14px",
                   }}
                 >
                   Items
@@ -183,7 +196,7 @@ const KOT = (props) => {
                     borderRight: "0px",
                     textAlign: "center",
                     width: "30%",
-                    fontSize: '14px'
+                    fontSize: "14px",
                   }}
                 >
                   Qty
@@ -212,7 +225,11 @@ const KOT = (props) => {
                     {item.comment && (
                       <div
                         className="text-xs"
-                        style={{ fontSize: "12px", marginTop: "4px", marginBottom: '6px' }}
+                        style={{
+                          fontSize: "12px",
+                          marginTop: "4px",
+                          marginBottom: "6px",
+                        }}
                       >
                         ({item.comment})
                       </div>
@@ -225,8 +242,7 @@ const KOT = (props) => {
                       borderRight: "0px",
                       textAlign: "center",
                       width: "30%",
-                      fontSize: '14px',
-
+                      fontSize: "14px",
                     }}
                   >
                     {item.qty} {item.unit}
