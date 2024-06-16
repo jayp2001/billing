@@ -5,7 +5,7 @@ import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import "./css/Header.css";
-import { Switch, Tab } from "@mui/material";
+import { Modal, Switch, Tab } from "@mui/material";
 import WatchLaterTwoToneIcon from "@mui/icons-material/WatchLaterTwoTone";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import GridViewIcon from "@mui/icons-material/GridView";
@@ -28,7 +28,7 @@ const Header = (props) => {
   const naviagate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const [loading, setLoading] = React.useState(false);
-  const [search, setSearch] = useState('')
+  const [search, setSearch] = useState("");
   const [error, setError] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const config = {
@@ -63,27 +63,31 @@ const Header = (props) => {
       )
       .then((res) => {
         props.setItems(res.data.itemData);
-        props.setBillData(
-          {
-            subTotal: res.data.totalAmount,
-            discountType: res.data.discountType,
-            discountValue: res.data.discountValue,
-            settledAmount: res.data.settledAmount,
-            totalDiscount: res.data.totalDiscount,
-            billPayType: res.data.billPayType,
-            billComment: res.data.billComment,
-            billCommentAuto: res.data.billComment ? res.data.billComment.split(', ') : [],
-          }
-        );
-        props.setCustomerData(res.data.customerDetails)
-        props.setEditBillData(res.data)
+        props.setBillData({
+          subTotal: res.data.totalAmount,
+          discountType: res.data.discountType,
+          discountValue: res.data.discountValue,
+          settledAmount: res.data.settledAmount,
+          totalDiscount: res.data.totalDiscount,
+          billPayType: res.data.billPayType,
+          billComment: res.data.billComment,
+          billCommentAuto: res.data.billComment
+            ? res.data.billComment.split(", ")
+            : [],
+        });
+        props.setCustomerData(res.data.customerDetails);
+        props.setEditBillData(res.data);
         props.setIsEdit(true);
-        props.setButtonCLicked(activeTab == 'Delivery' ? 'tab2' : 'tab3');
+        props.setButtonCLicked(
+          res.data.billType == "Delivery" ? "tab2" : "tab3"
+        );
+        toggleDrawer("right", false);
+        setOpenHold(false);
       })
       .catch((error) => {
         setError(error.response ? error.response.data : "Network Error ...!!!");
       });
-  }
+  };
   const SearchIconWrapper = styled("div")(({ theme }) => ({
     padding: theme.spacing(0, 2),
     height: "100%",
@@ -108,10 +112,7 @@ const Header = (props) => {
   };
   const getHoldBills = async () => {
     await axios
-      .get(
-        `${BACKEND_BASE_URL}billingrouter/getHoldBillData`,
-        config
-      )
+      .get(`${BACKEND_BASE_URL}billingrouter/getHoldBillData`, config)
       .then((res) => {
         setHoldBills(res.data);
       })
@@ -139,9 +140,10 @@ const Header = (props) => {
     right: false,
   });
   const [openHold, setOpenHold] = useState(false);
-  const [activeTab, setActiveTab] = useState('Pick Up');
+  const [activeTab, setActiveTab] = useState("Pick Up");
   const [recentBill, setRecentBill] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [logOutPopup, setLogOutPopUp] = useState(false);
   const [holdBills, setHoldBills] = useState([]);
 
   const toggleDrawer = (anchor, open) => (event) => {
@@ -151,9 +153,19 @@ const Header = (props) => {
     ) {
       return;
     }
-    getRecentToken('Pick Up');
-    setActiveTab('Pick Up')
+    getRecentToken("Pick Up");
+    setActiveTab("Pick Up");
     setState({ ...state, [anchor]: open });
+  };
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    bgcolor: "background.paper",
+    border: "2px solid #000",
+    boxShadow: 24,
+    p: 3,
   };
   if (loading) {
     console.log(">>>>??");
@@ -199,49 +211,51 @@ const Header = (props) => {
     setError(false);
   }
 
-
   const list = (anchor) => (
     <Box
       sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 400 }}
       role="presentation"
-    // onClick={toggleDrawer(anchor, false)}
+      // onClick={toggleDrawer(anchor, false)}
     >
       <div className="p-2 my-1 text-base">Recent</div>
       <hr className="mb-2" />
 
       <div className="flex p-2 my-1">
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Dine In" ? "active" : ""
-            }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${
+            activeTab === "Dine In" ? "active" : ""
+          }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Dine In");
             getRecentToken("Dine In");
-            setSearchTerm("")
+            setSearchTerm("");
           }}
         >
           Dine In
         </div>
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Pick Up" ? "active" : ""
-            }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${
+            activeTab === "Pick Up" ? "active" : ""
+          }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Pick Up");
             getRecentToken("Pick Up");
-            setSearchTerm("")
+            setSearchTerm("");
           }}
         >
           Pick Up
         </div>
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Delivery" ? "active" : ""
-            }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${
+            activeTab === "Delivery" ? "active" : ""
+          }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Delivery");
             getRecentToken("Delivery");
-            setSearchTerm("")
+            setSearchTerm("");
           }}
         >
           Delivery
@@ -249,16 +263,16 @@ const Header = (props) => {
       </div>
 
       <div className="w-full px-3">
-          <input
-            type="search"
-            placeholder="Search…"
-            inputProps={{ "aria-label": "search" }}
-            onChange={(e) => {
-              setSearchTerm(e.target.value)
-            }}
-            className="py-2 anotherSearch"
-            value={searchTerm}
-          />
+        <input
+          type="search"
+          placeholder="Search…"
+          inputProps={{ "aria-label": "search" }}
+          onChange={(e) => {
+            setSearchTerm(e.target.value);
+          }}
+          className="py-2 anotherSearch"
+          value={searchTerm}
+        />
       </div>
       <hr className="my-2" />
       <div className="flex pl-6 pr-6 mt-1 justify-between recentBillHeader">
@@ -266,7 +280,10 @@ const Header = (props) => {
         <div>Rs.</div>
       </div>
 
-      <div className="recentBillContainer">
+      <div
+        className="recentBillContainer"
+        onClick={toggleDrawer(anchor, false)}
+      >
         {recentBill
           .filter((val) =>
             val.tokenNo.toLowerCase().includes(searchTerm.toLowerCase())
@@ -351,9 +368,13 @@ const Header = (props) => {
       </div>
       <div className="recentBillContainer ">
         {holdBills?.map((data, index) => (
-          <div className="recentBillRow pb-2 pt-2 flex justify-between" key={index} onClick={() => {
-            getBbill(data.billId);
-          }}>
+          <div
+            className="recentBillRow pb-2 pt-2 flex justify-between"
+            key={index}
+            onClick={() => {
+              getBbill(data.billId);
+            }}
+          >
             <div className="pl-6">{data.tokenNo}</div>
             <div className="pl-6">{data.billType}</div>
             <div className="pr-4">{data.totalAmount}</div>
@@ -370,31 +391,31 @@ const Header = (props) => {
         config
       )
       .then((res) => {
-        console.log(res)
+        console.log(res);
         props.setItems(res.data.itemData);
-        props.setBillData(
-          {
-            subTotal: res.data.totalAmount,
-            discountType: res.data.discountType,
-            discountValue: res.data.discountValue,
-            settledAmount: res.data.settledAmount,
-            totalDiscount: res.data.totalDiscount,
-            billPayType: res.data.billPayType,
-            billComment: res.data.billComment,
-            billCommentAuto: res.data.billComment ? res.data.billComment.split(', ') : [],
-          }
-        );
-        props.setCustomerData(res.data.customerDetails)
-        props.setEditBillData(res.data)
+        props.setBillData({
+          subTotal: res.data.totalAmount,
+          discountType: res.data.discountType,
+          discountValue: res.data.discountValue,
+          settledAmount: res.data.settledAmount,
+          totalDiscount: res.data.totalDiscount,
+          billPayType: res.data.billPayType,
+          billComment: res.data.billComment,
+          billCommentAuto: res.data.billComment
+            ? res.data.billComment.split(", ")
+            : [],
+        });
+        props.setCustomerData(res.data.customerDetails);
+        props.setEditBillData(res.data);
         props.setIsEdit(true);
         const billType = res.data.billType;
-        props.setButtonCLicked(billType === 'Delivery' ? 'tab2' : 'tab3');
-        setSearch('')
+        props.setButtonCLicked(billType === "Delivery" ? "tab2" : "tab3");
+        setSearch("");
       })
       .catch((error) => {
         setError(error.response ? error.response.data : "Network Error ...!!!");
       });
-  }
+  };
   return (
     <>
       <div className="bg-gray-100 px-2 h-12">
@@ -423,7 +444,7 @@ const Header = (props) => {
                 inputProps={{ "aria-label": "search" }}
                 onChange={(e) => setSearch(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
+                  if (e.key === "Enter") {
                     handleCommonSearch();
                   }
                 }}
@@ -447,29 +468,67 @@ const Header = (props) => {
               <LocalPrintshopOutlinedIcon />
             </div>
             <div className="header_icon cursor-pointer grid content-center">
-              <WatchLaterTwoToneIcon onClick={() => {
-                setOpenHold(true);
-                getHoldBills();
-              }} />
+              <WatchLaterTwoToneIcon
+                onClick={() => {
+                  setOpenHold(true);
+                  getHoldBills();
+                }}
+              />
             </div>
             <div className="header_icon cursor-pointer grid content-center">
               <PendingActionsIcon onClick={toggleDrawer("right", true)} />
             </div>
             <div className="header_icon cursor-pointer grid content-center">
               <GridViewIcon
-                onClick={() => {
-                  naviagate("/LiveView");
-                }}
+              // onClick={() => {
+              //   naviagate("/LiveView");
+              // }}
               />
             </div>
             <div className="header_icon cursor-pointer grid content-center">
               <NotificationsIcon />
             </div>
             <div className="header_icon cursor-pointer  grid content-center">
-              <PowerSettingsNewIcon />
+              <PowerSettingsNewIcon onClick={() => setLogOutPopUp(true)} />
             </div>
           </div>
         </div>
+        <Modal
+          open={logOutPopup}
+          onClose={() => {
+            setLogOutPopUp(false);
+          }}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+          disableAutoFocus
+        >
+          <Box sx={style} className="p-2 rounded-md">
+            <p>Are You Sure you Want To LogOut?</p>
+            <div className="w-full text-base flex  gap-4 p-1 mt-4 ">
+              <div className="w-full">
+                <button
+                  className="text-base button px-2 w-full py-1 rounded-md text-white"
+                  onClick={() => {
+                    localStorage.clear();
+                    naviagate("/");
+                  }}
+                >
+                  Save
+                </button>
+              </div>
+              <div className="w-full">
+                <button
+                  className="another_2 button text-base w-full px-2 py-1 rounded-md text-white"
+                  onClick={() => {
+                    setLogOutPopUp(false);
+                  }}
+                >
+                  Cancle
+                </button>
+              </div>
+            </div>
+          </Box>
+        </Modal>
         <React.Fragment key={"right"}>
           <Drawer
             anchor={"right"}

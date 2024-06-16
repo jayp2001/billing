@@ -83,10 +83,11 @@ const PickUp = () => {
   const regex = /^-?\d*(?:\.\d*)?$/;
   const isValidInput = /^(?:\d{1,4}(?:\.\d{0,3})?|\.\d{1,3})$/;
   const pickupkot = systemPrinter?.filter(
-    (printer) => printer.categoryId == "pickupkot"
+    (printer) => printer.categoryId == "pickupKot"
   );
+  console.log(">>>>printer", pickupkot, systemPrinter);
   const pickupbill = systemPrinter?.filter(
-    (printer) => printer.categoryId == "pickupbill"
+    (printer) => printer.categoryId == "pickupBill"
   );
   const deliverykot = systemPrinter?.filter(
     (printer) => printer.categoryId == "deliveryKot"
@@ -363,7 +364,10 @@ const PickUp = () => {
       printKot: true,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -458,7 +462,10 @@ const PickUp = () => {
       printKot: true,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -554,7 +561,10 @@ const PickUp = () => {
       printKot: true,
       firmId: "A",
       billStatus: "Hold",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -649,7 +659,10 @@ const PickUp = () => {
       printKot: true,
       firmId: "A",
       billStatus: "Hold",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -658,7 +671,7 @@ const PickUp = () => {
     };
     await axios
       .post(
-        `${BACKEND_BASE_URL}billingrouter/updateDeliveryBillData`,
+        `${BACKEND_BASE_URL}billingrouter/addDeliveryBillData`,
         customData,
         config
       )
@@ -736,6 +749,7 @@ const PickUp = () => {
   const cancleBillData = async () => {
     setLoading(true);
     const customData = {
+      ...editBillData,
       customerDetails: {
         ...customerData,
       },
@@ -743,17 +757,21 @@ const PickUp = () => {
       printBill: true,
       printKot: true,
       firmId: "A",
-      billStatus: "Cancle",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      billStatus: "Cancel",
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
+      billPayType: "Cancel",
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
       footerBill: "Thank You",
     };
     await axios
       .post(
-        `${BACKEND_BASE_URL}billingrouter/addPickUpBillData`,
+        `${BACKEND_BASE_URL}billingrouter/updatePickUpBillData`,
         customData,
         config
       )
@@ -794,6 +812,7 @@ const PickUp = () => {
           billComment: "",
           billCommentAuto: [],
         });
+        setIsEdit(false);
         // const pickupKotPrint = renderToString(<KOT data={res.data} />);
         // const pickupBillPrint = renderToString(
         //   res && res.data && res.data.isOfficial ? (
@@ -831,6 +850,7 @@ const PickUp = () => {
   const cancleBillDataDelivery = async () => {
     setLoading(true);
     const customData = {
+      ...editBillData,
       customerDetails: {
         ...customerData,
       },
@@ -838,14 +858,18 @@ const PickUp = () => {
       printBill: true,
       printKot: true,
       firmId: "A",
-      billStatus: "Cancle",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      billStatus: "Cancel",
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
+      billPayType: "Cancel",
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
       footerBill: "Thank You",
-      billPayType: "Cancle",
+      billPayType: "Cancel",
     };
     await axios
       .post(
@@ -890,6 +914,7 @@ const PickUp = () => {
           billComment: "",
           billCommentAuto: [],
         });
+        setIsEdit(false);
         // const pickupKotPrint = renderToString(<KOT data={res.data} />);
         // const pickupBillPrint = renderToString(
         //   res && res.data && res.data.isOfficial ? (
@@ -935,7 +960,10 @@ const PickUp = () => {
       printKot: true,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -1030,7 +1058,10 @@ const PickUp = () => {
       printKot: true,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -1127,7 +1158,10 @@ const PickUp = () => {
       printKot: true,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -1235,7 +1269,10 @@ const PickUp = () => {
       printKot: true,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -1343,7 +1380,10 @@ const PickUp = () => {
       printKot: false,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -1416,7 +1456,10 @@ const PickUp = () => {
       printKot: false,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -1490,7 +1533,10 @@ const PickUp = () => {
       printKot: false,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -1598,7 +1644,10 @@ const PickUp = () => {
       printKot: false,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -1706,7 +1755,10 @@ const PickUp = () => {
       printKot: true,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -1814,7 +1866,10 @@ const PickUp = () => {
       printKot: true,
       firmId: "A",
       billStatus: "Print",
-      totalDiscount: billData.subTotal - billData.settledAmount,
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
@@ -2182,7 +2237,9 @@ const PickUp = () => {
         setError("Sattle Amount can not be less than zero");
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
-        cancleBillData();
+        if (window.confirm("Are you sure you want to Cancel this bill?")) {
+          cancleBillData();
+        }
       }
     }
   };
@@ -2211,7 +2268,9 @@ const PickUp = () => {
         setError("Sattle Amount can not be less than zero");
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
-        cancleBillDataDelivery();
+        if (window.confirm("Are you sure you want to Cancel this bill?")) {
+          cancleBillDataDelivery();
+        }
       }
     }
   };
@@ -2535,34 +2594,40 @@ const PickUp = () => {
       //     inputName: matchingProduct
       //   }));
       // }
-      if (!matchingProduct || value === "") {
-        setValidationError(true);
-        second.current && second.current.focus();
-        setFullFormData((prevState) => ({
-          ...prevState,
-          selectedItem: "",
-          inputName: "",
-          itemName: "",
-        }));
-      } else if (
-        value === matchingProduct.itemCode.toString() ||
-        matchingProduct.itemShortKey.toString().toLocaleLowerCase() ===
-          value.toString().toLocaleLowerCase()
-      ) {
-        e.preventDefault();
-        setValidationError(false);
-        setFullFormData((prevState) => ({
-          ...prevState,
-          inputCode: matchingProduct.itemCode,
-          itemId: matchingProduct.itemId,
-          inputName: matchingProduct,
-          itemName:
-            matchingProduct && matchingProduct.itemName
-              ? matchingProduct.itemName
-              : "",
-          selectedItem: matchingProduct,
-        }));
-        quantityInputRef.current && quantityInputRef.current.focus();
+      if (matchingProduct?.periods?.length > 0) {
+        alert(
+          `Item is not Available From ${matchingProduct?.periods[0].displayStartTime} To ${matchingProduct?.periods[0].displayEndTime}`
+        );
+      } else {
+        if (!matchingProduct || value === "") {
+          setValidationError(true);
+          second.current && second.current.focus();
+          setFullFormData((prevState) => ({
+            ...prevState,
+            selectedItem: "",
+            inputName: "",
+            itemName: "",
+          }));
+        } else if (
+          value === matchingProduct.itemCode.toString() ||
+          matchingProduct.itemShortKey.toString().toLocaleLowerCase() ===
+            value.toString().toLocaleLowerCase()
+        ) {
+          e.preventDefault();
+          setValidationError(false);
+          setFullFormData((prevState) => ({
+            ...prevState,
+            inputCode: matchingProduct.itemCode,
+            itemId: matchingProduct.itemId,
+            inputName: matchingProduct,
+            itemName:
+              matchingProduct && matchingProduct.itemName
+                ? matchingProduct.itemName
+                : "",
+            selectedItem: matchingProduct,
+          }));
+          quantityInputRef.current && quantityInputRef.current.focus();
+        }
       }
     }
   };
@@ -3645,10 +3710,12 @@ const PickUp = () => {
             <div className="left_bill_menu text-base w-full h-full">
               <div className="w-full  p-0 text-white">
                 <div className="grid w-full grid-flow-row grid-cols-12 mr-2  bg-gray-700">
-                  <div
-                    onClick={() =>
-                      items.length <= 0 && setButtonCLicked("tab1")
-                    }
+                  {/* <div
+                    // onClick={() =>
+                    //   items.length <= 0 &&
+                    //   isEdit == false &&
+                    //   setButtonCLicked("tab1")
+                    // }
                     className={
                       buttonCLicked == "tab1"
                         ? "clicked col-3 p-0 col-span-3 text-center"
@@ -3662,15 +3729,16 @@ const PickUp = () => {
                     >
                       Dine In
                     </Button>
-                  </div>
+                  </div> */}
                   <div
                     onClick={() =>
-                      items.length <= 0 && setButtonCLicked("tab2")
+                      (items.length <= 0 || isEdit == false) &&
+                      setButtonCLicked("tab2")
                     }
                     className={
                       buttonCLicked == "tab2"
-                        ? "clicked col-3 p-0  col-span-3 text-center"
-                        : "col-3 p-0 cursor-pointer  col-span-3 text-center"
+                        ? "clicked col-3 p-0  col-span-6 text-center"
+                        : "col-3 p-0 cursor-pointer  col-span-6 text-center"
                     }
                   >
                     <Button
@@ -3683,12 +3751,13 @@ const PickUp = () => {
                   </div>
                   <div
                     onClick={() =>
-                      items.length <= 0 && setButtonCLicked("tab3")
+                      (items.length <= 0 || isEdit == false) &&
+                      setButtonCLicked("tab3")
                     }
                     className={
                       buttonCLicked == "tab3"
-                        ? "clicked col-3 p-0  col-span-3 text-center"
-                        : "col-3 p-0 cursor-pointer  col-span-3 text-center"
+                        ? "clicked col-3 p-0  col-span-6 text-center"
+                        : "col-3 p-0 cursor-pointer  col-span-6 text-center"
                     }
                   >
                     <Button
@@ -3699,10 +3768,12 @@ const PickUp = () => {
                       Pick Up
                     </Button>
                   </div>
-                  <div
-                    onClick={() =>
-                      items.length <= 0 && setButtonCLicked("tab4")
-                    }
+                  {/* <div
+                    // onClick={() =>
+                    //   items.length <= 0 &&
+                    //   isEdit == false &&
+                    //   setButtonCLicked("tab4")
+                    // }
                     className={
                       buttonCLicked == "tab4"
                         ? "clicked col-3 p-0  col-span-3 text-center"
@@ -3716,7 +3787,7 @@ const PickUp = () => {
                     >
                       Hotel
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className=" p-0 text-base ">
@@ -3726,14 +3797,12 @@ const PickUp = () => {
                       ITEMS
                     </div>
                     <div className="col-span-3 justify-self-end">COMMENTS</div>
-                    <div className="col-span-3 justify-self-center">QTY.</div>
+                    <div className="col-span-3 justify-self-center ml-16">
+                      QTY.
+                    </div>
                     <div className="col-span-1 justify-self-center">Unit</div>
-                    <div className="col-span-1 justify-self-end pr-3">
-                      Price
-                    </div>
-                    <div className="col-span-1 justify-self-end pr-3">
-                      Total
-                    </div>
+                    <div className="col-span-1 justify-self-end ">Price</div>
+                    <div className="col-span-1 justify-self-end ">Total</div>
                   </div>
                 </div>
                 <div
@@ -3753,20 +3822,20 @@ const PickUp = () => {
                       key={index}
                       className=" billin_content itemBorder p-2 text-lg"
                     >
-                      <div className="grid grid-cols-12 content-center gap-2">
-                        <div className="col-span-4 flex  justify-self-start itemName">
+                      <div className="grid grid-cols-12 items-center content-center gap-2">
+                        <div className="col-span-4 w-full flex  justify-self-start items-center ">
                           <MdCancel
                             onClick={() => handleDeleteRow(index)}
-                            className="main_bill_icon text-red-700 mx-1  mt-1 cursor-pointer"
+                            className="main_bill_icon text-red-700 mx-1  cursor-pointer"
                           />
                           <p
-                            className="ml-2"
+                            className="ml-2 w-9/12 itemName"
                             onClick={(e) => handleClick(e, index)}
                           >
                             {item.itemName}
                           </p>
                         </div>
-                        <div className="col-span-3 justify-self-center">
+                        <div className="col-span-3 justify-self-start commentsDefault">
                           {item.comment}
                         </div>
                         <div className="col-span-2 justify-self-start">
@@ -3776,7 +3845,7 @@ const PickUp = () => {
                                 onClick={() =>
                                   handleDecreaseQuantity(index, item.qty)
                                 }
-                                className="border quantity_button flex justify-center p-0 rounded-md border-black"
+                                className="border quantity_button cursor-pointer flex justify-center p-0 rounded-md border-black"
                               >
                                 <span className="w-fit">-</span>
                               </div>
@@ -3794,7 +3863,7 @@ const PickUp = () => {
                                 onClick={() =>
                                   handleIncreaseQuantity(index, item.qty)
                                 }
-                                className="border quantity_button flex justify-center text-md  items-center p-0 rounded-md border-black"
+                                className="border quantity_button  cursor-pointer flex justify-center text-md  items-center p-0 rounded-md border-black"
                               >
                                 <span className="w-fit">+</span>
                               </div>
@@ -4034,12 +4103,16 @@ const PickUp = () => {
                   )}
                 </div>
                 <div
-                  className="discountPadding flex gap-3 w-1/2"
+                  className="discountPadding flex gap-3 w-4/12"
                   style={{ textAlign: "end" }}
                 >
                   <div className="text-white text-xl mt-1 w-full">
                     {"Total Discount : " +
-                      (billData.subTotal - billData.settledAmount).toFixed(2)}
+                      (billData.discountType == "none"
+                        ? 0
+                        : (billData.subTotal - billData.settledAmount).toFixed(
+                            2
+                          ))}
                   </div>
                 </div>
               </div>
@@ -4155,7 +4228,7 @@ const PickUp = () => {
                             : cancleBill()
                         }
                       >
-                        Cancle
+                        Cancel
                       </button>
                     </div>
                   </>
@@ -4225,7 +4298,7 @@ const PickUp = () => {
                 className="another_2 button text-base px-2 py-1 rounded-md text-white"
                 onClick={() => handleClose()}
               >
-                Cancle
+                Cancel
               </button>
             </div>
           </div>
