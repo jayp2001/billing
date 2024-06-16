@@ -2499,9 +2499,43 @@ const PickUp = () => {
       //   }));
       // }
       if (matchingProduct?.periods?.length > 0) {
-        alert(`Item is not Available From ${matchingProduct?.periods[0].displayStartTime} To ${matchingProduct?.periods[0].displayEndTime}`)
-      }
-      else {
+        const currentTime = new Date();
+        const startTime = new Date(matchingProduct.periods[0].displayStartTime);
+        const endTime = new Date(matchingProduct.periods[0].displayEndTime);
+
+        if (currentTime >= startTime && currentTime <= endTime) {
+          alert(`Item is not Available From ${matchingProduct.periods[0].displayStartTime} To ${matchingProduct.periods[0].displayEndTime}`);
+          first.current && first.current.focus();
+          e.target.select();
+        } else {
+          if (!matchingProduct || value === "") {
+            setValidationError(true);
+            second.current && second.current.focus();
+            setFullFormData((prevState) => ({
+              ...prevState,
+              selectedItem: "",
+              inputName: "",
+              itemName: ''
+            }));
+          } else if (
+            value === matchingProduct.itemCode.toString() ||
+            matchingProduct.itemShortKey.toString().toLocaleLowerCase() ===
+            value.toString().toLocaleLowerCase()
+          ) {
+            e.preventDefault();
+            setValidationError(false);
+            setFullFormData((prevState) => ({
+              ...prevState,
+              inputCode: matchingProduct.itemCode,
+              itemId: matchingProduct.itemId,
+              inputName: matchingProduct,
+              itemName: matchingProduct && matchingProduct.itemName ? matchingProduct.itemName : "",
+              selectedItem: matchingProduct,
+            }));
+            quantityInputRef.current && quantityInputRef.current.focus();
+          }
+        }
+      } else {
         if (!matchingProduct || value === "") {
           setValidationError(true);
           second.current && second.current.focus();
