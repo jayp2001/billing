@@ -15,6 +15,7 @@ import TokenBill from "./pages/TokenBill";
 import PrintSlectingPage from "./pages/PrintSelectingPage";
 import LiveView from "./pages/LiveView";
 import LoginPage from "./pages/login/login";
+import TableView from "./pages/tableview/tableView";
 // import TestPage from "./testPage";
 // import Test from './pages/Test';
 // import Test from './pages/Test';
@@ -38,6 +39,7 @@ const App = () => {
         {/* <Route path="/" element={<Test />} /> */}
         <Route path="/printSlectingPage" element={<PrintSlectingPage />} />
         <Route path="/LiveView" element={<LiveView />} />
+        <Route path="/tableView" element={<TableView/>} />
         {/* <Route path="/" element={<Test />} /> */}
       </Routes>
     </Provider>

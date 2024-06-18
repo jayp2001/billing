@@ -151,22 +151,29 @@ const PrintSelectingPage = () => {
       <Header />
       <div className="tableContainerWrapper">
         <Table sx={{ "& tr > *:not(:first-child)": { textAlign: "right" } }}>
-          <TableHead>
+          <TableHead className="tableHead">
             <TableRow>
-              <TableCell>No.</TableCell>
-              <TableCell>Name</TableCell>
+              <TableCell style={{width:'10px'}}>No.</TableCell>
+              <TableCell style={{width:'13%'}}>Name</TableCell>
               <TableCell>Printer Name</TableCell>
-              <TableCell>Footer</TableCell>
-              <TableCell>Actions</TableCell>
+              <TableCell>Top</TableCell>
+              <TableCell>Right</TableCell>
+              <TableCell>Bottom</TableCell>
+              <TableCell>Left</TableCell>
+              <TableCell className="headerCentertext">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {categoryList?.map((data, index) => (
               <TableRow key={data.categoryId}>
                 <TableCell>{index + 1}</TableCell>
+                {console.log(categoryList)}
                 <TableCell>{data.categoryName}</TableCell>
                 <TableCell>{data.printerName}</TableCell>
-                <TableCell>{data.footer}</TableCell>
+                <TableCell className="margins">{data.marginTop}</TableCell>
+                <TableCell className="margins">{data.marginRight}</TableCell>
+                <TableCell className="margins">{data.marginBottom}</TableCell>
+                <TableCell className="margins">{data.marginLeft}</TableCell>
                 <TableCell>
                   <div className="flex">
                     <div
@@ -207,6 +214,7 @@ const PrintSelectingPage = () => {
                   <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
+                    label="Printers"
                     value={selectPrinter.printerName || ""}
                     onChange={(e) =>
                       setSelectPrinter((prev) => ({

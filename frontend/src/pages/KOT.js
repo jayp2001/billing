@@ -39,10 +39,7 @@ const KOT = (props) => {
           >
             <meta charSet="utf-8" />
             {/* {props.data.billPayType == 'cash'?'SHRI BHAGAWATI':props.data.firmData.firmName} */}
-            {/* {props.data.billType} */}
-            Delivery
-            <br />
-            KOT
+            {props.data.billType} - KOT
             <br />
             {props.isEdit ? "( NEW BILL )" : ""}
           </div>
@@ -166,7 +163,7 @@ const KOT = (props) => {
             <div
               style={{ textAlign: "start", marginTop: "6px", fontSize: "10px" }}
             >
-              <div>Locality : હેલો આ મારું સરનામું છે</div>
+              <div>Locality : </div>
             </div>
           </div>
         ) : (
@@ -208,14 +205,15 @@ const KOT = (props) => {
                 <tr>
                   <td
                     style={{
-                      border: "1px solid black",
-                      width: "70%",
-                      fontWeight: "700",
-                      paddingTop: "6px",
-                      lineHeight: "15px",
+                      borderRight: "1px solid black",
+                      minWidth: "65%",
+                      maxWidth: "75%",
+                      fontWeight: "600",
+                      paddingTop: "8px",
+                      lineHeight: "21px",
                       paddingLeft: "4px",
                       paddingRight: "4px",
-                      paddingBottom: "2px",
+                      paddingBottom: "8px",
                       fontSize: "14px",
                       borderLeft: "0px",
                       textAlign: "start",
@@ -237,11 +235,11 @@ const KOT = (props) => {
                   </td>
                   <td
                     style={{
-                      border: "1px solid black",
-                      padding: "2px 0px 6px 0px",
+                      padding: "8px 0px 6px 0px",
                       borderRight: "0px",
                       textAlign: "center",
-                      width: "30%",
+                      minWidth: "25%",
+                      maxWidth: "35%",
                       fontSize: "14px",
                     }}
                   >
@@ -256,7 +254,7 @@ const KOT = (props) => {
             </tbody>
           </table>
         </div>
-        {
+        {props.data.billComment && (
           <div
             style={{
               padding: "2px",
@@ -276,7 +274,7 @@ const KOT = (props) => {
               </div>
             </div>
           </div>
-        }
+        )}
       </div>
     </div>
   );

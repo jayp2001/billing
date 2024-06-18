@@ -15,6 +15,7 @@ import Alert from "@mui/material/Alert";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import CryptoJS from "crypto-js";
+import bhagwatiLogo from "../../assets/bhagwatiLogo.png";
 import { ToastContainer, toast } from "react-toastify";
 const { ipcRenderer } = window.require("electron");
 
@@ -144,7 +145,7 @@ function LoginPage() {
           <div className="grid grid-cols-12">
             <div className="tablet1:col-span-8 text-m mobile:col-start-4 mobile:col-span-6 tablet1:col-start-3">
               <div className="logoMobile">
-                {/* <img src={bhagwatiLogo} alt="bhagwati logo" /> */}
+                <img src={bhagwatiLogo} alt="bhagwati logo" />
               </div>
             </div>
           </div>

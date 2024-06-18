@@ -1,7 +1,7 @@
 {
-  "name": "southern-ratio-wrestle-fhv40",
-  "productName": "southern-ratio-wrestle-fhv40",
-  "description": "My Electron application description",
+  "name": "Shree-Bhagwati-Fast-Food",
+  "productName": "Shree Bhagwati Fast Food",
+  "description": "Bhagwati Billing Application",
   "keywords": [],
   "main": "./main.js",
   "version": "1.0.0",
@@ -28,7 +28,7 @@
     "node-machine-id": "^1.1.12"
   },
   "build": {
-    "appId": "com.Rk.final",
+    "appId": "com.Rk.BhagwatiFastFood",
     "files": "!build-assets${*/}"
   }
 }

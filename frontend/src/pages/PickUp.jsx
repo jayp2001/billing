@@ -25,11 +25,13 @@ import { ReactTransliterate } from "react-transliterate";
 import "react-transliterate/dist/index.css";
 import { FormControl } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import axios from "axios";
 import { renderToString } from "react-dom/server";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { BACKEND_BASE_URL } from "../url";
+import RemoveIcon from "@mui/icons-material/Remove";
 import InputAdornment from "@mui/material/InputAdornment";
 import InputBase from "@mui/material/InputBase";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
@@ -159,6 +161,10 @@ const PickUp = () => {
     billComment: "",
     billCommentAuto: [],
   });
+  const [disbledFeild, setDisabledFeild] = useState({
+    quantity: true,
+    comment: true,
+  });
   const [customerData, setCustomerData] = useState({
     customerId: "",
     addressId: "",
@@ -199,6 +205,7 @@ const PickUp = () => {
       ...prevState,
       inputCode: value,
     }));
+    setDisabledFeild({ ...disbledFeild, quantity: false, comment: false });
     // const matchingProduct = data.find(item => item.itemCode.toString() === value);
 
     // if (e.key === 'Enter') {
@@ -313,6 +320,7 @@ const PickUp = () => {
     //   (item.itemName && item.itemName.toLowerCase().includes(value.toLowerCase()))
     // ) : [];
     console.log("filltered", value);
+    setDisabledFeild({ ...disbledFeild, quantity: false, comment: false });
     setValidationError(false);
     setFullFormData((prevState) => ({
       ...prevState,
@@ -2707,6 +2715,7 @@ const PickUp = () => {
 
   const handleAddItem = (e) => {
     if (e.key === "Enter") {
+      setDisabledFeild({ ...disbledFeild, quantity: true, comment: true });
       if (fullFormData.inputName !== "") {
         const isExist = items.findIndex(
           (item) =>
@@ -3075,7 +3084,7 @@ const PickUp = () => {
   }, [suggestionIndex]);
 
   return (
-    <div className="" style={{ background: "#f0f2f5" }}>
+    <div className="bg-gray-200 overfloe-hidden h-full">
       <Header
         setIsEdit={setIsEdit}
         setBillData={setBillData}
@@ -3085,7 +3094,7 @@ const PickUp = () => {
         setButtonCLicked={setButtonCLicked}
       />
       <section className="right_section ">
-        <div className="right_top_header gap-6 p-2 flex">
+        <div className="right_top_header gap-6 p-2 flex paddinAnother">
           <div className="w-32">
             <TextField
               placeholder="Short Code"
@@ -3094,6 +3103,7 @@ const PickUp = () => {
               onKeyDown={handleEnterPressFirst}
               variant="outlined"
               inputRef={first}
+              className="textBoxmUI"
               error={validationError ? true : false}
               helperText={validationError ? "Incorrect Code" : ""}
             />
@@ -3123,6 +3133,7 @@ const PickUp = () => {
           <div className="w-28">
             <TextField
               placeholder="Quantity"
+              className="textBoxmUI"
               value={fullFormData.qty}
               onChange={(e) => {
                 if (
@@ -3132,6 +3143,7 @@ const PickUp = () => {
                   handleQuantityChange(e);
                 }
               }}
+              disabled={disbledFeild.quantity ? true : false}
               onKeyDown={handleEnterPressSecond}
               inputRef={quantityInputRef}
               variant="outlined"
@@ -3213,7 +3225,7 @@ const PickUp = () => {
             </FormControl>
           </div>
           <div className="w-28">
-            <TextField value={fullFormData.itemPrice} />
+            <TextField value={fullFormData.itemPrice} className="textBoxmUI" />
           </div>
           <div className="w-96 autocompleteTxt">
             <TextField
@@ -3226,8 +3238,9 @@ const PickUp = () => {
                   comment: e.target.value,
                 }))
               }
+              disabled={disbledFeild.comment ? true : false}
               onKeyDown={handleAddItem}
-              className="w-full"
+              className="w-full textBoxmUI"
             />
             {/* <Autocomplete
               multiple
@@ -3323,8 +3336,8 @@ const PickUp = () => {
           </div>
         </div>
       </section>
-      <section className="left_section ">
-        <div className=" w-full p-0 my-2">
+      <section className="left_section h-full ">
+        <div className=" w-full p-0 my-2 ">
           <div className="flex justify-between h-full">
             <div className="Righ_bill_menu w-2/5">
               <div className="w-full right_meun rounded-md">
@@ -3847,7 +3860,7 @@ const PickUp = () => {
                                 }
                                 className="border quantity_button cursor-pointer flex justify-center p-0 rounded-md border-black"
                               >
-                                <span className="w-fit">-</span>
+                                <RemoveIcon />
                               </div>
                             </div>
                             <input
@@ -3865,7 +3878,7 @@ const PickUp = () => {
                                 }
                                 className="border quantity_button  cursor-pointer flex justify-center text-md  items-center p-0 rounded-md border-black"
                               >
-                                <span className="w-fit">+</span>
+                                <AddOutlinedIcon />
                               </div>
                             </div>
                           </div>
@@ -4134,6 +4147,11 @@ const PickUp = () => {
                         setBillData((perv) => ({
                           ...perv,
                           settledAmount: e.target.value,
+                          discountType:
+                            billData.subTotal - e.target.value == 0
+                              ? "none"
+                              : "fixed",
+                          discountValue: billData.subTotal - e.target.value,
                         }));
                       }
                     }}
