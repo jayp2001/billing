@@ -1,5 +1,3 @@
-
-
 .right_top_header {
   /* margin-top: 10px; */
   /* align-items: center; */
@@ -30,13 +28,24 @@ ul li:hover {
 }
 
 .css-1t8l2tu-MuiInputBase-input-MuiOutlinedInput-input {
-  padding: 10px !important;
+  padding: 12px !important;
+}
+.css-3nmb8v-MuiInputBase-root .MuiInputBase-input {
+  padding: 14px !important;
 }
 
 .MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon.css-clttge-MuiAutocomplete-root .MuiOutlinedInput-root {
   padding: 3px !important;
 }
-
+.textBoxmUI .css-1v4ccyo .css-1x5jdmq {
+  padding: 9px !important;
+}
+.autocompleteTxt .MuiAutocomplete-root.MuiAutocomplete-hasClearIcon.MuiAutocomplete-hasPopupIcon.css-1e9nr6u .MuiFormControl-root.MuiFormControl-fullWidth.MuiTextField-root.css-feqhe6  .css-1e9nr6u .MuiOutlinedInput-root {
+  padding: 2px !important;
+}
+.autocompleteTxt .MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon.css-1e9nr6u .MuiOutlinedInput-root {
+  padding: 4px !important;
+}
 .verticle_divider {
   width: 1px !important;
   color: white !important;
@@ -45,7 +54,11 @@ ul li:hover {
 }
 
 .autocompleteTxt .css-1j0qgw8-MuiAutocomplete-root .MuiOutlinedInput-root{
-  padding: 2px !important;
+  padding: 4px !important;
+}
+.paddinAnother{
+  padding-top: 9px !important;
+  padding-bottom: 9px !important;
 }
 .autocompleteTxt .css-1tw9w9k-MuiAutocomplete-root .MuiOutlinedInput-root{
   padding-top: 2px !important;
@@ -198,4 +211,3 @@ input[type="number"] {
 .no-spinner {
   -moz-appearance: textfield;
 }
-

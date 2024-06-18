@@ -423,10 +423,10 @@ const RestaurantBill = (props) => {
                     borderBottom: "1px solid black",
                     padding: "10px 4px 10px 0px",
                     fontWeight: "bold",
-                    fontSize: "14px",
+                    fontSize: "18px",
                   }}
                 >
-                  <pre style={{ fontFamily: "Verdana" }}>
+                  <pre style={{ fontFamily: "Verdana", fontSize:'18px' }}>
                     Grand Total Rs. {(props.data.settledAmount).toFixed(2)}
                   </pre>
                 </td>

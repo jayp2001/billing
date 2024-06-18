@@ -14,7 +14,7 @@ import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSwitch } from "../../pages/app/toggleSlice";
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import axios from "axios";
@@ -54,7 +54,6 @@ const Header = (props) => {
       width: "auto",
     },
   }));
-
   const getBbill = async (id) => {
     await axios
       .get(
@@ -146,16 +145,19 @@ const Header = (props) => {
   const [logOutPopup, setLogOutPopUp] = useState(false);
   const [holdBills, setHoldBills] = useState([]);
 
+  const location = useLocation();
   const toggleDrawer = (anchor, open) => (event) => {
-    if (
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
+    if (location.pathname === "/main") {
+      if (
+        event.type === "keydown" &&
+        (event.key === "Tab" || event.key === "Shift")
+      ) {
+        return;
+      }
+      getRecentToken("Pick Up");
+      setActiveTab("Pick Up");
+      setState({ ...state, [anchor]: open });
     }
-    getRecentToken("Pick Up");
-    setActiveTab("Pick Up");
-    setState({ ...state, [anchor]: open });
   };
   const style = {
     position: "absolute",
@@ -452,11 +454,11 @@ const Header = (props) => {
                 value={search}
               />
             </div>
-            <div className="header_toggle ml-2 grid content-center ">
+            {/* <div className="header_toggle ml-2 grid content-center ">
               <div>
                 OFF <Switch checked={isSwitchOn} onChange={handleToggle} /> ON
               </div>
-            </div>
+            </div> */}
           </div>
           <div className="flex h-full align-middle gap-6 mr-3">
             <div
@@ -470,8 +472,10 @@ const Header = (props) => {
             <div className="header_icon cursor-pointer grid content-center">
               <WatchLaterTwoToneIcon
                 onClick={() => {
-                  setOpenHold(true);
-                  getHoldBills();
+                  if (location.pathname === "/main") {
+                    setOpenHold(true);
+                    getHoldBills();
+                  }
                 }}
               />
             </div>
@@ -480,14 +484,14 @@ const Header = (props) => {
             </div>
             <div className="header_icon cursor-pointer grid content-center">
               <GridViewIcon
-              // onClick={() => {
-              //   naviagate("/LiveView");
-              // }}
+                onClick={() => {
+                  naviagate("/tableView");
+                }}
               />
             </div>
-            <div className="header_icon cursor-pointer grid content-center">
+            {/* <div className="header_icon cursor-pointer grid content-center">
               <NotificationsIcon />
-            </div>
+            </div> */}
             <div className="header_icon cursor-pointer  grid content-center">
               <PowerSettingsNewIcon onClick={() => setLogOutPopUp(true)} />
             </div>
@@ -513,7 +517,7 @@ const Header = (props) => {
                     naviagate("/");
                   }}
                 >
-                  Save
+                  Yes
                 </button>
               </div>
               <div className="w-full">
@@ -523,7 +527,7 @@ const Header = (props) => {
                     setLogOutPopUp(false);
                   }}
                 >
-                  Cancle
+                  No
                 </button>
               </div>
             </div>

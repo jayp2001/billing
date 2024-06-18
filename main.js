@@ -7,6 +7,7 @@ const { machineIdSync } = require("node-machine-id");
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
+    icon: "./icon.ico",
     webPreferences: {
       nodeIntegration: true,
       enableRemoteModule: true,
@@ -127,8 +128,10 @@ function createWindow() {
     //   console.error('Error:', error);
     // })
   });
-  mainWindow.loadURL("http://localhost:3000/");
+  // mainWindow.loadURL("http://192.168.1.222:3000/");
   // mainWindow.loadURL('http://admin.bhagwatifastfood.com/')
+  // mainWindow.loadURL("http://192.168.1.222:3006/");
+  mainWindow.loadURL('http://localhost:3000/')
 }
 
 app.whenReady().then(() => {
