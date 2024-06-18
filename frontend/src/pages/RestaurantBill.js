@@ -382,7 +382,7 @@ const RestaurantBill = (props) => {
                   }}
                 >
                   <pre style={{ fontFamily: "Verdana" }}>
-                    Total Qty: {itemList.length + 1}, Sub Total:{" "}
+                    Total Qty: {itemList.length }, Sub Total:{" "}
                     {(props.data.subTotal).toFixed(2)}
                   </pre>
                 </td>

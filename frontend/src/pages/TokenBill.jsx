@@ -319,7 +319,7 @@ const TokenBil = (props) => {
                 >
                   <pre style={{ fontFamily: "Verdana" }}>
                     <pre style={{ fontFamily: "Verdana", fontSize: "14px" }}>
-                      Total Qty: {itemList.length + 1}   Sub Total:{" "}{props.data.subTotal.toFixed(2)}
+                      Total Qty: {itemList.length}   Sub Total:{" "}{props.data.subTotal.toFixed(2)}
                     </pre>
                   </pre>
                 </td>

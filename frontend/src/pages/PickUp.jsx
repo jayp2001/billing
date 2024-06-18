@@ -308,11 +308,37 @@ const PickUp = () => {
       billCommentAuto: value ? value : [],
     }));
   };
+  const handleShoetCutKey = (event) => {
+    if (event.key === "F12") {
+      buttonCLicked == "tab2"
+        ? isEdit
+          ? editBillDelivery()
+          : saveBillDelivery()
+        : isEdit
+        ? editBill()
+        : saveBill();
+    }
+    if (event.key === "F1") {
+      buttonCLicked == "tab2"
+        ? isEdit
+          ? justEditBillDelivery()
+          : justSaveBillDelivery()
+        : isEdit
+        ? justEditBill()
+        : justSaveBill();
+    }
+  };
   useEffect(() => {
     first.current.focus();
     getData();
     getcustomerDDL();
     getComments();
+  }, []);
+  useEffect(() => {
+    window.addEventListener("keydown", handleShoetCutKey);
+    return () => {
+      window.removeEventListener("keydown", handleShoetCutKey);
+    };
   }, []);
   const handleInputNameChange = (e, value) => {
     // const filtered = value ? data.filter(item =>
@@ -328,6 +354,10 @@ const PickUp = () => {
       itemName: value && value.itemName ? value.itemName : "",
       selectedItem: value ? value : "",
       itemId: value && value.itemId ? value.itemId : "",
+      itemPrice:
+        value && value.variantsList[0] ? value.variantsList[0].price : 0,
+      unit: value && value.variantsList[0] ? value.variantsList[0].unit : "",
+      price: value && value.variantsList[0] ? value.variantsList[0].price : 0,
     }));
 
     if (value) {
@@ -2458,6 +2488,10 @@ const PickUp = () => {
     setFullFormData((prevState) => ({
       ...prevState,
       qty: value,
+      price:
+        fullFormData && fullFormData.itemPrice
+          ? fullFormData.itemPrice * value
+          : 0,
     }));
 
     if (e.key === "Enter") {
@@ -2633,6 +2667,18 @@ const PickUp = () => {
                 ? matchingProduct.itemName
                 : "",
             selectedItem: matchingProduct,
+            itemPrice:
+              matchingProduct && matchingProduct.variantsList[0]
+                ? matchingProduct.variantsList[0].price
+                : 0,
+            unit:
+              matchingProduct && matchingProduct.variantsList[0]
+                ? matchingProduct.variantsList[0].unit
+                : "",
+            price:
+              matchingProduct && matchingProduct.variantsList[0]
+                ? matchingProduct.variantsList[0].price
+                : 0,
           }));
           quantityInputRef.current && quantityInputRef.current.focus();
         }
@@ -3744,10 +3790,15 @@ const PickUp = () => {
                     </Button>
                   </div> */}
                   <div
-                    onClick={() =>
-                      (items.length <= 0 || isEdit == false) &&
-                      setButtonCLicked("tab2")
-                    }
+                    onClick={() => {
+                      if (items.length <= 0 || isEdit == false) {
+                        setButtonCLicked("tab2");
+                        setBillError((perv) => ({
+                          ...perv,
+                          mobileNo: false,
+                        }));
+                      }
+                    }}
                     className={
                       buttonCLicked == "tab2"
                         ? "clicked col-3 p-0  col-span-6 text-center"
@@ -3763,10 +3814,15 @@ const PickUp = () => {
                     </Button>
                   </div>
                   <div
-                    onClick={() =>
-                      (items.length <= 0 || isEdit == false) &&
-                      setButtonCLicked("tab3")
-                    }
+                    onClick={() => {
+                      if (items.length <= 0 || isEdit == false) {
+                        setButtonCLicked("tab3");
+                        setBillError((perv) => ({
+                          ...perv,
+                          mobileNo: false,
+                        }));
+                      }
+                    }}
                     className={
                       buttonCLicked == "tab3"
                         ? "clicked col-3 p-0  col-span-6 text-center"

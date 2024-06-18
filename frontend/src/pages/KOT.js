@@ -26,6 +26,7 @@ const KOT = (props) => {
           borderCollapse: "collapse",
           textAlign: "center",
           overflow: "hidden",
+          borderBottom:'0px'
         }}
       >
         <div
@@ -205,7 +206,7 @@ const KOT = (props) => {
                 <tr>
                   <td
                     style={{
-                      borderRight: "1px solid black",
+                      border: "1px solid black",
                       minWidth: "65%",
                       maxWidth: "75%",
                       fontWeight: "600",
@@ -236,11 +237,12 @@ const KOT = (props) => {
                   <td
                     style={{
                       padding: "8px 0px 6px 0px",
-                      borderRight: "0px",
+                      border: "1px solid black",
                       textAlign: "center",
                       minWidth: "25%",
                       maxWidth: "35%",
                       fontSize: "14px",
+                      borderRight:'0px'
                     }}
                   >
                     {item.qty} {item.unit}
