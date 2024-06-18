@@ -141,6 +141,49 @@ const PrintSelectingPage = () => {
     setSelectPrinter({});
     setAssignPrinterPopUp(false);
   };
+  if (loading) {
+    console.log(">>>>??");
+    toast.loading("Please wait...", {
+      toastId: "loading",
+    });
+  }
+  if (success) {
+    toast.dismiss("loading");
+    toast("success", {
+      type: "success",
+      toastId: "success",
+      position: "top-right",
+      toastId: "error",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+    setTimeout(() => {
+      setSuccess(false);
+      setLoading(false);
+    }, 50);
+  }
+  if (error) {
+    setLoading(false);
+    toast.dismiss("loading");
+    toast(error, {
+      type: "error",
+      position: "top-right",
+      toastId: "error",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+    setError(false);
+  }
 
   useEffect(() => {
     getAllData();
@@ -167,7 +210,6 @@ const PrintSelectingPage = () => {
             {categoryList?.map((data, index) => (
               <TableRow key={data.categoryId}>
                 <TableCell>{index + 1}</TableCell>
-                {console.log(categoryList)}
                 <TableCell>{data.categoryName}</TableCell>
                 <TableCell>{data.printerName}</TableCell>
                 <TableCell className="margins">{data.marginTop}</TableCell>

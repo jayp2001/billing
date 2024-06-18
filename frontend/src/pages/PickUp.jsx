@@ -310,7 +310,7 @@ const PickUp = () => {
   };
   const handleShoetCutKey = (event) => {
     if (event.key === "F12") {
-      buttonCLicked == "tab2"
+      buttonCLicked === "tab2"
         ? isEdit
           ? editBillDelivery()
           : saveBillDelivery()
@@ -319,7 +319,7 @@ const PickUp = () => {
         : saveBill();
     }
     if (event.key === "F1") {
-      buttonCLicked == "tab2"
+      buttonCLicked === "tab2"
         ? isEdit
           ? justEditBillDelivery()
           : justSaveBillDelivery()
@@ -328,18 +328,19 @@ const PickUp = () => {
         : justSaveBill();
     }
   };
+
   useEffect(() => {
     first.current.focus();
     getData();
     getcustomerDDL();
     getComments();
   }, []);
-  useEffect(() => {
-    window.addEventListener("keydown", handleShoetCutKey);
-    return () => {
-      window.removeEventListener("keydown", handleShoetCutKey);
-    };
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener("keydown", handleShoetCutKey);
+  //   return () => {
+  //     window.removeEventListener("keydown", handleShoetCutKey);
+  //   };
+  // }, [buttonCLicked, isEdit]);
   const handleInputNameChange = (e, value) => {
     // const filtered = value ? data.filter(item =>
     //   (item.itemShortKey && item.itemShortKey.toLowerCase().includes(value.toLowerCase())) ||
@@ -2076,6 +2077,7 @@ const PickUp = () => {
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
         addBillData();
+        setValidationError(false)
       }
     }
   };
@@ -2872,6 +2874,7 @@ const PickUp = () => {
       unit: "",
       comment: "",
       commentAutoComplete: [],
+      itemPrice:''
     });
 
     if (unitOptionsExist(fullFormData.inputName)) {
@@ -3141,9 +3144,9 @@ const PickUp = () => {
       />
       <section className="right_section ">
         <div className="right_top_header gap-6 p-2 flex paddinAnother">
-          <div className="w-32">
+          <div className="w-20">
             <TextField
-              placeholder="Short Code"
+              placeholder="Code"
               value={fullFormData.inputCode ? fullFormData.inputCode : ""}
               onChange={handleInputCodeChange}
               onKeyDown={handleEnterPressFirst}
@@ -3151,10 +3154,10 @@ const PickUp = () => {
               inputRef={first}
               className="textBoxmUI"
               error={validationError ? true : false}
-              helperText={validationError ? "Incorrect Code" : ""}
+              helperText={validationError ? "No Code" : ""}
             />
           </div>
-          <div className="w-80 autocompleteTxt">
+          <div className="w-96 autocompleteTxt">
             <Autocomplete
               options={data ? data : []}
               defaultValue={null}
@@ -3797,6 +3800,7 @@ const PickUp = () => {
                           ...perv,
                           mobileNo: false,
                         }));
+                        setValidationError(false)
                       }
                     }}
                     className={
@@ -3821,6 +3825,7 @@ const PickUp = () => {
                           ...perv,
                           mobileNo: false,
                         }));
+                        setValidationError(false)
                       }
                     }}
                     className={

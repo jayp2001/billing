@@ -26,7 +26,7 @@ const KOT = (props) => {
           borderCollapse: "collapse",
           textAlign: "center",
           overflow: "hidden",
-          borderBottom:'0px'
+          borderBottom: "0px",
         }}
       >
         <div
@@ -141,31 +141,50 @@ const KOT = (props) => {
               borderTop: "2px solid black",
             }}
           >
-            <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
-            >
-              <div>Phone No : {customerData.mobileNo} </div>
-            </div>
-            <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
-            >
-              <div>Name : {customerData.customerName} </div>
-            </div>
-            <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
-            >
-              <div>Address : {customerData.address}</div>
-            </div>
-            <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "12px" }}
-            >
-              <div>Locality : {customerData.locality}</div>
-            </div>
-            <div
-              style={{ textAlign: "start", marginTop: "6px", fontSize: "10px" }}
-            >
-              <div>Locality : </div>
-            </div>
+            {customerData.mobileNo && (
+              <div
+                style={{
+                  textAlign: "start",
+                  marginTop: "6px",
+                  fontSize: "12px",
+                }}
+              >
+                <div>Phone No : {customerData.mobileNo} </div>
+              </div>
+            )}
+            {customerData.customerName && (
+              <div
+                style={{
+                  textAlign: "start",
+                  marginTop: "6px",
+                  fontSize: "12px",
+                }}
+              >
+                <div>Name : {customerData.customerName} </div>
+              </div>
+            )}
+            {customerData.address && (
+              <div
+                style={{
+                  textAlign: "start",
+                  marginTop: "6px",
+                  fontSize: "12px",
+                }}
+              >
+                <div>Address : {customerData.address}</div>
+              </div>
+            )}
+            {customerData.locality && (
+              <div
+                style={{
+                  textAlign: "start",
+                  marginTop: "6px",
+                  fontSize: "12px",
+                }}
+              >
+                <div>Locality : {customerData.locality}</div>
+              </div>
+            )}
           </div>
         ) : (
           <></>
@@ -242,7 +261,7 @@ const KOT = (props) => {
                       minWidth: "25%",
                       maxWidth: "35%",
                       fontSize: "14px",
-                      borderRight:'0px'
+                      borderRight: "0px",
                     }}
                   >
                     {item.qty} {item.unit}
