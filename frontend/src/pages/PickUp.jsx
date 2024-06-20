@@ -13,6 +13,8 @@ import {
   NativeSelect,
   MenuItem,
 } from "@mui/material";
+// import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from 'react-router-dom';
 import Autocomplete from "@mui/material/Autocomplete";
 import Popover from "@mui/material/Popover";
 import "./css/pickUp.css";
@@ -78,6 +80,7 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
   },
 }));
 const PickUp = () => {
+  const navigate = useNavigate();
   const userInfo = JSON.parse(localStorage.getItem("userInfo"));
   const freeSoloValue = React.useRef("");
   const systemPrinter = JSON.parse(localStorage.getItem("printerPreference"));
@@ -176,7 +179,7 @@ const PickUp = () => {
     aniversaryDate: "",
   });
   const [isEnglish, setIsEnglish] = React.useState(false);
-
+  let { tab } = useParams();
   const [customerList, setCustomerList] = React.useState([]);
   const [editBillData, setEditBillData] = React.useState();
   const [commentList, setCommentList] = React.useState([]);
@@ -185,7 +188,7 @@ const PickUp = () => {
   const [error, setError] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [validationError, setValidationError] = useState(false);
-  const [buttonCLicked, setButtonCLicked] = useState("tab2");
+  const [buttonCLicked, setButtonCLicked] = useState(tab);
   const [openSuggestions, setopenSuggestions] = useState(false);
   const quantityInputRef = useRef(null);
   const [data, setData] = useState([]);
@@ -315,8 +318,8 @@ const PickUp = () => {
           ? editBillDelivery()
           : saveBillDelivery()
         : isEdit
-        ? editBill()
-        : saveBill();
+          ? editBill()
+          : saveBill();
     }
     if (event.key === "F1") {
       buttonCLicked === "tab2"
@@ -324,8 +327,11 @@ const PickUp = () => {
           ? justEditBillDelivery()
           : justSaveBillDelivery()
         : isEdit
-        ? justEditBill()
-        : justSaveBill();
+          ? justEditBill()
+          : justSaveBill();
+    }
+    if (event.key === "F5") {
+      window.location.reload();
     }
   };
 
@@ -335,12 +341,12 @@ const PickUp = () => {
     getcustomerDDL();
     getComments();
   }, []);
-  // useEffect(() => {
-  //   window.addEventListener("keydown", handleShoetCutKey);
-  //   return () => {
-  //     window.removeEventListener("keydown", handleShoetCutKey);
-  //   };
-  // }, [buttonCLicked, isEdit]);
+  useEffect(() => {
+    window.addEventListener("keydown", handleShoetCutKey);
+    return () => {
+      window.removeEventListener("keydown", handleShoetCutKey);
+    };
+  }, [buttonCLicked, isEdit, fullFormData, billData, customerData, editBillData, billError, items]);
   const handleInputNameChange = (e, value) => {
     // const filtered = value ? data.filter(item =>
     //   (item.itemShortKey && item.itemShortKey.toLowerCase().includes(value.toLowerCase())) ||
@@ -481,6 +487,11 @@ const PickUp = () => {
         } else if (res && res.data && res.data.printKot) {
           ipcRenderer.send("set-title", printerDataKot);
         }
+        // setTimeout(() => {
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
+        // }, 1500)
       })
       .catch((error) => {
         setError(
@@ -579,6 +590,9 @@ const PickUp = () => {
         } else if (res && res.data && res.data.printKot) {
           ipcRenderer.send("set-title", printerDataKot);
         }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -678,6 +692,9 @@ const PickUp = () => {
         // } else if (res && res.data && res.data.printKot) {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -776,6 +793,9 @@ const PickUp = () => {
         // } else if (res && res.data && res.data.printKot) {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -877,6 +897,9 @@ const PickUp = () => {
         // } else if (res && res.data && res.data.printKot) {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -979,6 +1002,9 @@ const PickUp = () => {
         // } else if (res && res.data && res.data.printKot) {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -1077,6 +1103,9 @@ const PickUp = () => {
         // } else if (res && res.data && res.data.printKot) {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -1175,6 +1204,9 @@ const PickUp = () => {
         // } else if (res && res.data && res.data.printKot) {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -1287,6 +1319,9 @@ const PickUp = () => {
         } catch (error) {
           console.log("try catch errror", error);
         }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -1398,6 +1433,9 @@ const PickUp = () => {
         } catch (error) {
           console.log("try catch errror", error);
         }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -1474,6 +1512,9 @@ const PickUp = () => {
           billComment: "",
           billCommentAuto: [],
         });
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -1550,6 +1591,9 @@ const PickUp = () => {
           billComment: "",
           billCommentAuto: [],
         });
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -1662,6 +1706,9 @@ const PickUp = () => {
         } catch (error) {
           console.log("try catch errror", error);
         }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -1773,6 +1820,9 @@ const PickUp = () => {
         } catch (error) {
           console.log("try catch errror", error);
         }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -1884,6 +1934,9 @@ const PickUp = () => {
         } catch (error) {
           console.log("try catch errror", error);
         }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -1995,6 +2048,9 @@ const PickUp = () => {
         } catch (error) {
           console.log("try catch errror", error);
         }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
       })
       .catch((error) => {
         setError(
@@ -2576,11 +2632,11 @@ const PickUp = () => {
     const value = e.target.value;
     const options =
       fullFormData &&
-      fullFormData.selectedItem &&
-      fullFormData.selectedItem.variantsList
+        fullFormData.selectedItem &&
+        fullFormData.selectedItem.variantsList
         ? fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+        fullFormData.selectedItem &&
+        fullFormData.selectedItem.variantsList
         : [];
 
     if (!isNaN(value)) {
@@ -2625,11 +2681,11 @@ const PickUp = () => {
       e.preventDefault();
       const matchingProduct = data
         ? data?.find(
-            (item) =>
-              item.itemCode.toString() === value ||
-              item.itemShortKey.toString().toLocaleLowerCase() ===
-                value.toString().toLocaleLowerCase()
-          )
+          (item) =>
+            item.itemCode.toString() === value ||
+            item.itemShortKey.toString().toLocaleLowerCase() ===
+            value.toString().toLocaleLowerCase()
+        )
         : [];
       console.log("Search Item", matchingProduct);
       //    if (matchingProduct) {
@@ -2655,7 +2711,7 @@ const PickUp = () => {
         } else if (
           value === matchingProduct.itemCode.toString() ||
           matchingProduct.itemShortKey.toString().toLocaleLowerCase() ===
-            value.toString().toLocaleLowerCase()
+          value.toString().toLocaleLowerCase()
         ) {
           e.preventDefault();
           setValidationError(false);
@@ -2712,26 +2768,26 @@ const PickUp = () => {
         ...perv,
         unit:
           fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+            fullFormData.selectedItem &&
+            fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].unit
             : "",
         itemPrice:
           fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+            fullFormData.selectedItem &&
+            fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].price
             : 0,
         selectedUnit:
           fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+            fullFormData.selectedItem &&
+            fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0]
             : {},
         price:
           (fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+            fullFormData.selectedItem &&
+            fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].price
             : 0) * fullFormData.qty,
       }));
@@ -2739,8 +2795,8 @@ const PickUp = () => {
       e.preventDefault();
       if (
         fullFormData &&
-        fullFormData.selectedItem &&
-        fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
           ? fullFormData.selectedItem.variantsList.length > 1
             ? true
             : false
@@ -2749,8 +2805,8 @@ const PickUp = () => {
         unitInputRef.current && unitInputRef.current.focus();
       } else if (
         fullFormData &&
-        fullFormData.selectedItem &&
-        fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
           ? fullFormData.selectedItem.variantsList.length == 1
             ? true
             : false
@@ -2795,14 +2851,14 @@ const PickUp = () => {
             prevItems?.map((data, index) =>
               isExist == index
                 ? {
-                    ...data,
-                    qty: parseFloat(data.qty) + parseFloat(fullFormData.qty),
-                    comment: data.comment
-                      ? data.comment + ", " + fullFormData.comment
-                      : fullFormData.comment,
-                    price:
-                      data.price + fullFormData.qty * fullFormData.itemPrice,
-                  }
+                  ...data,
+                  qty: parseFloat(data.qty) + parseFloat(fullFormData.qty),
+                  comment: data.comment
+                    ? data.comment + ", " + fullFormData.comment
+                    : fullFormData.comment,
+                  price:
+                    data.price + fullFormData.qty * fullFormData.itemPrice,
+                }
                 : data
             )
           );
@@ -2874,7 +2930,7 @@ const PickUp = () => {
       unit: "",
       comment: "",
       commentAutoComplete: [],
-      itemPrice:''
+      itemPrice: ''
     });
 
     if (unitOptionsExist(fullFormData.inputName)) {
@@ -2923,9 +2979,9 @@ const PickUp = () => {
         subTotal: newSubTotal,
         settledAmount: Math.ceil(
           newSubTotal -
-            (prev.discountType === "fixed"
-              ? prev.discountValue
-              : prev.discountType === "percentage"
+          (prev.discountType === "fixed"
+            ? prev.discountValue
+            : prev.discountType === "percentage"
               ? newSubTotal * (prev.discountValue / 100)
               : 0)
         ),
@@ -2967,19 +3023,19 @@ const PickUp = () => {
       settledAmount: Math.ceil(
         qty1 > 1
           ? billData.subTotal -
-              items[index].itemPrice -
-              (billData.discountType == "fixed"
-                ? billData.discountValue
-                : billData.discountType == "percentage"
-                ? (billData.subTotal - items[index].itemPrice) *
-                  (billData.discountValue / 100)
-                : 0)
+          items[index].itemPrice -
+          (billData.discountType == "fixed"
+            ? billData.discountValue
+            : billData.discountType == "percentage"
+              ? (billData.subTotal - items[index].itemPrice) *
+              (billData.discountValue / 100)
+              : 0)
           : billData.subTotal -
-              (billData.discountType == "fixed"
-                ? billData.discountValue
-                : billData.discountType == "percentage"
-                ? billData.subTotal * (billData.discountValue / 100)
-                : 0)
+          (billData.discountType == "fixed"
+            ? billData.discountValue
+            : billData.discountType == "percentage"
+              ? billData.subTotal * (billData.discountValue / 100)
+              : 0)
       ),
     }));
   };
@@ -3004,12 +3060,12 @@ const PickUp = () => {
           subTotal: newSubTotal,
           settledAmount: Math.ceil(
             newSubTotal -
-              (prev.discountType === "fixed"
-                ? prev.discountValue
-                : prev.discountType === "percentage"
+            (prev.discountType === "fixed"
+              ? prev.discountValue
+              : prev.discountType === "percentage"
                 ? newSubTotal * (prev.discountValue / 100)
                 : 0
-              ).toFixed(2)
+            ).toFixed(2)
           ),
         };
       });
@@ -3028,7 +3084,7 @@ const PickUp = () => {
       toastId: "success",
       position: "top-right",
       toastId: "error",
-      autoClose: 3000,
+      autoClose: 2000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -3223,8 +3279,8 @@ const PickUp = () => {
                 onBlur={(e) => {
                   const json = fullFormData.selectedItem.variantsList
                     ? fullFormData.selectedItem.variantsList?.filter(
-                        (varient) => varient.unit == e.target.value
-                      )
+                      (varient) => varient.unit == e.target.value
+                    )
                     : {};
                   setFullFormData((perv) => ({
                     ...perv,
@@ -3239,8 +3295,8 @@ const PickUp = () => {
                 onChange={(e) => {
                   const json = fullFormData.selectedItem.variantsList
                     ? fullFormData.selectedItem.variantsList?.filter(
-                        (varient) => varient.unit == e.target.value
-                      )
+                      (varient) => varient.unit == e.target.value
+                    )
                     : {};
                   setFullFormData((perv) => ({
                     ...perv,
@@ -3434,9 +3490,8 @@ const PickUp = () => {
                           <td className="autocompleteTxt">
                             <input
                               type="text"
-                              className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${
-                                billError.mobileNo ? "mobileNoError" : ""
-                              }`}
+                              className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${billError.mobileNo ? "mobileNoError" : ""
+                                }`}
                               name="mobileNo"
                               // value={customerData.mobileNo}
                               // onChange={(e) => {
@@ -3470,7 +3525,7 @@ const PickUp = () => {
                               value={customerData.mobileNo}
                               autoComplete="off"
 
-                              // onBlur={() => setopenSuggestions(false)}
+                            // onBlur={() => setopenSuggestions(false)}
                             />
                             {customerList.length > 0 && (
                               <div
@@ -3489,11 +3544,10 @@ const PickUp = () => {
                                     onClick={() => handleSuggestionClick(val)}
                                   >
                                     <div
-                                      className={`suggestionValue px-2 py-1 ${
-                                        suggestionIndex === index
-                                          ? "bg-gray-200"
-                                          : ""
-                                      }`}
+                                      className={`suggestionValue px-2 py-1 ${suggestionIndex === index
+                                        ? "bg-gray-200"
+                                        : ""
+                                        }`}
                                     >
                                       {val.mobileNo} - {val.customerName} -{" "}
                                       {val.address}
@@ -4185,8 +4239,8 @@ const PickUp = () => {
                       (billData.discountType == "none"
                         ? 0
                         : (billData.subTotal - billData.settledAmount).toFixed(
-                            2
-                          ))}
+                          2
+                        ))}
                   </div>
                 </div>
               </div>
@@ -4249,8 +4303,8 @@ const PickUp = () => {
                           ? justEditBillDelivery()
                           : justSaveBillDelivery()
                         : isEdit
-                        ? justEditBill()
-                        : justSaveBill()
+                          ? justEditBill()
+                          : justSaveBill()
                     }
                   >
                     Save
@@ -4265,8 +4319,8 @@ const PickUp = () => {
                           ? editBillDelivery()
                           : saveBillDelivery()
                         : isEdit
-                        ? editBill()
-                        : saveBill();
+                          ? editBill()
+                          : saveBill();
                     }}
                   >
                     Save & Print

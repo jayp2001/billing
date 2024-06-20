@@ -16,6 +16,7 @@ import PrintSlectingPage from "./pages/PrintSelectingPage";
 import LiveView from "./pages/LiveView";
 import LoginPage from "./pages/login/login";
 import TableView from "./pages/tableview/tableView";
+import Dashboard from "./pages/tempDashboard/dashboard";
 // import TestPage from "./testPage";
 // import Test from './pages/Test';
 // import Test from './pages/Test';
@@ -32,14 +33,15 @@ const App = () => {
   return (
     <Provider store={store}>
       <Routes>
-        <Route path="/main" element={<MainComponent />} />
+        <Route path="/main/:tab" element={<MainComponent />} />
         {/* <Route path="/" element={<TestPage />} /> */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/" element={<RestaurantBill />} />
         {/* <Route path="/" element={<Test />} /> */}
         <Route path="/printSlectingPage" element={<PrintSlectingPage />} />
         <Route path="/LiveView" element={<LiveView />} />
-        <Route path="/tableView" element={<TableView/>} />
+        <Route path="/tableView" element={<TableView />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         {/* <Route path="/" element={<Test />} /> */}
       </Routes>
     </Provider>

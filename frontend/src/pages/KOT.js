@@ -26,7 +26,7 @@ const KOT = (props) => {
           borderCollapse: "collapse",
           textAlign: "center",
           overflow: "hidden",
-          borderBottom: "0px",
+          borderBottom: props.data.billComment ? "1px solid black" : "0px",
         }}
       >
         <div
@@ -129,10 +129,10 @@ const KOT = (props) => {
           </div>
         </div>
         {customerData &&
-        (customerData.mobileNo ||
-          customerData.customerName ||
-          customerData.address ||
-          customerData.locality) ? (
+          (customerData.mobileNo ||
+            customerData.customerName ||
+            customerData.address ||
+            customerData.locality) ? (
           <div
             style={{
               padding: "8px 4px 8px 4px ",

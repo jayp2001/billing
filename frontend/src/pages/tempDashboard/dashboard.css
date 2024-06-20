@@ -1,0 +1,14 @@
+.dashboardCard{
+    height: 60px;
+    width: 200px;
+    /* border: 1px solid black; */
+    border-radius: 10px;
+    text-align: center;
+    font-size: 32px;
+    padding-top: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    /* background-color: rgb(220 38 38 / 1); */
+    background: red;
+    color: white;
+}

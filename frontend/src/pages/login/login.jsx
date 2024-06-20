@@ -105,7 +105,7 @@ function LoginPage() {
           getAllPrinterdata(configs);
 
           // if (rights == 6)
-          navigate("/main");
+          navigate("/dashboard");
           // else
           //     navigate('/');
         }

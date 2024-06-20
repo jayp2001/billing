@@ -147,7 +147,8 @@ const Header = (props) => {
 
   const location = useLocation();
   const toggleDrawer = (anchor, open) => (event) => {
-    if (location.pathname === "/main") {
+    console.log('>>>path', location.pathname.split('/')[1])
+    if (location.pathname.split('/')[1] == "main") {
       if (
         event.type === "keydown" &&
         (event.key === "Tab" || event.key === "Shift")
@@ -217,16 +218,15 @@ const Header = (props) => {
     <Box
       sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 400 }}
       role="presentation"
-      // onClick={toggleDrawer(anchor, false)}
+    // onClick={toggleDrawer(anchor, false)}
     >
       <div className="p-2 my-1 text-base">Recent</div>
       <hr className="mb-2" />
 
       <div className="flex p-2 my-1">
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${
-            activeTab === "Dine In" ? "active" : ""
-          }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Dine In" ? "active" : ""
+            }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Dine In");
@@ -237,9 +237,8 @@ const Header = (props) => {
           Dine In
         </div>
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${
-            activeTab === "Pick Up" ? "active" : ""
-          }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Pick Up" ? "active" : ""
+            }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Pick Up");
@@ -250,9 +249,8 @@ const Header = (props) => {
           Pick Up
         </div>
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${
-            activeTab === "Delivery" ? "active" : ""
-          }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Delivery" ? "active" : ""
+            }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Delivery");
@@ -415,6 +413,7 @@ const Header = (props) => {
         setSearch("");
       })
       .catch((error) => {
+        setSearch('')
         setError(error.response ? error.response.data : "Network Error ...!!!");
       });
   };
@@ -433,7 +432,7 @@ const Header = (props) => {
               <button
                 className="button text-sm px-2 py-1 rounded-sm text-white"
                 onClick={() => {
-                  navigate("/main");
+                  navigate("/dashboard");
                 }}
               >
                 New Order
@@ -472,7 +471,7 @@ const Header = (props) => {
             <div className="header_icon cursor-pointer grid content-center">
               <WatchLaterTwoToneIcon
                 onClick={() => {
-                  if (location.pathname === "/main") {
+                  if (location.pathname.split('/')[1] == "main") {
                     setOpenHold(true);
                     getHoldBills();
                   }

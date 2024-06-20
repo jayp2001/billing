@@ -120,8 +120,8 @@ const TableView = () => {
               <TableCell align="right">
                 {rows["pickUp"]
                   ? rows["pickUp"].cashAmt +
-                    rows["pickUp"].onlineAmt +
-                    rows["pickUp"].dueAmt
+                  rows["pickUp"].onlineAmt +
+                  rows["pickUp"].dueAmt
                   : 0}
               </TableCell>
             </TableRow>
@@ -153,8 +153,8 @@ const TableView = () => {
               <TableCell align="right">
                 {rows["delivery"]
                   ? rows["delivery"].cashAmt +
-                    rows["delivery"].onlineAmt +
-                    rows["delivery"].dueAmt
+                  rows["delivery"].onlineAmt +
+                  rows["delivery"].dueAmt
                   : 0}
               </TableCell>
             </TableRow>
@@ -183,7 +183,7 @@ const TableView = () => {
               <TableCell align="right">
                 {rows["pickUp"]
                   ? rows["pickUp"].complimentaryAmt +
-                    rows["delivery"].complimentaryAmt
+                  rows["delivery"].complimentaryAmt
                   : 0}
               </TableCell>
               <TableCell align="right">
@@ -199,11 +199,11 @@ const TableView = () => {
               <TableCell align="right">
                 {rows["pickUp"]
                   ? rows["pickUp"].cashAmt +
-                    rows["pickUp"].onlineAmt +
-                    rows["pickUp"].dueAmt +
-                    rows["delivery"].cashAmt +
-                    rows["delivery"].onlineAmt +
-                    rows["delivery"].dueAmt
+                  rows["pickUp"].onlineAmt +
+                  rows["pickUp"].dueAmt +
+                  rows["delivery"].cashAmt +
+                  rows["delivery"].onlineAmt +
+                  rows["delivery"].dueAmt
                   : 0}
               </TableCell>
             </TableRow>
