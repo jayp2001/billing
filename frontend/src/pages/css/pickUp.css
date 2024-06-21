@@ -1,6 +1,10 @@
-.right_top_header {
+body{
+  overflow: hidden !important;
+}
+.anotherHeight {
   /* margin-top: 10px; */
   /* align-items: center; */
+  overflow: hidden;
 }
 
 .right_meun {
@@ -183,6 +187,7 @@ font-weight: 600;
 
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
+  z-index: -1 !important;
 }
 
 ::-webkit-scrollbar-thumb {

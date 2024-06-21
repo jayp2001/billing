@@ -5,7 +5,7 @@ import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import "./css/Header.css";
-import { Modal, Switch, Tab } from "@mui/material";
+import { Modal, Popover, Switch, Tab, Typography } from "@mui/material";
 import WatchLaterTwoToneIcon from "@mui/icons-material/WatchLaterTwoTone";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import GridViewIcon from "@mui/icons-material/GridView";
@@ -14,8 +14,10 @@ import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSwitch } from "../../pages/app/toggleSlice";
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
+import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import Drawer from "@mui/material/Drawer";
 import axios from "axios";
 import { BACKEND_BASE_URL } from "../../url";
@@ -31,6 +33,18 @@ const Header = (props) => {
   const [search, setSearch] = useState("");
   const [error, setError] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [hoveredData, setHoveredData] = useState(null);
+
+  const handlePopoverOpen = (event, data) => {
+    setAnchorEl(event.currentTarget);
+    setHoveredData(data);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+    setHoveredData(null);
+  };
   const config = {
     headers: {
       "Content-Type": "application/json",
@@ -106,6 +120,7 @@ const Header = (props) => {
         setRecentBill(res.data);
       })
       .catch((error) => {
+        setRecentBill([]);
         // setError(error.response ? error.response.data : "Network Error ...!!!");
       });
   };
@@ -147,8 +162,8 @@ const Header = (props) => {
 
   const location = useLocation();
   const toggleDrawer = (anchor, open) => (event) => {
-    console.log('>>>path', location.pathname.split('/')[1])
-    if (location.pathname.split('/')[1] == "main") {
+    console.log(">>>path", location.pathname.split("/")[1]);
+    if (location.pathname.split("/")[1] == "main") {
       if (
         event.type === "keydown" &&
         (event.key === "Tab" || event.key === "Shift")
@@ -160,6 +175,7 @@ const Header = (props) => {
       setState({ ...state, [anchor]: open });
     }
   };
+  const popOverOpen = Boolean(anchorEl);
   const style = {
     position: "absolute",
     top: "50%",
@@ -214,19 +230,23 @@ const Header = (props) => {
     setError(false);
   }
 
+  const filteredBills = recentBill.filter((val) =>
+    val.tokenNo.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const list = (anchor) => (
     <Box
       sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 400 }}
       role="presentation"
-    // onClick={toggleDrawer(anchor, false)}
+      // onClick={toggleDrawer(anchor, false)}
     >
       <div className="p-2 my-1 text-base">Recent</div>
       <hr className="mb-2" />
 
-      <div className="flex p-2 my-1">
+      <div className="flex p-2 my-1 sticky">
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Dine In" ? "active" : ""
-            }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${
+            activeTab === "Dine In" ? "active" : ""
+          }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Dine In");
@@ -237,8 +257,9 @@ const Header = (props) => {
           Dine In
         </div>
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Pick Up" ? "active" : ""
-            }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${
+            activeTab === "Pick Up" ? "active" : ""
+          }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Pick Up");
@@ -249,8 +270,9 @@ const Header = (props) => {
           Pick Up
         </div>
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Delivery" ? "active" : ""
-            }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${
+            activeTab === "Delivery" ? "active" : ""
+          }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Delivery");
@@ -275,20 +297,18 @@ const Header = (props) => {
         />
       </div>
       <hr className="my-2" />
-      <div className="flex pl-6 pr-6 mt-1 justify-between recentBillHeader">
+      <div className="flex pl-6 pr-4 mt-1 justify-between recentBillHeader">
         <div>Token No</div>
+        <div className="mr-20">Customer Name</div>
         <div>Rs.</div>
       </div>
 
       <div
-        className="recentBillContainer"
+        className="recentBillContainer customHeight"
         onClick={toggleDrawer(anchor, false)}
       >
-        {recentBill
-          .filter((val) =>
-            val.tokenNo.toLowerCase().includes(searchTerm.toLowerCase())
-          )
-          .map((data, index) => (
+        {filteredBills.length > 0 ? (
+          filteredBills.map((data, index) => (
             <div
               className="recentBillRow pb-2 pt-2 flex justify-between cursor-pointer"
               key={index}
@@ -297,9 +317,58 @@ const Header = (props) => {
               }}
             >
               <div className="pl-6">{data.tokenNo}</div>
+              {activeTab === "Delivery" ? (
+                <div
+                  className="customername"
+                  onMouseEnter={(event) => handlePopoverOpen(event, data)}
+                  onMouseLeave={handlePopoverClose}
+                >
+                  {data.customerName}
+                </div>
+              ) : (
+                <></>
+              )}
               <div className="pr-4">{data.totalAmount}</div>
+              <Popover
+                id="mouse-over-popover"
+                sx={{
+                  pointerEvents: "none",
+                  boxShadow: 1,
+                  "& .MuiPaper-root": {
+                    boxShadow: "0px 2px 2px rgba(0, 0, 0, 0.1)",
+                  },
+                }}
+                open={popOverOpen}
+                anchorEl={anchorEl}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+                transformOrigin={{
+                  vertical: "top",
+                  horizontal: "left",
+                }}
+                onClose={handlePopoverClose}
+                disableRestoreFocus
+              >
+                <Typography sx={{ p: 1, width: 400 }}>
+                  {hoveredData && hoveredData.info
+                    ? hoveredData.info
+                    : "No address available"}
+                </Typography>
+              </Popover>
             </div>
-          ))}
+          ))
+        ) : (
+          <div className="customHeight flex justify-center text-center items-center ">
+            <div className="text-center mb-20">
+              <div>
+                <HourglassEmptyIcon className="noFoundIcon" />
+              </div>
+              <p className="text-lg font-bold">No Data Found</p>
+            </div>
+          </div>
+        )}
       </div>
     </Box>
   );
@@ -413,13 +482,13 @@ const Header = (props) => {
         setSearch("");
       })
       .catch((error) => {
-        setSearch('')
+        setSearch("");
         setError(error.response ? error.response.data : "Network Error ...!!!");
       });
   };
   return (
     <>
-      <div className="bg-gray-100 px-2 h-12">
+      <div className="bg-gray-100 px-2 h-12 sticky top-0 z-50">
         <div className="flex justify-between h-full">
           <div className="flex h-full  ">
             <div className="header_Bars grid content-center">
@@ -471,7 +540,7 @@ const Header = (props) => {
             <div className="header_icon cursor-pointer grid content-center">
               <WatchLaterTwoToneIcon
                 onClick={() => {
-                  if (location.pathname.split('/')[1] == "main") {
+                  if (location.pathname.split("/")[1] == "main") {
                     setOpenHold(true);
                     getHoldBills();
                   }
@@ -483,6 +552,13 @@ const Header = (props) => {
             </div>
             <div className="header_icon cursor-pointer grid content-center">
               <GridViewIcon
+                onClick={() => {
+                  naviagate("/LiveView");
+                }}
+              />
+            </div>
+            <div className="header_icon cursor-pointer grid content-center">
+              <CurrencyRupeeIcon
                 onClick={() => {
                   naviagate("/tableView");
                 }}

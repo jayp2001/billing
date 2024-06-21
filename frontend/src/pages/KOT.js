@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./css/Bill.css";
 import "./css/RestaurantBill.css";
 import { useActionData } from "react-router-dom";
@@ -10,6 +10,10 @@ const KOT = (props) => {
       : {};
   const itemList =
     props && props.data && props.data.itemsData ? props.data.itemsData : [];
+
+  useEffect(() => {
+    console.log(props);
+  },[]);
 
   return (
     <div
@@ -32,7 +36,7 @@ const KOT = (props) => {
         <div
           style={{
             padding: "16px 0px 16px 0px",
-            borderBottom: "2px solid black",
+            borderBottom: "1px solid black",
           }}
         >
           <div
@@ -43,6 +47,7 @@ const KOT = (props) => {
             {props.data.billType} - KOT
             <br />
             {props.isEdit ? "( NEW BILL )" : ""}
+            <p style={{fontSize:'14px', margin:'0'}}>{props.data.billPayType == "complimentary" ? "Complimentary" : ""}{props.data.billPayType == "cash" ? "Cash" : ""}{props.data.billPayType == "due" ? "Due" : ""} {props.data.billPayType == "online" ? "Online" : ""}</p>
           </div>
         </div>
         <div
@@ -122,17 +127,19 @@ const KOT = (props) => {
                     lineHeight: "18px",
                   }}
                 >
-                  {props.data.tokenNo}
+                  {props.data.billType == "Pick Up"
+                    ? props.data.justToken
+                    : props.data.tokenNo}{" "}
                 </p>
               </div>
             </div>
           </div>
         </div>
         {customerData &&
-          (customerData.mobileNo ||
-            customerData.customerName ||
-            customerData.address ||
-            customerData.locality) ? (
+        (customerData.mobileNo ||
+          customerData.customerName ||
+          customerData.address ||
+          customerData.locality) ? (
           <div
             style={{
               padding: "8px 4px 8px 4px ",
@@ -171,7 +178,7 @@ const KOT = (props) => {
                   fontSize: "12px",
                 }}
               >
-                <div>Address : {customerData.address}</div>
+                <div style={{width:'90%'}}>Address : {customerData.address}</div>
               </div>
             )}
             {customerData.locality && (

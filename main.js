@@ -131,7 +131,7 @@ function createWindow() {
   // mainWindow.loadURL("http://192.168.1.222:3000/");
   // mainWindow.loadURL('http://admin.bhagwatifastfood.com/')
   // mainWindow.loadURL("http://192.168.1.222:3006/");
-  mainWindow.loadURL('http://localhost:3000/')
+  mainWindow.loadURL("http://localhost:3000/");
 }
 
 app.whenReady().then(() => {

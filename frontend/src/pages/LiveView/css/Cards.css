@@ -1,0 +1,13 @@
+body{
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.CardContent{
+    padding: 0px !important;
+}
+.css-46bh2p-MuiCardContent-root{
+    padding: 0px !important;
+}
+.itemCustomheight{
+    height: 120px;
+    overflow: auto;
+}

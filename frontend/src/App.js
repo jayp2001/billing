@@ -13,10 +13,10 @@ import KOT from "./pages/KOT";
 import TokenBill from "./pages/TokenBill";
 // import Test from './pages/Test';
 import PrintSlectingPage from "./pages/PrintSelectingPage";
-import LiveView from "./pages/LiveView";
 import LoginPage from "./pages/login/login";
 import TableView from "./pages/tableview/tableView";
 import Dashboard from "./pages/tempDashboard/dashboard";
+import LiveView from "./pages/LiveView/LiveView"
 // import TestPage from "./testPage";
 // import Test from './pages/Test';
 // import Test from './pages/Test';

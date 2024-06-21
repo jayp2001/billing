@@ -31,7 +31,7 @@ const TokenBil = (props) => {
         <div
           style={{
             padding: "16px 0px 16px 0px",
-            borderBottom: "2px solid black",
+            borderBottom: "1px solid black",
           }}
         >
           <div
@@ -43,6 +43,22 @@ const TokenBil = (props) => {
             {props.data.billType}
           </div>
         </div>
+        {props.data.billPayType === "complimentary" && (
+          <div
+            style={{ paddingBottom: "0px", borderBottom: "2px solid black" }}
+          >
+            <div
+              className="name font-bold text-sm"
+              style={{
+                fontWeight: "700",
+                fontSize: "12px",
+                lineHeight: "20px",
+              }}
+            >
+              COMPLIMENTARY
+            </div>
+          </div>
+        )}
         <div
           style={{
             padding: "8px 4px 8px 4px ",
@@ -110,7 +126,9 @@ const TokenBil = (props) => {
                     lineHeight: "18px",
                   }}
                 >
-                  {props.data.tokenNo}
+                  {props.data.billType == "Pick Up"
+                    ? props.data.justToken
+                    : props.data.tokenNo}{" "}
                 </p>
               </div>
             </div>
@@ -164,7 +182,7 @@ const TokenBil = (props) => {
                   fontSize: "14px",
                 }}
               >
-                <div> Address : {customerData.address}</div>
+                <div style={{width:'95%'}}> Address : {customerData.address}</div>
               </div>
             )}
             {customerData.locality && (
@@ -319,9 +337,30 @@ const TokenBil = (props) => {
                 >
                   <pre style={{ fontFamily: "Verdana" }}>
                     <pre style={{ fontFamily: "Verdana", fontSize: "14px" }}>
-                      Total Qty: {itemList.length}   Sub Total:{" "}{props.data.subTotal.toFixed(2)}
+                      Total Qty: {itemList.length}   Sub Total:{" "}
+                      {props.data.subTotal.toFixed(2)}
                     </pre>
                   </pre>
+                </td>
+              </tr>
+              <tr style={{ padding: "5px" }}>
+                <td
+                  colSpan="3"
+                  style={{
+                    border: "1px solid black",
+                    padding: "8px 4px 8px 0px",
+                    width: "60%",
+                    borderLeft: "0px",
+                    textAlign: "right",
+                    borderRight: "0px",
+                    fontSize: "12px",
+                  }}
+                >
+                  <p style={{ fontSize: "14px", margin: "0", width:'100%',textAlign:'center' }}>
+                    Pay Type: {props.data.billPayType == "cash" ? "Cash" : ""}
+                    {props.data.billPayType == "due" ? "Due" : ""}{" "}
+                    {props.data.billPayType == "online" ? "Online" : ""}
+                  </p>
                 </td>
               </tr>
               <tr className="">

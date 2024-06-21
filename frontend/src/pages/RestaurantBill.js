@@ -71,7 +71,7 @@ const RestaurantBill = (props) => {
         >
           <div
             className="name font-medium text-sm"
-            style={{ fontWeight: "500", fontSize: '14px' }}
+            style={{ fontWeight: "500", fontSize: "14px" }}
           >
             GSTIN: {props.data.firmData.gstNumber}
           </div>
@@ -89,7 +89,7 @@ const RestaurantBill = (props) => {
             BILL OF SUPPLY
           </div>
         </div>
-        {props.data.billPayType === "complementary" && (
+        {props.data.billPayType === "complimentary" && (
           <div
             style={{ paddingBottom: "0px", borderBottom: "2px solid black" }}
           >
@@ -101,15 +101,15 @@ const RestaurantBill = (props) => {
                 lineHeight: "20px",
               }}
             >
-              COMPLEMENTARY BILL
+              COMPLIMENTARY BILL
             </div>
           </div>
         )}
         {customerData &&
-          (customerData.mobileNo ||
-            customerData.customerName ||
-            customerData.address ||
-            customerData.locality) ? (
+        (customerData.mobileNo ||
+          customerData.customerName ||
+          customerData.address ||
+          customerData.locality) ? (
           <div
             style={{
               padding: "8px 4px 8px 4px ",
@@ -159,11 +159,25 @@ const RestaurantBill = (props) => {
             }}
           >
             <div style={{ textAlign: "start" }}>
-              <div style={{ textAlign: "start", fontSize: '12px' }}>Date : {props.data.billDate}</div>
-              <div style={{ textAlign: "start", marginTop: "4px", fontSize: '12px' }}>
+              <div style={{ textAlign: "start", fontSize: "12px" }}>
+                Date : {props.data.billDate}
+              </div>
+              <div
+                style={{
+                  textAlign: "start",
+                  marginTop: "4px",
+                  fontSize: "12px",
+                }}
+              >
                 <div>Time: {props.data.billTime}</div>
               </div>
-              <div style={{ textAlign: "start", marginTop: "4px", fontSize: '12px' }}>
+              <div
+                style={{
+                  textAlign: "start",
+                  marginTop: "4px",
+                  fontSize: "12px",
+                }}
+              >
                 BILL NO :{" "}
                 <span style={{ fontWeight: "700", fontSize: "12px" }}>
                   {" "}
@@ -179,7 +193,11 @@ const RestaurantBill = (props) => {
             </div>
 
             <div
-              style={{ textAlign: "start", maxWidth: "30%", marginRight: '10px' }}
+              style={{
+                textAlign: "start",
+                maxWidth: "30%",
+                marginRight: "10px",
+              }}
             >
               <div
                 style={{
@@ -206,7 +224,9 @@ const RestaurantBill = (props) => {
                     lineHeight: "18px",
                   }}
                 >
-                  {props.data.tokenNo}
+                  {props.data.billType == "Pick Up"
+                    ? props.data.justToken
+                    : props.data.tokenNo}{" "}
                 </p>
               </div>
             </div>
@@ -253,7 +273,7 @@ const RestaurantBill = (props) => {
                     borderLeft: "0px",
                     textAlign: "start",
                     borderRight: "0px",
-                    fontSize: '14px'
+                    fontSize: "14px",
                   }}
                 >
                   Particulars
@@ -265,7 +285,7 @@ const RestaurantBill = (props) => {
                     paddingTop: "8px",
                     paddingBottom: "8px",
                     textAlign: "center",
-                    fontSize: '14px'
+                    fontSize: "14px",
                   }}
                 >
                   Qty
@@ -277,7 +297,7 @@ const RestaurantBill = (props) => {
                     paddingTop: "8px",
                     paddingBottom: "8px",
                     textAlign: "center",
-                    fontSize: '14px'
+                    fontSize: "14px",
                   }}
                 >
                   Price
@@ -309,7 +329,7 @@ const RestaurantBill = (props) => {
                       width: "60%",
                       padding: "8px 4px 8px 4px",
                       textAlign: "start",
-                      fontSize: '13px'
+                      fontSize: "13px",
                     }}
                   >
                     {item.itemName} <br />
@@ -332,7 +352,7 @@ const RestaurantBill = (props) => {
                       borderCollapse: "collapse",
                       width: "20%",
                       textAlign: "center",
-                      fontSize: '13px'
+                      fontSize: "13px",
                     }}
                   >
                     {item.qty}
@@ -344,10 +364,10 @@ const RestaurantBill = (props) => {
                       borderCollapse: "collapse",
                       width: "20%",
                       textAlign: "center",
-                      fontSize: '13px'
+                      fontSize: "13px",
                     }}
                   >
-                    {(item.itemPrice).toFixed(2)}
+                    {item.itemPrice.toFixed(2)}
                   </td>
                   <td
                     style={{
@@ -361,10 +381,10 @@ const RestaurantBill = (props) => {
                       textAlign: "end",
                       paddingRight: "2px",
                       paddingLeft: "2px",
-                      fontSize: '13px'
+                      fontSize: "13px",
                     }}
                   >
-                    {(item.price).toFixed(2)}
+                    {item.price.toFixed(2)}
                   </td>
                 </tr>
               ))}
@@ -382,8 +402,8 @@ const RestaurantBill = (props) => {
                   }}
                 >
                   <pre style={{ fontFamily: "Verdana" }}>
-                    Total Qty: {itemList.length }, Sub Total:{" "}
-                    {(props.data.subTotal).toFixed(2)}
+                    Total Qty: {itemList.length}, Sub Total:{" "}
+                    {props.data.subTotal.toFixed(2)}
                   </pre>
                 </td>
               </tr>
@@ -406,9 +426,9 @@ const RestaurantBill = (props) => {
                         {props.data.discountType === "fixed"
                           ? ""
                           : props.data.discountType === "none"
-                            ? ""
-                            : "%"}
-                        , {(props.data.totalDiscount).toFixed(2)}
+                          ? ""
+                          : "%"}
+                        , {props.data.totalDiscount.toFixed(2)}
                       </pre>
                     </td>
                   </>
@@ -426,8 +446,8 @@ const RestaurantBill = (props) => {
                     fontSize: "18px",
                   }}
                 >
-                  <pre style={{ fontFamily: "Verdana", fontSize:'18px' }}>
-                    Grand Total Rs. {(props.data.settledAmount).toFixed(2)}
+                  <pre style={{ fontFamily: "Verdana", fontSize: "18px" }}>
+                    Grand Total Rs. {props.data.settledAmount.toFixed(2)}
                   </pre>
                 </td>
               </tr>

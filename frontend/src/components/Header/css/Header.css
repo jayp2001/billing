@@ -49,6 +49,7 @@ body{
 
 .recentBillContainer{
     cursor: pointer;
+    overflow-y: auto;
 }
 .recentBillRow{
     border-bottom: 1px solid rgba(0, 0, 0, 0.7);
@@ -66,4 +67,19 @@ body{
 }
 input:focus {
     outline: none;
+}
+.customername{
+    white-space: nowrap; 
+    width: 35%; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+.PopOverWidth{
+    width: 100% !important;
+}
+.noFoundIcon{
+    font-size: 96px !important;
+}
+.customHeight{
+    height: calc(100vh - 200px) !important;
 }

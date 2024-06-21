@@ -2709,8 +2709,8 @@ const PickUp = () => {
             itemName: "",
           }));
         } else if (
-          value === matchingProduct.itemCode.toString() ||
-          matchingProduct.itemShortKey.toString().toLocaleLowerCase() ===
+          value === matchingProduct?.itemCode?.toString() ||
+          matchingProduct.itemShortKey?.toString()?.toLocaleLowerCase() ===
           value.toString().toLocaleLowerCase()
         ) {
           e.preventDefault();
@@ -3189,7 +3189,7 @@ const PickUp = () => {
   }, [suggestionIndex]);
 
   return (
-    <div className="bg-gray-200 overfloe-hidden h-full">
+    <div className="bg-gray-200 overfloe-hidden h-screen anotherHeight">
       <Header
         setIsEdit={setIsEdit}
         setBillData={setBillData}
@@ -3199,8 +3199,8 @@ const PickUp = () => {
         setButtonCLicked={setButtonCLicked}
       />
       <section className="right_section ">
-        <div className="right_top_header gap-6 p-2 flex paddinAnother">
-          <div className="w-20">
+        <div className="right_top_header gap-6 p-2 flex paddinAnother w-full">
+          <div className="sm:w-20 w-20">
             <TextField
               placeholder="Code"
               value={fullFormData.inputCode ? fullFormData.inputCode : ""}
@@ -3213,7 +3213,7 @@ const PickUp = () => {
               helperText={validationError ? "No Code" : ""}
             />
           </div>
-          <div className="w-96 autocompleteTxt">
+          <div className="sm:w-96 w-96 autocompleteTxt">
             <Autocomplete
               options={data ? data : []}
               defaultValue={null}
@@ -3235,7 +3235,7 @@ const PickUp = () => {
               )}
             />
           </div>
-          <div className="w-28">
+          <div className="sm:w-28 w-28">
             <TextField
               placeholder="Quantity"
               className="textBoxmUI"
@@ -3257,7 +3257,7 @@ const PickUp = () => {
               }}
             />
           </div>
-          <div className="w-28">
+          <div className="sm:w-28 w-28">
             {/* <Autocomplete
               options={fullFormData&&fullFormData.selectedItem&&fullFormData.selectedItem.variantsList?fullFormData.selectedItem.variantsList:[]}
               value={fullFormData.unit}
@@ -3329,10 +3329,10 @@ const PickUp = () => {
               </NativeSelect>
             </FormControl>
           </div>
-          <div className="w-28">
+          <div className="sm:w-28 w-28">
             <TextField value={fullFormData.itemPrice} className="textBoxmUI" />
           </div>
-          <div className="w-96 autocompleteTxt">
+          <div className="sm:w-96 w-96 autocompleteTxt">
             <TextField
               placeholder="Comment"
               variant="outlined"
@@ -3431,7 +3431,7 @@ const PickUp = () => {
               )}
             /> */}
           </div>
-          <div className="w-12">
+          <div className="sm:w-12 ">
             <button
               onClick={handleReset}
               className="button mt-1 text-sm px-2 py-1 rounded-sm text-white"
@@ -3469,7 +3469,7 @@ const PickUp = () => {
                   <div className="shadow-md bg-white rounded-md my-2 p-2">
                     <div className="flex justify-between mb-2">
                       <div className="header_toggle ml-2 grid content-center ">
-                        <p className="w-32">Customer Details</p>
+                        <p className="w-56">Customer Details</p>
                       </div>
                       <div className="header_toggle ml-2 grid content-center ">
                         <div>
@@ -4080,7 +4080,7 @@ const PickUp = () => {
                         </div>
                         <div>
                           <FormControlLabel
-                            value="complementary"
+                            value="complimentary"
                             control={
                               <Radio
                                 name="radio"
@@ -4092,7 +4092,7 @@ const PickUp = () => {
                                 }}
                               />
                             }
-                            label="Complementary"
+                            label="Complimentary"
                           />
                         </div>
                       </RadioGroup>
