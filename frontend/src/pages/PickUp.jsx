@@ -45,6 +45,7 @@ import Chip from "@mui/material/Chip";
 
 import TokenBil from "./TokenBill";
 import { Switch } from "@mui/material";
+import HotelBill from "./HotelBill";
 const { ipcRenderer } = window.require("electron");
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
@@ -90,7 +91,6 @@ const PickUp = () => {
   const pickupkot = systemPrinter?.filter(
     (printer) => printer.categoryId == "pickupKot"
   );
-  console.log(">>>>printer", pickupkot, systemPrinter);
   const pickupbill = systemPrinter?.filter(
     (printer) => printer.categoryId == "pickupBill"
   );
@@ -99,6 +99,12 @@ const PickUp = () => {
   );
   const deliverybill = systemPrinter?.filter(
     (printer) => printer.categoryId == "deliveryBill"
+  );
+  const hotelbill = systemPrinter?.filter(
+    (printer) => printer.categoryId == "hotelBill"
+  );
+  const hotelkot = systemPrinter?.filter(
+    (printer) => printer.categoryId == "hotelKot"
   );
   const config = {
     headers: {
@@ -140,11 +146,18 @@ const PickUp = () => {
     itemPrice: 0,
     price: 0,
   });
+  const [hotelFormData, setHotelFormData] = useState({
+    hotelId: '',
+    roomNo: '',
+    selectedHotel: ''
+  });
 
   const [billError, setBillError] = useState({
     mobileNo: false,
     settledAmount: false,
     discountValue: false,
+    hotelId: false,
+    roomNo: false
   });
 
   const [items, setItems] = useState([]);
@@ -181,6 +194,7 @@ const PickUp = () => {
   const [isEnglish, setIsEnglish] = React.useState(false);
   let { tab } = useParams();
   const [customerList, setCustomerList] = React.useState([]);
+  const [hotelList, setHotelList] = React.useState([]);
   const [editBillData, setEditBillData] = React.useState();
   const [commentList, setCommentList] = React.useState([]);
   const [freeSoloField, setFreeSoloField] = React.useState([]);
@@ -192,6 +206,7 @@ const PickUp = () => {
   const [openSuggestions, setopenSuggestions] = useState(false);
   const quantityInputRef = useRef(null);
   const [data, setData] = useState([]);
+  const [billTypeCategory, setBillTypeCategory] = useState([]);
   const unitInputRef = useRef(null);
   const commentInputRef = useRef(null);
   const first = useRef(null);
@@ -287,10 +302,10 @@ const PickUp = () => {
   //   handleClose();
   // }
 
-  const getData = async () => {
+  const getData = async (id) => {
     await axios
       .get(
-        `${BACKEND_BASE_URL}menuItemrouter/getItemData?menuId=base_2001`,
+        `${BACKEND_BASE_URL}menuItemrouter/getItemData?menuId=${id}`,
         config
       )
       .then((res) => {
@@ -299,6 +314,21 @@ const PickUp = () => {
       .catch((error) => {
         // setError(error.response && error.response.data ? error.response.data : "Network Error ...!!!");
         setData(null);
+      });
+  };
+  const getBillTypes = async () => {
+    await axios
+      .get(
+        `${BACKEND_BASE_URL}billingrouter/getBillCategory`,
+        config
+      )
+      .then((res) => {
+        setBillTypeCategory(res.data);
+        getData(res.data[tab].menuId ? res.data[tab].menuId : 'base_2001');
+      })
+      .catch((error) => {
+        setError(error.response && error.response.data ? error.response.data : "Network Error ...!!!");
+        // setData(null);
       });
   };
   const handleCommentAutocomplete = (e, value) => {
@@ -313,7 +343,7 @@ const PickUp = () => {
   };
   const handleShoetCutKey = (event) => {
     if (event.key === "F12") {
-      buttonCLicked === "tab2"
+      buttonCLicked === "Delivery"
         ? isEdit
           ? editBillDelivery()
           : saveBillDelivery()
@@ -322,7 +352,7 @@ const PickUp = () => {
           : saveBill();
     }
     if (event.key === "F1") {
-      buttonCLicked === "tab2"
+      buttonCLicked === "Delivery"
         ? isEdit
           ? justEditBillDelivery()
           : justSaveBillDelivery()
@@ -337,8 +367,10 @@ const PickUp = () => {
 
   useEffect(() => {
     first.current.focus();
-    getData();
+    // getData();
+    getBillTypes()
     getcustomerDDL();
+    getHotelDDL();
     getComments();
   }, []);
   useEffect(() => {
@@ -372,6 +404,46 @@ const PickUp = () => {
         ...prevState,
         inputCode: value.itemCode.toString(),
       }));
+    }
+  };
+  const handleHotelInputNameChange = (e, value) => {
+    if (value) {
+      setHotelFormData((perv) => ({
+        ...perv,
+        hotelId: value.hotelId,
+        selectedHotel: value
+      }))
+      setBillError((perv) => ({
+        ...perv,
+        hotelId: false
+      }))
+      setBillData((perv) => ({
+        ...perv,
+        discountType: value.discountType,
+        discountValue: value.discount,
+        settledAmount: billData.subTotal ? Math.ceil(
+          value.discountType == "none" ? billData.subTotal :
+            value.discountType == "fixed"
+              ? billData.subTotal - value.discount
+              : billData.subTotal * (1 - value.discount / 100)
+        ) : 0,
+        billPayType: value.payType,
+      }))
+    } else {
+      setHotelFormData((perv) => ({
+        ...perv,
+        hotelId: '',
+        selectedHotel: ''
+      }))
+      setBillError((perv) => ({
+        ...perv,
+        hotelId: true
+      }))
+      setHotelFormData((perv) => ({
+        ...perv,
+        hotelId: '',
+        selectedHotel: 'value'
+      }))
     }
   };
   const handleFreeSoloChange = (e, value) => {
@@ -494,6 +566,111 @@ const PickUp = () => {
         // }, 1500)
       })
       .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
+  const addHotelBillData = async () => {
+    setLoading(true);
+    const customData = {
+      ...customerData,
+      billType: "Hotel",
+      printBill: true,
+      printKot: true,
+      firmId: billTypeCategory?.Hotel?.firmId,
+      billStatus: "Print",
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(", "),
+      hotelId: hotelFormData?.selectedHotel?.hotelId,
+      roomNo: hotelFormData?.roomNo,
+      hotelDetails: hotelFormData?.selectedHotel,
+      footerKot: "Thank You",
+      footerBill: "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/addHotelBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setLoading(false);
+        setSuccess(true);
+        setItems([]);
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: "",
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        const HotelPrint = renderToString(<HotelBill data={res.data} />);
+        const pickupBillPrint = renderToString(
+          res && res.data && res.data.isOfficial ? (
+            <RestaurantBill data={res.data} />
+          ) : (
+            <TokenBil data={res.data} />
+          )
+        );
+        const printerDataKot = {
+          printer: hotelkot[0],
+          data: HotelPrint,
+        };
+        const printerDataBill = {
+          printer: hotelbill[0],
+          data: HotelPrint,
+        };
+        // const htmlString = renderToString(<RestaurantBill />)
+        if (res && res.data && res.data.printBill && res.data.printKot) {
+          ipcRenderer.send("set-title", printerDataKot);
+          ipcRenderer.send("set-title", printerDataBill);
+        } else if (res && res.data && res.data.printBill) {
+          ipcRenderer.send("set-title", printerDataBill);
+        } else if (res && res.data && res.data.printKot) {
+          ipcRenderer.send("set-title", printerDataKot);
+        }
+        // setTimeout(() => {
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
+        // }, 1500)
+      })
+      .catch((error) => {
+        console.log('><<>???', error)
         setError(
           error.response && error.response.data
             ? error.response.data
@@ -626,7 +803,7 @@ const PickUp = () => {
     };
     await axios
       .post(
-        `${BACKEND_BASE_URL}billingrouter/addPickUpBillData`,
+        `${BACKEND_BASE_URL}billingrouter/addPickUpHoldBillData`,
         customData,
         config
       )
@@ -704,6 +881,83 @@ const PickUp = () => {
         );
       });
   };
+  const holdHotelBillData = async () => {
+    setLoading(true);
+    const customData = {
+      ...customerData,
+      billType: "Hotel",
+      printBill: true,
+      printKot: true,
+      firmId: billTypeCategory?.Hotel?.firmId,
+      billStatus: "Hold",
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(", "),
+      hotelId: hotelFormData?.selectedHotel?.hotelId,
+      roomNo: hotelFormData?.roomNo,
+      hotelDetails: hotelFormData?.selectedHotel,
+      footerKot: "Thank You",
+      footerBill: "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/addHotelHoldBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: "",
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
   const holdBillDataDelivery = async () => {
     setLoading(true);
     const customData = {
@@ -727,7 +981,7 @@ const PickUp = () => {
     };
     await axios
       .post(
-        `${BACKEND_BASE_URL}billingrouter/addDeliveryBillData`,
+        `${BACKEND_BASE_URL}billingrouter/addDeliveryHoldBillData`,
         customData,
         config
       )
@@ -825,6 +1079,110 @@ const PickUp = () => {
       itemsData: items,
       billPayType: "Cancel",
       billComment: billData.billCommentAuto?.join(", "),
+      footerKot: "Thank You",
+      footerBill: "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/updatePickUpBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: "",
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        setIsEdit(false);
+        // const pickupKotPrint = renderToString(<KOT data={res.data} />);
+        // const pickupBillPrint = renderToString(
+        //   res && res.data && res.data.isOfficial ? (
+        //     <RestaurantBill data={res.data} />
+        //   ) : (
+        //     <TokenBil data={res.data} />
+        //   )
+        // );
+        // const printerDataKot = {
+        //   printer: pickupkot,
+        //   data: pickupKotPrint,
+        // };
+        // const printerDataBill = {
+        //   printer: pickupbill,
+        //   data: pickupBillPrint,
+        // };
+        // // const htmlString = renderToString(<RestaurantBill />)
+        // if (res && res.data && res.data.printBill && res.data.printKot) {
+        //   ipcRenderer.send("set-title", printerDataKot);
+        //   ipcRenderer.send("set-title", printerDataBill);
+        // } else if (res && res.data && res.data.printBill) {
+        //   ipcRenderer.send("set-title", printerDataBill);
+        // } else if (res && res.data && res.data.printKot) {
+        //   ipcRenderer.send("set-title", printerDataKot);
+        // }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
+  const cancleHotelBillData = async () => {
+    setLoading(true);
+    const customData = {
+      ...editBillData,
+      ...customerData,
+      billType: "Hotel",
+      printBill: true,
+      printKot: true,
+      firmId: billTypeCategory?.Hotel?.firmId,
+      billStatus: "Cancel",
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billPayType: "Cancel",
+      billComment: billData.billCommentAuto?.join(", "),
+      hotelId: hotelFormData?.selectedHotel?.hotelId,
+      roomNo: hotelFormData?.roomNo,
       footerKot: "Thank You",
       footerBill: "Thank You",
     };
@@ -1115,6 +1473,83 @@ const PickUp = () => {
         );
       });
   };
+  const justSaveHotelBillData = async () => {
+    setLoading(true);
+    const customData = {
+      ...customerData,
+      billType: "Hotel",
+      printBill: true,
+      printKot: true,
+      firmId: billTypeCategory?.Hotel?.firmId,
+      billStatus: "Print",
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(", "),
+      hotelId: hotelFormData?.selectedHotel?.hotelId,
+      roomNo: hotelFormData?.roomNo,
+      hotelDetails: hotelFormData?.selectedHotel,
+      footerKot: "Thank You",
+      footerBill: "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/addHotelBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: "",
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
   const justSaveBillDataDelivery = async () => {
     setLoading(true);
     const customData = {
@@ -1302,6 +1737,113 @@ const PickUp = () => {
           const printerDataBill = {
             printer: pickupbill[0],
             data: pickupBillPrint,
+          };
+          // const htmlString = renderToString(<RestaurantBill />)
+          if (res && res.data && res.data.printBill && res.data.printKot) {
+            console.log(">>>edit all");
+            ipcRenderer.send("set-title", printerDataKot);
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printBill) {
+            console.log(">>>edit one");
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printKot) {
+            console.log(">>>edit two");
+            ipcRenderer.send("set-title", printerDataKot);
+          }
+          console.log(">>>edit else", res.data.printBill, res.data.printKot);
+        } catch (error) {
+          console.log("try catch errror", error);
+        }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
+  const editHotelBillDataFunction = async () => {
+    setLoading(true);
+    const customData = {
+      ...editBillData,
+      ...customerData,
+      billType: "Hotel",
+      printBill: true,
+      printKot: true,
+      firmId: billTypeCategory?.Hotel?.firmId,
+      billStatus: "Print",
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(", "),
+      hotelId: hotelFormData?.selectedHotel?.hotelId,
+      roomNo: hotelFormData?.roomNo,
+      hotelDetails: hotelFormData?.selectedHotel,
+      isOfficial: billTypeCategory?.Hotel?.isOfficial,
+      footerKot: "Thank You",
+      footerBill: "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/updateHotelBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setIsEdit(false);
+        setEditBillData();
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: "",
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        try {
+          const HotelPrint = renderToString(<HotelBill data={res.data} />);
+          const printerDataKot = {
+            printer: hotelkot[0],
+            data: HotelPrint,
+          };
+          const printerDataBill = {
+            printer: hotelbill[0],
+            data: HotelPrint,
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
@@ -1524,6 +2066,87 @@ const PickUp = () => {
         );
       });
   };
+  const justEditHotelBillDataFunction = async () => {
+    setLoading(true);
+    const customData = {
+      ...editBillData,
+      ...customerData,
+      billType: "Hotel",
+      printBill: false,
+      printKot: false,
+      firmId: billTypeCategory?.Hotel?.firmId,
+      billStatus: "Print",
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(", "),
+      hotelId: hotelFormData?.selectedHotel?.hotelId,
+      roomNo: hotelFormData?.roomNo,
+      hotelDetails: hotelFormData?.selectedHotel,
+      isOfficial: billTypeCategory?.Hotel?.isOfficial,
+      footerKot: "Thank You",
+      footerBill: "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/updateHotelBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setIsEdit(false);
+        setEditBillData();
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: "",
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
   const justEditBillDataFunctionDelivery = async () => {
     setLoading(true);
     const customData = {
@@ -1689,6 +2312,113 @@ const PickUp = () => {
           const printerDataBill = {
             printer: pickupbill[0],
             data: pickupBillPrint,
+          };
+          // const htmlString = renderToString(<RestaurantBill />)
+          if (res && res.data && res.data.printBill && res.data.printKot) {
+            console.log(">>>edit all");
+            ipcRenderer.send("set-title", printerDataKot);
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printBill) {
+            console.log(">>>edit one");
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printKot) {
+            console.log(">>>edit two");
+            ipcRenderer.send("set-title", printerDataKot);
+          }
+          console.log(">>>edit else", res.data.printBill, res.data.printKot);
+        } catch (error) {
+          console.log("try catch errror", error);
+        }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
+  const editHotelBillPrintDataFunction = async () => {
+    setLoading(true);
+    const customData = {
+      ...editBillData,
+      ...customerData,
+      billType: "Hotel",
+      printBill: true,
+      printKot: false,
+      firmId: billTypeCategory?.Hotel?.firmId,
+      billStatus: "Print",
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(", "),
+      hotelId: hotelFormData?.selectedHotel?.hotelId,
+      roomNo: hotelFormData?.roomNo,
+      hotelDetails: hotelFormData?.selectedHotel,
+      isOfficial: billTypeCategory?.Hotel?.isOfficial,
+      footerKot: "Thank You",
+      footerBill: "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/updateHotelBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setIsEdit(false);
+        setEditBillData();
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: "",
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        try {
+          const HotelPrint = renderToString(<HotelBill data={res.data} />);
+          const printerDataKot = {
+            printer: hotelkot[0],
+            data: HotelPrint,
+          };
+          const printerDataBill = {
+            printer: hotelbill[0],
+            data: HotelPrint,
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
@@ -1946,6 +2676,113 @@ const PickUp = () => {
         );
       });
   };
+  const editHotelKotPrintDataFunction = async () => {
+    setLoading(true);
+    const customData = {
+      ...editBillData,
+      ...customerData,
+      billType: "Hotel",
+      printBill: false,
+      printKot: true,
+      firmId: billTypeCategory?.Hotel?.firmId,
+      billStatus: "Print",
+      totalDiscount:
+        billData.discountType == "none"
+          ? 0
+          : billData.subTotal - billData.settledAmount,
+      ...billData,
+      itemsData: items,
+      billComment: billData.billCommentAuto?.join(", "),
+      hotelId: hotelFormData?.selectedHotel?.hotelId,
+      roomNo: hotelFormData?.roomNo,
+      hotelDetails: hotelFormData?.selectedHotel,
+      isOfficial: billTypeCategory?.Hotel?.isOfficial,
+      footerKot: "Thank You",
+      footerBill: "Thank You",
+    };
+    await axios
+      .post(
+        `${BACKEND_BASE_URL}billingrouter/updateHotelBillData`,
+        customData,
+        config
+      )
+      .then((res) => {
+        setSuccess(true);
+        setLoading(false);
+        setItems([]);
+        setEditBillData();
+        setFullFormData({
+          inputCode: "",
+          itemId: "",
+          inputName: "",
+          itemName: "",
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: 0,
+          price: 0,
+          commentAutoComplete: [],
+        });
+        setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: "",
+          customerName: "",
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        });
+        setBillData({
+          subTotal: 0,
+          discountType: "none",
+          discountValue: 0,
+          settledAmount: "",
+          billPayType: "cash",
+          billComment: "",
+          billCommentAuto: [],
+        });
+        try {
+          const HotelPrint = renderToString(<HotelBill data={res.data} />);
+          const printerDataKot = {
+            printer: hotelkot[0],
+            data: HotelPrint,
+          };
+          const printerDataBill = {
+            printer: hotelbill[0],
+            data: HotelPrint,
+          };
+          // const htmlString = renderToString(<RestaurantBill />)
+          if (res && res.data && res.data.printBill && res.data.printKot) {
+            console.log(">>>edit all");
+            ipcRenderer.send("set-title", printerDataKot);
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printBill) {
+            console.log(">>>edit one");
+            ipcRenderer.send("set-title", printerDataBill);
+          } else if (res && res.data && res.data.printKot) {
+            console.log(">>>edit two");
+            ipcRenderer.send("set-title", printerDataKot);
+          }
+          console.log(">>>edit else", res.data.printBill, res.data.printKot);
+          setIsEdit(false);
+        } catch (error) {
+          console.log("try catch errror", error);
+        }
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500)
+      })
+      .catch((error) => {
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
+      });
+  };
   const editKotPrintDataFunctionDelivery = async () => {
     setLoading(true);
     const customData = {
@@ -2105,6 +2942,19 @@ const PickUp = () => {
         setError(error.response ? error.response.data : "Network Error ...!!!");
       });
   };
+  const getHotelDDL = async () => {
+    await axios
+      .get(
+        `${BACKEND_BASE_URL}billingrouter/ddlHotelList`,
+        config
+      )
+      .then((res) => {
+        setHotelList(res.data);
+      })
+      .catch((error) => {
+        setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+  };
   const getComments = async () => {
     await axios
       .get(`${BACKEND_BASE_URL}billingrouter/getComment`, config)
@@ -2133,6 +2983,35 @@ const PickUp = () => {
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
         addBillData();
+        setValidationError(false)
+      }
+    }
+  };
+  const saveHotelBill = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        !hotelFormData.hotelId ||
+        !hotelFormData.roomNo ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setBillError((perv) => ({
+          ...perv,
+          hotelId: !hotelFormData.hotelId ? true : false,
+          roomNo: !hotelFormData.roomNo ? true : false
+        }))
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        addHotelBillData();
         setValidationError(false)
       }
     }
@@ -2187,6 +3066,35 @@ const PickUp = () => {
       }
     }
   };
+  const justSaveHotelBill = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        !hotelFormData.hotelId ||
+        !hotelFormData.roomNo ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setBillError((perv) => ({
+          ...perv,
+          hotelId: !hotelFormData.hotelId ? true : false,
+          roomNo: !hotelFormData.roomNo ? true : false
+        }))
+        // console.log('><<<<>>>LLL', !hotelFormData.hotelId ? true : false, !hotelFormData.roomNo ? true : false)
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        justSaveHotelBillData();
+      }
+    }
+  };
   const justSaveBillDelivery = () => {
     if (loading || success) {
     } else {
@@ -2234,6 +3142,34 @@ const PickUp = () => {
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
         justEditBillDataFunction();
+      }
+    }
+  };
+  const justEditHotelBill = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        !hotelFormData.hotelId ||
+        !hotelFormData.roomNo ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setError("Please Fill All Field");
+        setBillError((perv) => ({
+          ...perv,
+          hotelId: !hotelFormData.hotelId ? true : false,
+          roomNo: !hotelFormData.roomNo ? true : false
+        }))
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        justEditHotelBillDataFunction();
       }
     }
   };
@@ -2287,6 +3223,34 @@ const PickUp = () => {
       }
     }
   };
+  const holdHotelBill = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        !hotelFormData.hotelId ||
+        !hotelFormData.roomNo ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setBillError((perv) => ({
+          ...perv,
+          hotelId: !hotelFormData.hotelId ? true : false,
+          roomNo: !hotelFormData.roomNo ? true : false
+        }))
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        holdHotelBillData();
+      }
+    }
+  };
   const holdBillDelivery = () => {
     if (loading || success) {
     } else {
@@ -2335,6 +3299,36 @@ const PickUp = () => {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
         if (window.confirm("Are you sure you want to Cancel this bill?")) {
           cancleBillData();
+        }
+      }
+    }
+  };
+  const cancleHotelBill = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        !hotelFormData.hotelId ||
+        !hotelFormData.roomNo ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setBillError((perv) => ({
+          ...perv,
+          hotelId: !hotelFormData.hotelId ? true : false,
+          roomNo: !hotelFormData.roomNo ? true : false
+        }))
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        if (window.confirm("Are you sure you want to Cancel this bill?")) {
+          cancleHotelBillData();
         }
       }
     }
@@ -2391,6 +3385,34 @@ const PickUp = () => {
       }
     }
   };
+  const editHotelBillPrint = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        !hotelFormData.hotelId ||
+        !hotelFormData.roomNo ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setBillError((perv) => ({
+          ...perv,
+          hotelId: !hotelFormData.hotelId ? true : false,
+          roomNo: !hotelFormData.roomNo ? true : false
+        }))
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        editHotelBillPrintDataFunction();
+      }
+    }
+  };
   const editBillPrintDelivery = () => {
     if (loading || success) {
     } else {
@@ -2438,6 +3460,34 @@ const PickUp = () => {
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
         editKotPrintDataFunction();
+      }
+    }
+  };
+  const editHotelKotPrint = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        !hotelFormData.hotelId ||
+        !hotelFormData.roomNo ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setBillError((perv) => ({
+          ...perv,
+          hotelId: !hotelFormData.hotelId ? true : false,
+          roomNo: !hotelFormData.roomNo ? true : false
+        }))
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        editHotelKotPrintDataFunction();
       }
     }
   };
@@ -2509,6 +3559,34 @@ const PickUp = () => {
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
         editBillDataFunction();
+      }
+    }
+  };
+  const editHotelBill = () => {
+    if (loading || success) {
+    } else {
+      if (
+        !items ||
+        items.length < 1 ||
+        !billData ||
+        !billData.subTotal ||
+        !billData.settledAmount ||
+        !billData.discountType ||
+        !hotelFormData.hotelId ||
+        !hotelFormData.roomNo ||
+        (billData.discountType != "none" && !billData.discountValue)
+      ) {
+        setBillError((perv) => ({
+          ...perv,
+          hotelId: !hotelFormData.hotelId ? true : false,
+          roomNo: !hotelFormData.roomNo ? true : false
+        }))
+        setError("Please Fill All Field");
+      } else if (billData.settledAmount <= 0) {
+        setError("Sattle Amount can not be less than zero");
+      } else {
+        // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        editHotelBillDataFunction();
       }
     }
   };
@@ -2845,7 +3923,13 @@ const PickUp = () => {
           setBillData((perv) => ({
             ...perv,
             subTotal: billData.subTotal + fullFormData.price,
-            settledAmount: Math.ceil(billData.subTotal + fullFormData.price),
+            settledAmount: billData.subTotal + fullFormData.price ? Math.ceil(
+              billData.discountType == "none" ? billData.subTotal + fullFormData.price :
+                billData.discountType == "fixed"
+                  ? (billData.subTotal + fullFormData.price) - billData.discountValue
+                  : (billData.subTotal + fullFormData.price) * (1 - billData.discountValue / 100)
+            ) : 0,
+            // settledAmount: Math.ceil(billData.subTotal + fullFormData.price),
           }));
           setItems((prevItems) =>
             prevItems?.map((data, index) =>
@@ -2897,7 +3981,13 @@ const PickUp = () => {
           setBillData((perv) => ({
             ...perv,
             subTotal: billData.subTotal + fullFormData.price,
-            settledAmount: Math.ceil(billData.subTotal + fullFormData.price),
+            settledAmount: billData.subTotal + fullFormData.price ? Math.ceil(
+              billData.discountType == "none" ? billData.subTotal + fullFormData.price :
+                billData.discountType == "fixed"
+                  ? (billData.subTotal + fullFormData.price) - billData.discountValue
+                  : (billData.subTotal + fullFormData.price) * (1 - billData.discountValue / 100)
+            ) : 0,
+            // settledAmount: Math.ceil(billData.subTotal + fullFormData.price),
           }));
           setItems((prevItems) => [...prevItems, newItem]);
           setFullFormData({
@@ -3187,7 +4277,7 @@ const PickUp = () => {
       }
     }
   }, [suggestionIndex]);
-
+  console.log('TEMPPPP    DATA   IIII', fullFormData, customerData, hotelFormData, billData)
   return (
     <div className="bg-gray-200 overfloe-hidden h-screen anotherHeight">
       <Header
@@ -3197,6 +4287,7 @@ const PickUp = () => {
         setItems={setItems}
         setCustomerData={setCustomerData}
         setButtonCLicked={setButtonCLicked}
+        setHotelFormData={setHotelFormData}
       />
       <section className="right_section ">
         <div className="right_top_header gap-6 p-2 flex paddinAnother w-full">
@@ -3446,221 +4537,204 @@ const PickUp = () => {
           <div className="flex justify-between h-full">
             <div className="Righ_bill_menu w-2/5">
               <div className="w-full right_meun rounded-md">
-                {/* {buttonCLicked === "tab1" && ( */}
-                <div className="w-full text-base h-full overflow-auto  table_no p-4">
-                  {/* <div className="bg-white  rounded-md shadow-md my-4 p-2">
-                      <p className="w-20">Table No </p>
+                {/* {buttonCLicked === "Dine In" && ( */}
+                {buttonCLicked !== "Hotel" &&
+                  <div className="w-full text-base h-full overflow-auto  table_no p-4">
+                    <div className="shadow-md bg-white rounded-md my-2 p-2">
+                      <div className="flex justify-between mb-2">
+                        <div className="header_toggle ml-2 grid content-center ">
+                          <p className="w-56">Customer Details</p>
+                        </div>
+                        <div className="header_toggle ml-2 grid content-center ">
+                          <div>
+                            ENG{" "}
+                            <Switch
+                              checked={isEnglish}
+                              onChange={() => setIsEnglish(!isEnglish)}
+                            />{" "}
+                            GUJ
+                          </div>
+                        </div>
+                      </div>
                       <hr />
-                      <div className="py-2 flex justify-between main_div ">
-                        <div>
-                          <span className="w-3">Enter No &nbsp;</span>{" "}
-                          <input
-                            type="text"
-                            name=""
-                            id=""
-                            className="w-20 p-1 border-2 rounded-sm"
-                          />
-                        </div>
-                        <div>
-                          <Button1>Assign Captain</Button1>
-                        </div>
-                      </div>
-                    </div> */}
-                  <div className="shadow-md bg-white rounded-md my-2 p-2">
-                    <div className="flex justify-between mb-2">
-                      <div className="header_toggle ml-2 grid content-center ">
-                        <p className="w-56">Customer Details</p>
-                      </div>
-                      <div className="header_toggle ml-2 grid content-center ">
-                        <div>
-                          ENG{" "}
-                          <Switch
-                            checked={isEnglish}
-                            onChange={() => setIsEnglish(!isEnglish)}
-                          />{" "}
-                          GUJ
-                        </div>
-                      </div>
-                    </div>
-                    <hr />
-                    <table className="my-2 h-44 w-full">
-                      <tbody>
-                        <tr className="mb-3">
-                          <td className="w-5">Mobile&nbsp;</td>
-                          <td className="autocompleteTxt">
-                            <input
-                              type="text"
-                              className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${billError.mobileNo ? "mobileNoError" : ""
-                                }`}
-                              name="mobileNo"
-                              // value={customerData.mobileNo}
-                              // onChange={(e) => {
-                              //   setCustomerData((perv) => ({
-                              //     ...perv,
-                              //     mobileNo: e.target.value,
-                              //   }));
-                              //   // handleOpenSuggestion(e.target.value);
-                              // }}
-                              // list="suggestion"
-                              id="searchWord"
-                              label="Outlined"
-                              variant="outlined"
-                              onChange={(e) => {
-                                // handleFilter(e.target.value);
-                                setBillError({ ...billError, mobileNo: false });
-                                if (regex.test(e.target.value)) {
-                                  setCustomerData((perv) => ({
-                                    ...perv,
-                                    mobileNo: e.target.value,
-                                    customerId: "",
-                                    addressId: "",
-                                  }));
-                                  setSuggestionIndex(0);
-                                  debounceFunction();
-                                }
-                                // setInputValue(e.target.value)
-                              }}
-                              onBlur={handleBlur}
-                              onKeyDown={handleKeyDown}
-                              value={customerData.mobileNo}
-                              autoComplete="off"
-
-                            // onBlur={() => setopenSuggestions(false)}
-                            />
-                            {customerList.length > 0 && (
-                              <div
-                                className="suggestions"
-                                style={{
-                                  maxHeight: "165px",
-                                  overflowY: "auto",
-                                  width: "33%",
-                                }}
-                                ref={suggestionListRef}
-                              >
-                                {customerList.map((val, index) => (
-                                  <div
-                                    key={index}
-                                    className="cursor-pointer suggestionBorder"
-                                    onClick={() => handleSuggestionClick(val)}
-                                  >
-                                    <div
-                                      className={`suggestionValue px-2 py-1 ${suggestionIndex === index
-                                        ? "bg-gray-200"
-                                        : ""
-                                        }`}
-                                    >
-                                      {val.mobileNo} - {val.customerName} -{" "}
-                                      {val.address}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </td>
-                        </tr>
-                        <tr className="mb-3">
-                          <td className="w-5">Name&nbsp;</td>
-                          <td>
-                            {!isEnglish ? (
-                              <input
-                                value={customerData.customerName}
-                                type="text"
-                                name="customerName"
-                                className="border-2 w-full p-1 rounded-sm"
-                                onChange={(e) => {
-                                  setCustomerData((perv) => ({
-                                    ...perv,
-                                    customerName: e.target.value,
-                                  }));
-                                }}
-                              />
-                            ) : (
-                              <ReactTransliterate
-                                value={customerData.customerName}
-                                className="border-2 w-full p-1 rounded-sm"
-                                onChangeText={(text) => {
-                                  setCustomerData((perv) => ({
-                                    ...perv,
-                                    customerName: text,
-                                  }));
-                                }}
-                                lang="gu"
-                              />
-                            )}
-                          </td>
-                        </tr>
-                        <tr className="mb-3">
-                          <td className="w-5">Address&nbsp;</td>
-                          <td>
-                            {isEnglish ? (
-                              <ReactTransliterate
-                                value={customerData.address}
-                                className="border-2 w-full p-1 rounded-sm"
-                                onChangeText={(text) => {
-                                  setCustomerData((perv) => ({
-                                    ...perv,
-                                    address: text,
-                                    addressId: "",
-                                  }));
-                                }}
-                                lang="gu"
-                              />
-                            ) : (
-                              <input
-                                value={customerData.address}
-                                type="text"
-                                className="border-2 w-full p-1 rounded-sm"
-                                onChange={(e) => {
-                                  setCustomerData((perv) => ({
-                                    ...perv,
-                                    address: e.target.value,
-                                    addressId: "",
-                                  }));
-                                }}
-                              />
-                            )}
-                          </td>
-                        </tr>
-                        <tr className="mb-3">
-                          <td className="w-5">Locality&nbsp;</td>
-                          <td>
-                            {isEnglish ? (
-                              <ReactTransliterate
-                                value={customerData.locality}
-                                className="border-2 w-full p-1 rounded-sm"
-                                onChangeText={(text) => {
-                                  setCustomerData((perv) => ({
-                                    ...perv,
-                                    locality: text,
-                                  }));
-                                }}
-                                lang="gu"
-                              />
-                            ) : (
-                              <input
-                                value={customerData.locality}
-                                type="text"
-                                className="border-2 w-full p-1 rounded-sm"
-                                onChange={(e) => {
-                                  setCustomerData((perv) => ({
-                                    ...perv,
-                                    locality: e.target.value,
-                                  }));
-                                }}
-                              />
-                            )}
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                  <div className="shadow-md bg-white  rounded-md my-2 p-2">
-                    <div className="w-full py-2 my-2">
-                      <table className=" w-full">
+                      <table className="my-2 h-44 w-full">
                         <tbody>
                           <tr className="mb-3">
-                            <td colSpan="2">
-                              {/* <input
+                            <td className="w-5">Mobile&nbsp;</td>
+                            <td className="autocompleteTxt">
+                              <input
+                                type="text"
+                                className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${billError.mobileNo ? "mobileNoError" : ""
+                                  }`}
+                                name="mobileNo"
+                                // value={customerData.mobileNo}
+                                // onChange={(e) => {
+                                //   setCustomerData((perv) => ({
+                                //     ...perv,
+                                //     mobileNo: e.target.value,
+                                //   }));
+                                //   // handleOpenSuggestion(e.target.value);
+                                // }}
+                                // list="suggestion"
+                                id="searchWord"
+                                label="Outlined"
+                                variant="outlined"
+                                onChange={(e) => {
+                                  // handleFilter(e.target.value);
+                                  setBillError({ ...billError, mobileNo: false });
+                                  if (regex.test(e.target.value)) {
+                                    setCustomerData((perv) => ({
+                                      ...perv,
+                                      mobileNo: e.target.value,
+                                      customerId: "",
+                                      addressId: "",
+                                    }));
+                                    setSuggestionIndex(0);
+                                    debounceFunction();
+                                  }
+                                  // setInputValue(e.target.value)
+                                }}
+                                onBlur={handleBlur}
+                                onKeyDown={handleKeyDown}
+                                value={customerData && customerData.mobileNo ? customerData.mobileNo : ''}
+                                autoComplete="off"
+
+                              // onBlur={() => setopenSuggestions(false)}
+                              />
+                              {customerList.length > 0 && (
+                                <div
+                                  className="suggestions"
+                                  style={{
+                                    maxHeight: "165px",
+                                    overflowY: "auto",
+                                    width: "33%",
+                                  }}
+                                  ref={suggestionListRef}
+                                >
+                                  {customerList.map((val, index) => (
+                                    <div
+                                      key={index}
+                                      className="cursor-pointer suggestionBorder"
+                                      onClick={() => handleSuggestionClick(val)}
+                                    >
+                                      <div
+                                        className={`suggestionValue px-2 py-1 ${suggestionIndex === index
+                                          ? "bg-gray-200"
+                                          : ""
+                                          }`}
+                                      >
+                                        {val.mobileNo} - {val.customerName} -{" "}
+                                        {val.address}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                          <tr className="mb-3">
+                            <td className="w-5">Name&nbsp;</td>
+                            <td>
+                              {!isEnglish ? (
+                                <input
+                                  value={customerData && customerData.customerName ? customerData.customerName : ''}
+                                  type="text"
+                                  name="customerName"
+                                  className="border-2 w-full p-1 rounded-sm"
+                                  onChange={(e) => {
+                                    setCustomerData((perv) => ({
+                                      ...perv,
+                                      customerName: e.target.value,
+                                    }));
+                                  }}
+                                />
+                              ) : (
+                                <ReactTransliterate
+                                  value={customerData && customerData.customerName ? customerData.customerName : ''}
+                                  className="border-2 w-full p-1 rounded-sm"
+                                  onChangeText={(text) => {
+                                    setCustomerData((perv) => ({
+                                      ...perv,
+                                      customerName: text,
+                                    }));
+                                  }}
+                                  lang="gu"
+                                />
+                              )}
+                            </td>
+                          </tr>
+                          <tr className="mb-3">
+                            <td className="w-5">Address&nbsp;</td>
+                            <td>
+                              {isEnglish ? (
+                                <ReactTransliterate
+                                  value={customerData.address}
+                                  className="border-2 w-full p-1 rounded-sm"
+                                  onChangeText={(text) => {
+                                    setCustomerData((perv) => ({
+                                      ...perv,
+                                      address: text,
+                                      addressId: "",
+                                    }));
+                                  }}
+                                  lang="gu"
+                                />
+                              ) : (
+                                <input
+                                  value={customerData.address}
+                                  type="text"
+                                  className="border-2 w-full p-1 rounded-sm"
+                                  onChange={(e) => {
+                                    setCustomerData((perv) => ({
+                                      ...perv,
+                                      address: e.target.value,
+                                      addressId: "",
+                                    }));
+                                  }}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                          <tr className="mb-3">
+                            <td className="w-5">Locality&nbsp;</td>
+                            <td>
+                              {isEnglish ? (
+                                <ReactTransliterate
+                                  value={customerData.locality}
+                                  className="border-2 w-full p-1 rounded-sm"
+                                  onChangeText={(text) => {
+                                    setCustomerData((perv) => ({
+                                      ...perv,
+                                      locality: text,
+                                    }));
+                                  }}
+                                  lang="gu"
+                                />
+                              ) : (
+                                <input
+                                  value={customerData.locality}
+                                  type="text"
+                                  className="border-2 w-full p-1 rounded-sm"
+                                  onChange={(e) => {
+                                    setCustomerData((perv) => ({
+                                      ...perv,
+                                      locality: e.target.value,
+                                    }));
+                                  }}
+                                />
+                              )}
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div className="shadow-md bg-white  rounded-md my-2 p-2">
+                      <div className="w-full py-2 my-2">
+                        <table className=" w-full">
+                          <tbody>
+                            <tr className="mb-3">
+                              <td colSpan="2">
+                                {/* <input
                                 type="text"
                                 className="border-2 w-full p-1 rounded-sm"
                                 value={billData.billComment}
@@ -3671,102 +4745,34 @@ const PickUp = () => {
                                   }))
                                 }
                               /> */}
-                              <Autocomplete
-                                multiple
-                                id="tags-outlined"
-                                options={commentList ? commentList : []}
-                                // getOptionLabel={commentList ? commentList : []}
-                                defaultValue={[]}
-                                freeSolo
-                                value={
-                                  billData.billCommentAuto
-                                    ? billData.billCommentAuto
-                                    : []
-                                }
-                                onChange={handleCommentAutocomplete}
-                                renderInput={(params) => (
-                                  <TextField
-                                    {...params}
-                                    placeholder="Order Comment"
-                                  />
-                                )}
-                              />
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-                {/* )} */}
-                {/* {(buttonCLicked === "tab3" || buttonCLicked === "tab2") && (
-                  <div className="w-full text-base table_no p-2">
-                    <div className="shadow-md bg-white  rounded-md my-2 p-2">
-                      <p className="w-32 mb-2">Customer Details</p>
-                      <hr />
-                      <table className="my-2 h-44 w-full">
-                        <tbody>
-                          <tr className="mb-3">
-                            <td className="w-5">Mobile&nbsp;</td>
-                            <td>
-                              <input
-                                type="number"
-                                className="border-2 w-48 p-1 rounded-sm"
-                                name=""
-                                id=""
-                              />
-                            </td>
-                          </tr>
-                          <tr className="mb-3">
-                            <td className="w-5">itemName&nbsp;</td>
-                            <td>
-                              <input
-                                type="text"
-                                className="border-2 w-full p-1 rounded-sm"
-                                name=""
-                                id=""
-                              />
-                            </td>
-                          </tr>
-                          <tr className="mb-3">
-                            <td className="w-5">Add&nbsp;</td>
-                            <td>
-                              <input
-                                type="text"
-                                className="border-2 w-full p-1 rounded-sm"
-                                name=""
-                                id=""
-                              />
-                            </td>
-                          </tr>
-                          <tr className="mb-3">
-                            <td className="w-5">Locality&nbsp;</td>
-                            <td>
-                              <input
-                                type="text"
-                                className="border-2 w-full p-1 rounded-sm"
-                                name=""
-                                id=""
-                              />
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div className="shadow-md bg-white  rounded-md my-2 p-2">
-                      <div className="w-full py-2 my-2">
-                        <span className="w-3">Order Comment&nbsp;</span>{" "}
-                        <input
-                          type="text"
-                          name=""
-                          id=""
-                          className="w-80 p-1 border-2 rounded-sm"
-                        />
+                                <Autocomplete
+                                  multiple
+                                  id="tags-outlined"
+                                  options={commentList ? commentList : []}
+                                  // getOptionLabel={commentList ? commentList : []}
+                                  defaultValue={[]}
+                                  freeSolo
+                                  value={
+                                    billData.billCommentAuto
+                                      ? billData.billCommentAuto
+                                      : []
+                                  }
+                                  onChange={handleCommentAutocomplete}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      placeholder="Order Comment"
+                                    />
+                                  )}
+                                />
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </div>
-                  </div>
-                )} */}
-                {/* {buttonCLicked === "tab4" && (
+                  </div>}
+                {buttonCLicked === "Hotel" && (
                   <div>
                     <div className="shadow-md bg-white  rounded-md  text-base m-4 p-2">
                       <p className="w-full">Hotel Information </p>
@@ -3774,53 +4780,224 @@ const PickUp = () => {
                       <div className="py-2 flex justify-between main_div ">
                         <div className="w-80">
                           <Autocomplete
-                              className='hotel_autocomplete'
-                              options={unitOptionsExist(fullFormData.inputName) ? data.find(item => item.itemName === fullFormData.inputName).variantsList : []}
-                              value={fullFormData.unit}
-                              renderInput={(params) => <TextField {...params} inputRef={unitInputRef} onChange={handleUnitChange} className='hotel_input' placeholder="Hotel itemName" variant="outlined" />}
-                            />
+                            options={hotelList ? hotelList : []}
+                            defaultValue={null}
+                            getOptionLabel={(options) =>
+                              options.hotelName ? options.hotelName : ""
+                            }
+                            // className={""}
+                            // error={true}
+                            value={hotelFormData.selectedHotel}
+                            onChange={handleHotelInputNameChange}
+                            // onKeyDown={handleEnterPressName}
+                            renderInput={(params) => (
+                              <TextField
+                                {...params}
+                                placeholder="Auto fill the name only"
+                                variant="outlined"
+                                error={billError.hotelId}
+                              />
+                            )}
+                          />
                         </div>
                         <div>
                           <span className="w-3">Room No &nbsp;</span>{" "}
                           <input
                             type="text"
-                            name=""
-                            id=""
-                            className="w-20 p-1 border-2 rounded-sm"
+                            name="roomNo"
+                            value={hotelFormData.roomNo}
+                            // error={true}
+                            onChange={(e) => {
+                              setHotelFormData((perv) => ({
+                                ...perv,
+                                roomNo: e.target.value
+                              }))
+                              setBillError((perv) => ({
+                                ...perv,
+                                roomNo: e.target.value ? false : true
+                              }))
+                            }}
+                            autoComplete='off'
+                            className={`w-20 p-1 border-2 rounded-sm ${billError.roomNo ? 'mobileNoError' : ''}`}
                           />
                         </div>
                       </div>
                     </div>
-                    <div className="shadow-md bg-white  rounded-md text-base m-4 p-2">
-                      <table className="my-2 h-44 w-full">
-                        <tbody>
-                          <tr className="mb-3">
-                            <td className="w-5">Mobile&nbsp;</td>
-                            <td>
-                              <input
-                                type="number"
-                                className="border-2 w-48 p-1 rounded-sm"
-                                name=""
-                                id=""
-                              />
-                            </td>
-                          </tr>
-                          <tr className="mb-3">
-                            <td className="w-5">itemName&nbsp;</td>
-                            <td>
-                              <input
+                    <div className="px-4">
+                      <div className="shadow-md bg-white rounded-md my-2 p-2">
+                        <div className="flex justify-between mb-2">
+                          <div className="header_toggle ml-2 grid content-center ">
+                            <p className="w-56">Customer Details</p>
+                          </div>
+                          {/* <div className="header_toggle ml-2 grid content-center ">
+                            <div>
+                              ENG{" "}
+                              <Switch
+                                checked={isEnglish}
+                                onChange={() => setIsEnglish(!isEnglish)}
+                              />{" "}
+                              GUJ
+                            </div>
+                          </div> */}
+                        </div>
+                        <hr />
+                        <table className="my-2 h-28 w-full">
+                          <tbody>
+                            <tr className="mb-3">
+                              <td className="w-5">Mobile&nbsp;</td>
+                              <td className="autocompleteTxt">
+                                <input
+                                  type="text"
+                                  className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${billError.mobileNo ? "mobileNoError" : ""
+                                    }`}
+                                  name="mobileNo"
+                                  // value={customerData.mobileNo}
+                                  // onChange={(e) => {
+                                  //   setCustomerData((perv) => ({
+                                  //     ...perv,
+                                  //     mobileNo: e.target.value,
+                                  //   }));
+                                  //   // handleOpenSuggestion(e.target.value);
+                                  // }}
+                                  // list="suggestion"
+                                  id="searchWord"
+                                  label="Outlined"
+                                  variant="outlined"
+                                  onChange={(e) => {
+                                    // handleFilter(e.target.value);
+                                    setBillError({ ...billError, mobileNo: false });
+                                    if (regex.test(e.target.value) && e.target.value.length < 11) {
+                                      setCustomerData((perv) => ({
+                                        ...perv,
+                                        mobileNo: e.target.value,
+                                        customerId: "",
+                                        addressId: "",
+                                      }));
+                                      // setSuggestionIndex(0);
+                                      // debounceFunction();
+                                    }
+                                    // setInputValue(e.target.value)
+                                  }}
+                                  // onBlur={handleBlur}
+                                  // onKeyDown={handleKeyDown}
+                                  value={customerData && customerData.mobileNo ? customerData.mobileNo : ''}
+                                  autoComplete="off"
+
+                                // onBlur={() => setopenSuggestions(false)}
+                                />
+                                {/* {customerList.length > 0 && (
+                                  <div
+                                    className="suggestions"
+                                    style={{
+                                      maxHeight: "165px",
+                                      overflowY: "auto",
+                                      width: "33%",
+                                    }}
+                                    ref={suggestionListRef}
+                                  >
+                                    {customerList.map((val, index) => (
+                                      <div
+                                        key={index}
+                                        className="cursor-pointer suggestionBorder"
+                                        onClick={() => handleSuggestionClick(val)}
+                                      >
+                                        <div
+                                          className={`suggestionValue px-2 py-1 ${suggestionIndex === index
+                                            ? "bg-gray-200"
+                                            : ""
+                                            }`}
+                                        >
+                                          {val.mobileNo} - {val.customerName} -{" "}
+                                          {val.address}
+                                        </div>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )} */}
+                              </td>
+                            </tr>
+                            <tr className="mb-3">
+                              <td className="w-5">Name&nbsp;</td>
+                              <td>
+                                {!isEnglish ? (
+                                  <input
+                                    value={customerData && customerData.customerName ? customerData.customerName : ''}
+                                    type="text"
+                                    name="customerName"
+                                    className="border-2 w-full p-1 rounded-sm"
+                                    onChange={(e) => {
+                                      setCustomerData((perv) => ({
+                                        ...perv,
+                                        customerName: e.target.value,
+                                      }));
+                                    }}
+                                  />
+                                ) : (
+                                  <ReactTransliterate
+                                    value={customerData && customerData.customerName ? customerData.customerName : ''}
+                                    className="border-2 w-full p-1 rounded-sm"
+                                    onChangeText={(text) => {
+                                      setCustomerData((perv) => ({
+                                        ...perv,
+                                        customerName: text,
+                                      }));
+                                    }}
+                                    lang="gu"
+                                  />
+                                )}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div className="px-4 mt-4">
+                      <div className="shadow-md bg-white  rounded-md my-2 p-2">
+                        <div className="w-full py-2 my-2">
+                          <table className=" w-full">
+                            <tbody>
+                              <tr className="mb-3">
+                                <td colSpan="2">
+                                  {/* <input
                                 type="text"
                                 className="border-2 w-full p-1 rounded-sm"
-                                name=""
-                                id=""
-                              />
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
+                                value={billData.billComment}
+                                onChange={(e) =>
+                                  setBillData((perv) => ({
+                                    ...perv,
+                                    billComment: e.target.value,
+                                  }))
+                                }
+                              /> */}
+                                  <Autocomplete
+                                    multiple
+                                    id="tags-outlined"
+                                    options={commentList ? commentList : []}
+                                    // getOptionLabel={commentList ? commentList : []}
+                                    defaultValue={[]}
+                                    freeSolo
+                                    value={
+                                      billData.billCommentAuto
+                                        ? billData.billCommentAuto
+                                        : []
+                                    }
+                                    onChange={handleCommentAutocomplete}
+                                    renderInput={(params) => (
+                                      <TextField
+                                        {...params}
+                                        placeholder="Order Comment"
+                                      />
+                                    )}
+                                  />
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                )} */}
+                )}
               </div>
             </div>
             <div className="left_bill_menu text-base w-full h-full">
@@ -3830,10 +5007,10 @@ const PickUp = () => {
                     // onClick={() =>
                     //   items.length <= 0 &&
                     //   isEdit == false &&
-                    //   setButtonCLicked("tab1")
+                    //   setButtonCLicked("Dine In")
                     // }
                     className={
-                      buttonCLicked == "tab1"
+                      buttonCLicked == "Dine In"
                         ? "clicked col-3 p-0 col-span-3 text-center"
                         : "col-3 p-0 cursor-pointer  col-span-3 text-center"
                     }
@@ -3849,18 +5026,19 @@ const PickUp = () => {
                   <div
                     onClick={() => {
                       if (items.length <= 0 || isEdit == false) {
-                        setButtonCLicked("tab2");
+                        setButtonCLicked("Delivery");
                         setBillError((perv) => ({
                           ...perv,
                           mobileNo: false,
                         }));
                         setValidationError(false)
+                        getData(billTypeCategory?.Delivery?.menuId)
                       }
                     }}
                     className={
-                      buttonCLicked == "tab2"
-                        ? "clicked col-3 p-0  col-span-6 text-center"
-                        : "col-3 p-0 cursor-pointer  col-span-6 text-center"
+                      buttonCLicked == "Delivery"
+                        ? "clicked col-3 p-0  col-span-4 text-center"
+                        : "col-3 p-0 cursor-pointer  col-span-4 text-center"
                     }
                   >
                     <Button
@@ -3874,18 +5052,19 @@ const PickUp = () => {
                   <div
                     onClick={() => {
                       if (items.length <= 0 || isEdit == false) {
-                        setButtonCLicked("tab3");
+                        setButtonCLicked("Pick Up");
                         setBillError((perv) => ({
                           ...perv,
                           mobileNo: false,
                         }));
-                        setValidationError(false)
+                        setValidationError(false);
+                        getData(billTypeCategory['Pick Up']?.menuId)
                       }
                     }}
                     className={
-                      buttonCLicked == "tab3"
-                        ? "clicked col-3 p-0  col-span-6 text-center"
-                        : "col-3 p-0 cursor-pointer  col-span-6 text-center"
+                      buttonCLicked == "Pick Up"
+                        ? "clicked col-3 p-0  col-span-4 text-center"
+                        : "col-3 p-0 cursor-pointer  col-span-4 text-center"
                     }
                   >
                     <Button
@@ -3896,16 +5075,22 @@ const PickUp = () => {
                       Pick Up
                     </Button>
                   </div>
-                  {/* <div
-                    // onClick={() =>
-                    //   items.length <= 0 &&
-                    //   isEdit == false &&
-                    //   setButtonCLicked("tab4")
-                    // }
+                  <div
+                    onClick={() => {
+                      if (items.length <= 0 || isEdit == false) {
+                        setButtonCLicked("Hotel");
+                        setBillError((perv) => ({
+                          ...perv,
+                          mobileNo: false,
+                        }));
+                        setValidationError(false);
+                        getData(billTypeCategory?.Hotel?.menuId)
+                      }
+                    }}
                     className={
-                      buttonCLicked == "tab4"
-                        ? "clicked col-3 p-0  col-span-3 text-center"
-                        : "col-3 p-0 cursor-pointer  col-span-3 text-center"
+                      buttonCLicked == "Hotel"
+                        ? "clicked col-3 p-0  col-span-4 text-center"
+                        : "col-3 p-0 cursor-pointer  col-span-4 text-center"
                     }
                   >
                     <Button
@@ -3915,7 +5100,7 @@ const PickUp = () => {
                     >
                       Hotel
                     </Button>
-                  </div> */}
+                  </div>
                 </div>
               </div>
               <div className=" p-0 text-base ">
@@ -4061,40 +5246,43 @@ const PickUp = () => {
                             label="Due"
                           />
                         </div>
-                        <div>
-                          <FormControlLabel
-                            value="online"
-                            control={
-                              <Radio
-                                name="radio"
-                                sx={{
-                                  color: "#fff",
-                                  "&.Mui-checked": {
-                                    color: "#fff",
-                                  },
-                                }}
+                        {buttonCLicked != 'Hotel' &&
+                          <>
+                            <div>
+                              <FormControlLabel
+                                value="online"
+                                control={
+                                  <Radio
+                                    name="radio"
+                                    sx={{
+                                      color: "#fff",
+                                      "&.Mui-checked": {
+                                        color: "#fff",
+                                      },
+                                    }}
+                                  />
+                                }
+                                label="Online"
                               />
-                            }
-                            label="Online"
-                          />
-                        </div>
-                        <div>
-                          <FormControlLabel
-                            value="complimentary"
-                            control={
-                              <Radio
-                                name="radio"
-                                sx={{
-                                  color: "#fff",
-                                  "&.Mui-checked": {
-                                    color: "#fff",
-                                  },
-                                }}
+                            </div>
+                            <div>
+                              <FormControlLabel
+                                value="complimentary"
+                                control={
+                                  <Radio
+                                    name="radio"
+                                    sx={{
+                                      color: "#fff",
+                                      "&.Mui-checked": {
+                                        color: "#fff",
+                                      },
+                                    }}
+                                  />
+                                }
+                                label="Complimentary"
                               />
-                            }
-                            label="Complimentary"
-                          />
-                        </div>
+                            </div>
+                          </>}
                       </RadioGroup>
                     </div>
                     <div>
@@ -4298,13 +5486,17 @@ const PickUp = () => {
                   <button
                     className="text-base button px-2 py-1 rounded-md text-white"
                     onClick={() =>
-                      buttonCLicked == "tab2"
+                      buttonCLicked == "Hotel"
                         ? isEdit
-                          ? justEditBillDelivery()
-                          : justSaveBillDelivery()
-                        : isEdit
-                          ? justEditBill()
-                          : justSaveBill()
+                          ? justEditHotelBill()
+                          : justSaveHotelBill() :
+                        buttonCLicked == "Delivery"
+                          ? isEdit
+                            ? justEditBillDelivery()
+                            : justSaveBillDelivery()
+                          : isEdit
+                            ? justEditBill()
+                            : justSaveBill()
                     }
                   >
                     Save
@@ -4314,13 +5506,17 @@ const PickUp = () => {
                   <button
                     className="text-base button save_button py-1 rounded-md text-white"
                     onClick={() => {
-                      buttonCLicked == "tab2"
+                      buttonCLicked == "Hotel"
                         ? isEdit
-                          ? editBillDelivery()
-                          : saveBillDelivery()
-                        : isEdit
-                          ? editBill()
-                          : saveBill();
+                          ? editHotelBill()
+                          : saveHotelBill() :
+                        buttonCLicked == "Delivery"
+                          ? isEdit
+                            ? editBillDelivery()
+                            : saveBillDelivery()
+                          : isEdit
+                            ? editBill()
+                            : saveBill();
                     }}
                   >
                     Save & Print
@@ -4332,9 +5528,11 @@ const PickUp = () => {
                       <button
                         className="another_1 button text-base px-2 py-1 rounded-md text-white"
                         onClick={() =>
-                          buttonCLicked == "tab2"
-                            ? editBillPrintDelivery()
-                            : editBillPrint()
+                          buttonCLicked == "Hotel"
+                            ? editHotelBillPrint() :
+                            buttonCLicked == "Delivery"
+                              ? editBillPrintDelivery()
+                              : editBillPrint()
                         }
                       >
                         Save & Bill
@@ -4344,9 +5542,11 @@ const PickUp = () => {
                       <button
                         className="another_1 button text-base px-2 py-1 rounded-md text-white"
                         onClick={() =>
-                          buttonCLicked == "tab2"
-                            ? editKotPrintDelivery()
-                            : editKotPrint()
+                          buttonCLicked == "Hotel"
+                            ? editHotelKotPrint() :
+                            buttonCLicked == "Delivery"
+                              ? editKotPrintDelivery()
+                              : editKotPrint()
                         }
                       >
                         Save & KOT
@@ -4356,9 +5556,11 @@ const PickUp = () => {
                       <button
                         className="another_2 button text-base px-2 py-1 rounded-md text-white"
                         onClick={() =>
-                          buttonCLicked == "tab2"
-                            ? cancleBillDelivery()
-                            : cancleBill()
+                          buttonCLicked == "Hotel"
+                            ? cancleHotelBill() :
+                            buttonCLicked == "Delivery"
+                              ? cancleBillDelivery()
+                              : cancleBill()
                         }
                       >
                         Cancel
@@ -4370,9 +5572,11 @@ const PickUp = () => {
                     <button
                       className="another_2 button text-base px-2 py-1 rounded-md text-white"
                       onClick={() =>
-                        buttonCLicked == "tab2"
-                          ? holdBillDelivery()
-                          : holdBill()
+                        buttonCLicked == "Hotel"
+                          ? holdHotelBill() :
+                          buttonCLicked == "Delivery"
+                            ? holdBillDelivery()
+                            : holdBill()
                       }
                     >
                       HOLD

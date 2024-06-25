@@ -88,18 +88,110 @@ const Header = (props) => {
             ? res.data.billComment.split(", ")
             : [],
         });
-        props.setCustomerData(res.data.customerDetails);
+        res?.data?.billType == 'Hotel' ? props.setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: res?.data?.hotelDetails?.mobileNo,
+          customerName: res?.data?.hotelDetails?.customerName,
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        }) : props.setCustomerData(res.data.customerDetails);
         props.setEditBillData(res.data);
         props.setIsEdit(true);
         props.setButtonCLicked(
-          res.data.billType == "Delivery" ? "tab2" : "tab3"
+          res?.data?.billType
         );
+        res?.data?.billType == 'Hotel' && (props.setHotelFormData({
+          hotelId: res.data?.hotelDetails?.hotelId,
+          roomNo: res.data?.hotelDetails?.roomNo,
+          selectedHotel: res.data?.hotelDetails
+        }))
+        toggleDrawer("right", false);
+        setOpenHold(false);
+      })
+      .catch((error) => {
+        console.log("ERRRORRR", error)
+        setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+  };
+  const getHoldBbill = async (id) => {
+    await axios
+      .get(
+        `${BACKEND_BASE_URL}billingrouter/getHoldBillDataById?holdId=${id}`,
+        config
+      )
+      .then((res) => {
+        props.setItems(res.data.itemData);
+        props.setBillData({
+          subTotal: res.data.totalAmount,
+          discountType: res.data.discountType,
+          discountValue: res.data.discountValue,
+          settledAmount: res.data.settledAmount,
+          totalDiscount: res.data.totalDiscount,
+          billPayType: res.data.billPayType,
+          billComment: res.data.billComment,
+          billCommentAuto: res.data.billComment
+            ? res.data.billComment.split(", ")
+            : [],
+        });
+        res?.data?.billType == 'Hotel' ? props.setCustomerData({
+          customerId: "",
+          addressId: "",
+          mobileNo: res?.data?.hotelDetails?.mobileNo,
+          customerName: res?.data?.hotelDetails?.customerName,
+          address: "",
+          locality: "",
+          birthDate: "",
+          aniversaryDate: "",
+        }) : props.setCustomerData(res.data.customerDetails);
+        props.setEditBillData(res.data);
+        props.setButtonCLicked(
+          res?.data?.billType
+        );
+        res?.data?.billType == 'Hotel' && (props.setHotelFormData({
+          hotelId: res.data?.hotelDetails?.hotelId,
+          roomNo: res.data?.hotelDetails?.roomNo,
+          selectedHotel: res.data?.hotelDetails
+        }))
+        // console.log("LLPP", {
+        //   customerId: "",
+        //   addressId: "",
+        //   mobileNo: res?.data?.hotelDetails?.mobileNo,
+        //   customerName: res?.data?.hotelDetails?.customerName,
+        //   address: "",
+        //   locality: "",
+        //   birthDate: "",
+        //   aniversaryDate: "",
+        // }, {
+        //   hotelId: res?.data?.hotelDetails?.hotelId,
+        //   roomNo: res?.data?.hotelDetails?.roomNo,
+        //   selectedHotel: res?.data?.hotelDetails
+        // })
         toggleDrawer("right", false);
         setOpenHold(false);
       })
       .catch((error) => {
         setError(error.response ? error.response.data : "Network Error ...!!!");
       });
+  };
+  const discardBill = async (id) => {
+    // if (window.confirm("Are You sure you want to discard hold bill ?")) {
+    await axios
+      .delete(
+        `${BACKEND_BASE_URL}billingrouter/discardHoldData?holdId=${id}`,
+        config
+      )
+      .then((res) => {
+        // toggleDrawer("right", false);
+        // setOpenHold(false);
+        getHoldBills()
+      })
+      .catch((error) => {
+        setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+    // }
   };
   const SearchIconWrapper = styled("div")(({ theme }) => ({
     padding: theme.spacing(0, 2),
@@ -131,6 +223,7 @@ const Header = (props) => {
         setHoldBills(res.data);
       })
       .catch((error) => {
+        setHoldBills([]);
         // setError(error.response ? error.response.data : "Network Error ...!!!");
       });
   };
@@ -237,29 +330,27 @@ const Header = (props) => {
     <Box
       sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 400 }}
       role="presentation"
-      // onClick={toggleDrawer(anchor, false)}
+    // onClick={toggleDrawer(anchor, false)}
     >
       <div className="p-2 my-1 text-base">Recent</div>
       <hr className="mb-2" />
 
       <div className="flex p-2 my-1 sticky">
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${
-            activeTab === "Dine In" ? "active" : ""
-          }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Hotel" ? "active" : ""
+            }`}
           onClick={(event) => {
             event.stopPropagation();
-            setActiveTab("Dine In");
-            getRecentToken("Dine In");
+            setActiveTab("Hotel");
+            getRecentToken("Hotel");
             setSearchTerm("");
           }}
         >
-          Dine In
+          Hotel
         </div>
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${
-            activeTab === "Pick Up" ? "active" : ""
-          }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Pick Up" ? "active" : ""
+            }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Pick Up");
@@ -270,9 +361,8 @@ const Header = (props) => {
           Pick Up
         </div>
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${
-            activeTab === "Delivery" ? "active" : ""
-          }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Delivery" ? "active" : ""
+            }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Delivery");
@@ -377,8 +467,8 @@ const Header = (props) => {
     <Box
       sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 400 }}
       role="presentation"
-      onClick={toggleDrawer(anchor, false)}
-      onKeyDown={toggleDrawer(anchor, false)}
+    // onClick={toggleDrawer(anchor, false)}
+    // onKeyDown={toggleDrawer(anchor, false)}
     >
       <div className="p-2 my-1  text-base">Hold Bills</div>
       <hr className="mb-2"></hr>
@@ -431,7 +521,7 @@ const Header = (props) => {
         </div> */}
       {/* </div> */}
       <div className="flex pl-6 pr-6 mt-1 justify-between recentBillHeader">
-        <div>Token No</div>
+        <div>No</div>
         <div>Type</div>
         <div>Rs.</div>
       </div>
@@ -440,17 +530,30 @@ const Header = (props) => {
           <div
             className="recentBillRow pb-2 pt-2 flex justify-between"
             key={index}
-            onClick={() => {
-              getBbill(data.billId);
-            }}
           >
-            <div className="pl-6">{data.tokenNo}</div>
-            <div className="pl-6">{data.billType}</div>
-            <div className="pr-4">{data.totalAmount}</div>
+            <div className="pl-6" onClick={() => {
+              getHoldBbill(data.holdId);
+            }}>{index + 1}</div>
+            <div className="pl-6" onClick={() => {
+              getHoldBbill(data.holdId);
+            }}>{data.billType}</div>
+            <div className="pr-4" onClick={() => {
+              getHoldBbill(data.holdId);
+            }}>{data.totalAmount}</div>
+            <div>
+              <button
+                className="discardBtn"
+                onClick={() =>
+                  discardBill(data.holdId)
+                }
+              >
+                Discard
+              </button>
+            </div>
           </div>
         ))}
       </div>
-    </Box>
+    </Box >
   );
   const navigate = useNavigate();
   const handleCommonSearch = async () => {
@@ -478,7 +581,7 @@ const Header = (props) => {
         props.setEditBillData(res.data);
         props.setIsEdit(true);
         const billType = res.data.billType;
-        props.setButtonCLicked(billType === "Delivery" ? "tab2" : "tab3");
+        props.setButtonCLicked(billType);
         setSearch("");
       })
       .catch((error) => {

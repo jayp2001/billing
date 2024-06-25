@@ -95,10 +95,10 @@ const Cards = ({ data }) => {
                 </div> */}
                 <div>
                   <div className="headr_icon text-xs">
-                    {data.customerDetails.mobileNo}
+                    {data?.customerDetails?.mobileNo}
                   </div>
                   <div className="headr_icon text-xs">
-                    {data.customerDetails.address ? `${data.customerDetails.address}` : 'address'}{data.customerDetails.customerName ? `, ${data.customerDetails.customerName}`:''}{data.customerDetails.locality ? `, ${data.customerDetails.locality}` : ''}
+                    {data?.customerDetails?.address ? `${data.customerDetails.address}` : 'address'}{data?.customerDetails?.customerName ? `, ${data.customerDetails.customerName}` : ''}{data?.customerDetails?.locality ? `, ${data.customerDetails.locality}` : ''}
                   </div>
                 </div>
               </div>
