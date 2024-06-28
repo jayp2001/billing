@@ -14,7 +14,7 @@ import {
   MenuItem,
 } from "@mui/material";
 // import { useNavigate } from "react-router-dom";
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from "react-router-dom";
 import Autocomplete from "@mui/material/Autocomplete";
 import Popover from "@mui/material/Popover";
 import "./css/pickUp.css";
@@ -147,9 +147,9 @@ const PickUp = () => {
     price: 0,
   });
   const [hotelFormData, setHotelFormData] = useState({
-    hotelId: '',
-    roomNo: '',
-    selectedHotel: ''
+    hotelId: "",
+    roomNo: "",
+    selectedHotel: "",
   });
 
   const [billError, setBillError] = useState({
@@ -157,7 +157,7 @@ const PickUp = () => {
     settledAmount: false,
     discountValue: false,
     hotelId: false,
-    roomNo: false
+    roomNo: false,
   });
 
   const [items, setItems] = useState([]);
@@ -304,10 +304,7 @@ const PickUp = () => {
 
   const getData = async (id) => {
     await axios
-      .get(
-        `${BACKEND_BASE_URL}menuItemrouter/getItemData?menuId=${id}`,
-        config
-      )
+      .get(`${BACKEND_BASE_URL}menuItemrouter/getItemData?menuId=${id}`, config)
       .then((res) => {
         setData(res.data);
       })
@@ -318,16 +315,17 @@ const PickUp = () => {
   };
   const getBillTypes = async () => {
     await axios
-      .get(
-        `${BACKEND_BASE_URL}billingrouter/getBillCategory`,
-        config
-      )
+      .get(`${BACKEND_BASE_URL}billingrouter/getBillCategory`, config)
       .then((res) => {
         setBillTypeCategory(res.data);
-        getData(res.data[tab].menuId ? res.data[tab].menuId : 'base_2001');
+        getData(res.data[tab].menuId ? res.data[tab].menuId : "base_2001");
       })
       .catch((error) => {
-        setError(error.response && error.response.data ? error.response.data : "Network Error ...!!!");
+        setError(
+          error.response && error.response.data
+            ? error.response.data
+            : "Network Error ...!!!"
+        );
         // setData(null);
       });
   };
@@ -348,8 +346,8 @@ const PickUp = () => {
           ? editBillDelivery()
           : saveBillDelivery()
         : isEdit
-          ? editBill()
-          : saveBill();
+        ? editBill()
+        : saveBill();
     }
     if (event.key === "F1") {
       buttonCLicked === "Delivery"
@@ -357,8 +355,8 @@ const PickUp = () => {
           ? justEditBillDelivery()
           : justSaveBillDelivery()
         : isEdit
-          ? justEditBill()
-          : justSaveBill();
+        ? justEditBill()
+        : justSaveBill();
     }
     if (event.key === "F5") {
       window.location.reload();
@@ -368,7 +366,7 @@ const PickUp = () => {
   useEffect(() => {
     first.current.focus();
     // getData();
-    getBillTypes()
+    getBillTypes();
     getcustomerDDL();
     getHotelDDL();
     getComments();
@@ -378,7 +376,16 @@ const PickUp = () => {
     return () => {
       window.removeEventListener("keydown", handleShoetCutKey);
     };
-  }, [buttonCLicked, isEdit, fullFormData, billData, customerData, editBillData, billError, items]);
+  }, [
+    buttonCLicked,
+    isEdit,
+    fullFormData,
+    billData,
+    customerData,
+    editBillData,
+    billError,
+    items,
+  ]);
   const handleInputNameChange = (e, value) => {
     // const filtered = value ? data.filter(item =>
     //   (item.itemShortKey && item.itemShortKey.toLowerCase().includes(value.toLowerCase())) ||
@@ -411,39 +418,42 @@ const PickUp = () => {
       setHotelFormData((perv) => ({
         ...perv,
         hotelId: value.hotelId,
-        selectedHotel: value
-      }))
+        selectedHotel: value,
+      }));
       setBillError((perv) => ({
         ...perv,
-        hotelId: false
-      }))
+        hotelId: false,
+      }));
       setBillData((perv) => ({
         ...perv,
         discountType: value.discountType,
         discountValue: value.discount,
-        settledAmount: billData.subTotal ? Math.ceil(
-          value.discountType == "none" ? billData.subTotal :
-            value.discountType == "fixed"
-              ? billData.subTotal - value.discount
-              : billData.subTotal * (1 - value.discount / 100)
-        ) : 0,
+        settledAmount: billData.subTotal
+          ? Math.ceil(
+              value.discountType == "none"
+                ? billData.subTotal
+                : value.discountType == "fixed"
+                ? billData.subTotal - value.discount
+                : billData.subTotal * (1 - value.discount / 100)
+            )
+          : 0,
         billPayType: value.payType,
-      }))
+      }));
     } else {
       setHotelFormData((perv) => ({
         ...perv,
-        hotelId: '',
-        selectedHotel: ''
-      }))
+        hotelId: "",
+        selectedHotel: "",
+      }));
       setBillError((perv) => ({
         ...perv,
-        hotelId: true
-      }))
+        hotelId: true,
+      }));
       setHotelFormData((perv) => ({
         ...perv,
-        hotelId: '',
-        selectedHotel: 'value'
-      }))
+        hotelId: "",
+        selectedHotel: "value",
+      }));
     }
   };
   const handleFreeSoloChange = (e, value) => {
@@ -561,7 +571,7 @@ const PickUp = () => {
         }
         // setTimeout(() => {
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate("/dashboard");
         }, 1500);
         // }, 1500)
       })
@@ -592,8 +602,9 @@ const PickUp = () => {
       hotelId: hotelFormData?.selectedHotel?.hotelId,
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory?.Hotel?.isOfficial,
+      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
+      footerBill: billTypeCategory?.Hotel?.billFooterNote,
     };
     await axios
       .post(
@@ -665,12 +676,12 @@ const PickUp = () => {
         }
         // setTimeout(() => {
         setTimeout(() => {
-          navigate('/dashboard');
+          navigate("/dashboard");
         }, 1500);
         // }, 1500)
       })
       .catch((error) => {
-        console.log('><<>???', error)
+        console.log("><<>???", error);
         setError(
           error.response && error.response.data
             ? error.response.data
@@ -768,8 +779,8 @@ const PickUp = () => {
           ipcRenderer.send("set-title", printerDataKot);
         }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -870,8 +881,8 @@ const PickUp = () => {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -947,8 +958,8 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -1048,8 +1059,8 @@ const PickUp = () => {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -1152,8 +1163,8 @@ const PickUp = () => {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -1256,8 +1267,8 @@ const PickUp = () => {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -1361,8 +1372,8 @@ const PickUp = () => {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -1462,8 +1473,8 @@ const PickUp = () => {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -1492,8 +1503,9 @@ const PickUp = () => {
       hotelId: hotelFormData?.selectedHotel?.hotelId,
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory?.Hotel?.isOfficial,
+      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
+      footerBill: billTypeCategory?.Hotel?.billFooterNote,
     };
     await axios
       .post(
@@ -1539,8 +1551,8 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -1640,8 +1652,8 @@ const PickUp = () => {
         //   ipcRenderer.send("set-title", printerDataKot);
         // }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -1755,8 +1767,8 @@ const PickUp = () => {
           console.log("try catch errror", error);
         }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -1787,8 +1799,8 @@ const PickUp = () => {
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
       isOfficial: billTypeCategory?.Hotel?.isOfficial,
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
+      footerBill: billTypeCategory?.Hotel?.billFooterNote,
     };
     await axios
       .post(
@@ -1862,8 +1874,8 @@ const PickUp = () => {
           console.log("try catch errror", error);
         }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -1976,8 +1988,8 @@ const PickUp = () => {
           console.log("try catch errror", error);
         }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -2055,8 +2067,8 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -2087,8 +2099,8 @@ const PickUp = () => {
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
       isOfficial: billTypeCategory?.Hotel?.isOfficial,
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
+      footerBill: billTypeCategory?.Hotel?.billFooterNote,
     };
     await axios
       .post(
@@ -2136,8 +2148,8 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -2215,8 +2227,8 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -2330,8 +2342,8 @@ const PickUp = () => {
           console.log("try catch errror", error);
         }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -2362,8 +2374,8 @@ const PickUp = () => {
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
       isOfficial: billTypeCategory?.Hotel?.isOfficial,
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
+      footerBill: billTypeCategory?.Hotel?.billFooterNote,
     };
     await axios
       .post(
@@ -2437,8 +2449,8 @@ const PickUp = () => {
           console.log("try catch errror", error);
         }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -2551,8 +2563,8 @@ const PickUp = () => {
           console.log("try catch errror", error);
         }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -2665,8 +2677,8 @@ const PickUp = () => {
           console.log("try catch errror", error);
         }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -2697,8 +2709,8 @@ const PickUp = () => {
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
       isOfficial: billTypeCategory?.Hotel?.isOfficial,
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
+      footerBill: billTypeCategory?.Hotel?.billFooterNote,
     };
     await axios
       .post(
@@ -2772,8 +2784,8 @@ const PickUp = () => {
           console.log("try catch errror", error);
         }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -2886,8 +2898,8 @@ const PickUp = () => {
           console.log("try catch errror", error);
         }
         setTimeout(() => {
-          navigate('/dashboard');
-        }, 1500)
+          navigate("/dashboard");
+        }, 1500);
       })
       .catch((error) => {
         setError(
@@ -2944,10 +2956,7 @@ const PickUp = () => {
   };
   const getHotelDDL = async () => {
     await axios
-      .get(
-        `${BACKEND_BASE_URL}billingrouter/ddlHotelList`,
-        config
-      )
+      .get(`${BACKEND_BASE_URL}billingrouter/ddlHotelList`, config)
       .then((res) => {
         setHotelList(res.data);
       })
@@ -2983,7 +2992,7 @@ const PickUp = () => {
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
         addBillData();
-        setValidationError(false)
+        setValidationError(false);
       }
     }
   };
@@ -3004,15 +3013,15 @@ const PickUp = () => {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false
-        }))
+          roomNo: !hotelFormData.roomNo ? true : false,
+        }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
         addHotelBillData();
-        setValidationError(false)
+        setValidationError(false);
       }
     }
   };
@@ -3083,8 +3092,8 @@ const PickUp = () => {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false
-        }))
+          roomNo: !hotelFormData.roomNo ? true : false,
+        }));
         // console.log('><<<<>>>LLL', !hotelFormData.hotelId ? true : false, !hotelFormData.roomNo ? true : false)
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -3163,8 +3172,8 @@ const PickUp = () => {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false
-        }))
+          roomNo: !hotelFormData.roomNo ? true : false,
+        }));
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
       } else {
@@ -3240,8 +3249,8 @@ const PickUp = () => {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false
-        }))
+          roomNo: !hotelFormData.roomNo ? true : false,
+        }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -3320,8 +3329,8 @@ const PickUp = () => {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false
-        }))
+          roomNo: !hotelFormData.roomNo ? true : false,
+        }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -3402,8 +3411,8 @@ const PickUp = () => {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false
-        }))
+          roomNo: !hotelFormData.roomNo ? true : false,
+        }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -3480,8 +3489,8 @@ const PickUp = () => {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false
-        }))
+          roomNo: !hotelFormData.roomNo ? true : false,
+        }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -3579,8 +3588,8 @@ const PickUp = () => {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false
-        }))
+          roomNo: !hotelFormData.roomNo ? true : false,
+        }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -3710,11 +3719,11 @@ const PickUp = () => {
     const value = e.target.value;
     const options =
       fullFormData &&
-        fullFormData.selectedItem &&
-        fullFormData.selectedItem.variantsList
+      fullFormData.selectedItem &&
+      fullFormData.selectedItem.variantsList
         ? fullFormData &&
-        fullFormData.selectedItem &&
-        fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
         : [];
 
     if (!isNaN(value)) {
@@ -3759,11 +3768,11 @@ const PickUp = () => {
       e.preventDefault();
       const matchingProduct = data
         ? data?.find(
-          (item) =>
-            item.itemCode.toString() === value ||
-            item.itemShortKey.toString().toLocaleLowerCase() ===
-            value.toString().toLocaleLowerCase()
-        )
+            (item) =>
+              item.itemCode.toString() === value ||
+              item.itemShortKey.toString().toLocaleLowerCase() ===
+                value.toString().toLocaleLowerCase()
+          )
         : [];
       console.log("Search Item", matchingProduct);
       //    if (matchingProduct) {
@@ -3789,7 +3798,7 @@ const PickUp = () => {
         } else if (
           value === matchingProduct?.itemCode?.toString() ||
           matchingProduct.itemShortKey?.toString()?.toLocaleLowerCase() ===
-          value.toString().toLocaleLowerCase()
+            value.toString().toLocaleLowerCase()
         ) {
           e.preventDefault();
           setValidationError(false);
@@ -3846,26 +3855,26 @@ const PickUp = () => {
         ...perv,
         unit:
           fullFormData &&
-            fullFormData.selectedItem &&
-            fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].unit
             : "",
         itemPrice:
           fullFormData &&
-            fullFormData.selectedItem &&
-            fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].price
             : 0,
         selectedUnit:
           fullFormData &&
-            fullFormData.selectedItem &&
-            fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0]
             : {},
         price:
           (fullFormData &&
-            fullFormData.selectedItem &&
-            fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].price
             : 0) * fullFormData.qty,
       }));
@@ -3873,8 +3882,8 @@ const PickUp = () => {
       e.preventDefault();
       if (
         fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+        fullFormData.selectedItem &&
+        fullFormData.selectedItem.variantsList
           ? fullFormData.selectedItem.variantsList.length > 1
             ? true
             : false
@@ -3883,8 +3892,8 @@ const PickUp = () => {
         unitInputRef.current && unitInputRef.current.focus();
       } else if (
         fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+        fullFormData.selectedItem &&
+        fullFormData.selectedItem.variantsList
           ? fullFormData.selectedItem.variantsList.length == 1
             ? true
             : false
@@ -3923,26 +3932,33 @@ const PickUp = () => {
           setBillData((perv) => ({
             ...perv,
             subTotal: billData.subTotal + fullFormData.price,
-            settledAmount: billData.subTotal + fullFormData.price ? Math.ceil(
-              billData.discountType == "none" ? billData.subTotal + fullFormData.price :
-                billData.discountType == "fixed"
-                  ? (billData.subTotal + fullFormData.price) - billData.discountValue
-                  : (billData.subTotal + fullFormData.price) * (1 - billData.discountValue / 100)
-            ) : 0,
+            settledAmount:
+              billData.subTotal + fullFormData.price
+                ? Math.ceil(
+                    billData.discountType == "none"
+                      ? billData.subTotal + fullFormData.price
+                      : billData.discountType == "fixed"
+                      ? billData.subTotal +
+                        fullFormData.price -
+                        billData.discountValue
+                      : (billData.subTotal + fullFormData.price) *
+                        (1 - billData.discountValue / 100)
+                  )
+                : 0,
             // settledAmount: Math.ceil(billData.subTotal + fullFormData.price),
           }));
           setItems((prevItems) =>
             prevItems?.map((data, index) =>
               isExist == index
                 ? {
-                  ...data,
-                  qty: parseFloat(data.qty) + parseFloat(fullFormData.qty),
-                  comment: data.comment
-                    ? data.comment + ", " + fullFormData.comment
-                    : fullFormData.comment,
-                  price:
-                    data.price + fullFormData.qty * fullFormData.itemPrice,
-                }
+                    ...data,
+                    qty: parseFloat(data.qty) + parseFloat(fullFormData.qty),
+                    comment: data.comment
+                      ? data.comment + ", " + fullFormData.comment
+                      : fullFormData.comment,
+                    price:
+                      data.price + fullFormData.qty * fullFormData.itemPrice,
+                  }
                 : data
             )
           );
@@ -3981,12 +3997,19 @@ const PickUp = () => {
           setBillData((perv) => ({
             ...perv,
             subTotal: billData.subTotal + fullFormData.price,
-            settledAmount: billData.subTotal + fullFormData.price ? Math.ceil(
-              billData.discountType == "none" ? billData.subTotal + fullFormData.price :
-                billData.discountType == "fixed"
-                  ? (billData.subTotal + fullFormData.price) - billData.discountValue
-                  : (billData.subTotal + fullFormData.price) * (1 - billData.discountValue / 100)
-            ) : 0,
+            settledAmount:
+              billData.subTotal + fullFormData.price
+                ? Math.ceil(
+                    billData.discountType == "none"
+                      ? billData.subTotal + fullFormData.price
+                      : billData.discountType == "fixed"
+                      ? billData.subTotal +
+                        fullFormData.price -
+                        billData.discountValue
+                      : (billData.subTotal + fullFormData.price) *
+                        (1 - billData.discountValue / 100)
+                  )
+                : 0,
             // settledAmount: Math.ceil(billData.subTotal + fullFormData.price),
           }));
           setItems((prevItems) => [...prevItems, newItem]);
@@ -4020,7 +4043,7 @@ const PickUp = () => {
       unit: "",
       comment: "",
       commentAutoComplete: [],
-      itemPrice: ''
+      itemPrice: "",
     });
 
     if (unitOptionsExist(fullFormData.inputName)) {
@@ -4069,9 +4092,9 @@ const PickUp = () => {
         subTotal: newSubTotal,
         settledAmount: Math.ceil(
           newSubTotal -
-          (prev.discountType === "fixed"
-            ? prev.discountValue
-            : prev.discountType === "percentage"
+            (prev.discountType === "fixed"
+              ? prev.discountValue
+              : prev.discountType === "percentage"
               ? newSubTotal * (prev.discountValue / 100)
               : 0)
         ),
@@ -4113,19 +4136,19 @@ const PickUp = () => {
       settledAmount: Math.ceil(
         qty1 > 1
           ? billData.subTotal -
-          items[index].itemPrice -
-          (billData.discountType == "fixed"
-            ? billData.discountValue
-            : billData.discountType == "percentage"
-              ? (billData.subTotal - items[index].itemPrice) *
-              (billData.discountValue / 100)
-              : 0)
+              items[index].itemPrice -
+              (billData.discountType == "fixed"
+                ? billData.discountValue
+                : billData.discountType == "percentage"
+                ? (billData.subTotal - items[index].itemPrice) *
+                  (billData.discountValue / 100)
+                : 0)
           : billData.subTotal -
-          (billData.discountType == "fixed"
-            ? billData.discountValue
-            : billData.discountType == "percentage"
-              ? billData.subTotal * (billData.discountValue / 100)
-              : 0)
+              (billData.discountType == "fixed"
+                ? billData.discountValue
+                : billData.discountType == "percentage"
+                ? billData.subTotal * (billData.discountValue / 100)
+                : 0)
       ),
     }));
   };
@@ -4150,12 +4173,12 @@ const PickUp = () => {
           subTotal: newSubTotal,
           settledAmount: Math.ceil(
             newSubTotal -
-            (prev.discountType === "fixed"
-              ? prev.discountValue
-              : prev.discountType === "percentage"
+              (prev.discountType === "fixed"
+                ? prev.discountValue
+                : prev.discountType === "percentage"
                 ? newSubTotal * (prev.discountValue / 100)
                 : 0
-            ).toFixed(2)
+              ).toFixed(2)
           ),
         };
       });
@@ -4277,7 +4300,13 @@ const PickUp = () => {
       }
     }
   }, [suggestionIndex]);
-  console.log('TEMPPPP    DATA   IIII', fullFormData, customerData, hotelFormData, billData)
+  console.log(
+    "TEMPPPP    DATA   IIII",
+    fullFormData,
+    customerData,
+    hotelFormData,
+    billData
+  );
   return (
     <div className="bg-gray-200 overfloe-hidden h-screen anotherHeight">
       <Header
@@ -4370,8 +4399,8 @@ const PickUp = () => {
                 onBlur={(e) => {
                   const json = fullFormData.selectedItem.variantsList
                     ? fullFormData.selectedItem.variantsList?.filter(
-                      (varient) => varient.unit == e.target.value
-                    )
+                        (varient) => varient.unit == e.target.value
+                      )
                     : {};
                   setFullFormData((perv) => ({
                     ...perv,
@@ -4386,8 +4415,8 @@ const PickUp = () => {
                 onChange={(e) => {
                   const json = fullFormData.selectedItem.variantsList
                     ? fullFormData.selectedItem.variantsList?.filter(
-                      (varient) => varient.unit == e.target.value
-                    )
+                        (varient) => varient.unit == e.target.value
+                      )
                     : {};
                   setFullFormData((perv) => ({
                     ...perv,
@@ -4538,7 +4567,7 @@ const PickUp = () => {
             <div className="Righ_bill_menu w-2/5">
               <div className="w-full right_meun rounded-md">
                 {/* {buttonCLicked === "Dine In" && ( */}
-                {buttonCLicked !== "Hotel" &&
+                {buttonCLicked !== "Hotel" && (
                   <div className="w-full text-base h-full overflow-auto  table_no p-4">
                     <div className="shadow-md bg-white rounded-md my-2 p-2">
                       <div className="flex justify-between mb-2">
@@ -4564,8 +4593,9 @@ const PickUp = () => {
                             <td className="autocompleteTxt">
                               <input
                                 type="text"
-                                className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${billError.mobileNo ? "mobileNoError" : ""
-                                  }`}
+                                className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${
+                                  billError.mobileNo ? "mobileNoError" : ""
+                                }`}
                                 name="mobileNo"
                                 // value={customerData.mobileNo}
                                 // onChange={(e) => {
@@ -4581,7 +4611,10 @@ const PickUp = () => {
                                 variant="outlined"
                                 onChange={(e) => {
                                   // handleFilter(e.target.value);
-                                  setBillError({ ...billError, mobileNo: false });
+                                  setBillError({
+                                    ...billError,
+                                    mobileNo: false,
+                                  });
                                   if (regex.test(e.target.value)) {
                                     setCustomerData((perv) => ({
                                       ...perv,
@@ -4596,10 +4629,14 @@ const PickUp = () => {
                                 }}
                                 onBlur={handleBlur}
                                 onKeyDown={handleKeyDown}
-                                value={customerData && customerData.mobileNo ? customerData.mobileNo : ''}
+                                value={
+                                  customerData && customerData.mobileNo
+                                    ? customerData.mobileNo
+                                    : ""
+                                }
                                 autoComplete="off"
 
-                              // onBlur={() => setopenSuggestions(false)}
+                                // onBlur={() => setopenSuggestions(false)}
                               />
                               {customerList.length > 0 && (
                                 <div
@@ -4618,10 +4655,11 @@ const PickUp = () => {
                                       onClick={() => handleSuggestionClick(val)}
                                     >
                                       <div
-                                        className={`suggestionValue px-2 py-1 ${suggestionIndex === index
-                                          ? "bg-gray-200"
-                                          : ""
-                                          }`}
+                                        className={`suggestionValue px-2 py-1 ${
+                                          suggestionIndex === index
+                                            ? "bg-gray-200"
+                                            : ""
+                                        }`}
                                       >
                                         {val.mobileNo} - {val.customerName} -{" "}
                                         {val.address}
@@ -4637,7 +4675,11 @@ const PickUp = () => {
                             <td>
                               {!isEnglish ? (
                                 <input
-                                  value={customerData && customerData.customerName ? customerData.customerName : ''}
+                                  value={
+                                    customerData && customerData.customerName
+                                      ? customerData.customerName
+                                      : ""
+                                  }
                                   type="text"
                                   name="customerName"
                                   className="border-2 w-full p-1 rounded-sm"
@@ -4650,7 +4692,11 @@ const PickUp = () => {
                                 />
                               ) : (
                                 <ReactTransliterate
-                                  value={customerData && customerData.customerName ? customerData.customerName : ''}
+                                  value={
+                                    customerData && customerData.customerName
+                                      ? customerData.customerName
+                                      : ""
+                                  }
                                   className="border-2 w-full p-1 rounded-sm"
                                   onChangeText={(text) => {
                                     setCustomerData((perv) => ({
@@ -4771,7 +4817,8 @@ const PickUp = () => {
                         </table>
                       </div>
                     </div>
-                  </div>}
+                  </div>
+                )}
                 {buttonCLicked === "Hotel" && (
                   <div>
                     <div className="shadow-md bg-white  rounded-md  text-base m-4 p-2">
@@ -4810,15 +4857,17 @@ const PickUp = () => {
                             onChange={(e) => {
                               setHotelFormData((perv) => ({
                                 ...perv,
-                                roomNo: e.target.value
-                              }))
+                                roomNo: e.target.value,
+                              }));
                               setBillError((perv) => ({
                                 ...perv,
-                                roomNo: e.target.value ? false : true
-                              }))
+                                roomNo: e.target.value ? false : true,
+                              }));
                             }}
-                            autoComplete='off'
-                            className={`w-20 p-1 border-2 rounded-sm ${billError.roomNo ? 'mobileNoError' : ''}`}
+                            autoComplete="off"
+                            className={`w-20 p-1 border-2 rounded-sm ${
+                              billError.roomNo ? "mobileNoError" : ""
+                            }`}
                           />
                         </div>
                       </div>
@@ -4848,8 +4897,9 @@ const PickUp = () => {
                               <td className="autocompleteTxt">
                                 <input
                                   type="text"
-                                  className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${billError.mobileNo ? "mobileNoError" : ""
-                                    }`}
+                                  className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${
+                                    billError.mobileNo ? "mobileNoError" : ""
+                                  }`}
                                   name="mobileNo"
                                   // value={customerData.mobileNo}
                                   // onChange={(e) => {
@@ -4865,8 +4915,14 @@ const PickUp = () => {
                                   variant="outlined"
                                   onChange={(e) => {
                                     // handleFilter(e.target.value);
-                                    setBillError({ ...billError, mobileNo: false });
-                                    if (regex.test(e.target.value) && e.target.value.length < 11) {
+                                    setBillError({
+                                      ...billError,
+                                      mobileNo: false,
+                                    });
+                                    if (
+                                      regex.test(e.target.value) &&
+                                      e.target.value.length < 11
+                                    ) {
                                       setCustomerData((perv) => ({
                                         ...perv,
                                         mobileNo: e.target.value,
@@ -4880,10 +4936,14 @@ const PickUp = () => {
                                   }}
                                   // onBlur={handleBlur}
                                   // onKeyDown={handleKeyDown}
-                                  value={customerData && customerData.mobileNo ? customerData.mobileNo : ''}
+                                  value={
+                                    customerData && customerData.mobileNo
+                                      ? customerData.mobileNo
+                                      : ""
+                                  }
                                   autoComplete="off"
 
-                                // onBlur={() => setopenSuggestions(false)}
+                                  // onBlur={() => setopenSuggestions(false)}
                                 />
                                 {/* {customerList.length > 0 && (
                                   <div
@@ -4921,7 +4981,11 @@ const PickUp = () => {
                               <td>
                                 {!isEnglish ? (
                                   <input
-                                    value={customerData && customerData.customerName ? customerData.customerName : ''}
+                                    value={
+                                      customerData && customerData.customerName
+                                        ? customerData.customerName
+                                        : ""
+                                    }
                                     type="text"
                                     name="customerName"
                                     className="border-2 w-full p-1 rounded-sm"
@@ -4934,7 +4998,11 @@ const PickUp = () => {
                                   />
                                 ) : (
                                   <ReactTransliterate
-                                    value={customerData && customerData.customerName ? customerData.customerName : ''}
+                                    value={
+                                      customerData && customerData.customerName
+                                        ? customerData.customerName
+                                        : ""
+                                    }
                                     className="border-2 w-full p-1 rounded-sm"
                                     onChangeText={(text) => {
                                       setCustomerData((perv) => ({
@@ -5031,8 +5099,8 @@ const PickUp = () => {
                           ...perv,
                           mobileNo: false,
                         }));
-                        setValidationError(false)
-                        getData(billTypeCategory?.Delivery?.menuId)
+                        setValidationError(false);
+                        getData(billTypeCategory?.Delivery?.menuId);
                       }
                     }}
                     className={
@@ -5058,7 +5126,7 @@ const PickUp = () => {
                           mobileNo: false,
                         }));
                         setValidationError(false);
-                        getData(billTypeCategory['Pick Up']?.menuId)
+                        getData(billTypeCategory["Pick Up"]?.menuId);
                       }
                     }}
                     className={
@@ -5084,7 +5152,7 @@ const PickUp = () => {
                           mobileNo: false,
                         }));
                         setValidationError(false);
-                        getData(billTypeCategory?.Hotel?.menuId)
+                        getData(billTypeCategory?.Hotel?.menuId);
                       }
                     }}
                     className={
@@ -5246,7 +5314,7 @@ const PickUp = () => {
                             label="Due"
                           />
                         </div>
-                        {buttonCLicked != 'Hotel' &&
+                        {buttonCLicked != "Hotel" && (
                           <>
                             <div>
                               <FormControlLabel
@@ -5282,7 +5350,8 @@ const PickUp = () => {
                                 label="Complimentary"
                               />
                             </div>
-                          </>}
+                          </>
+                        )}
                       </RadioGroup>
                     </div>
                     <div>
@@ -5427,8 +5496,8 @@ const PickUp = () => {
                       (billData.discountType == "none"
                         ? 0
                         : (billData.subTotal - billData.settledAmount).toFixed(
-                          2
-                        ))}
+                            2
+                          ))}
                   </div>
                 </div>
               </div>
@@ -5489,14 +5558,14 @@ const PickUp = () => {
                       buttonCLicked == "Hotel"
                         ? isEdit
                           ? justEditHotelBill()
-                          : justSaveHotelBill() :
-                        buttonCLicked == "Delivery"
-                          ? isEdit
-                            ? justEditBillDelivery()
-                            : justSaveBillDelivery()
-                          : isEdit
-                            ? justEditBill()
-                            : justSaveBill()
+                          : justSaveHotelBill()
+                        : buttonCLicked == "Delivery"
+                        ? isEdit
+                          ? justEditBillDelivery()
+                          : justSaveBillDelivery()
+                        : isEdit
+                        ? justEditBill()
+                        : justSaveBill()
                     }
                   >
                     Save
@@ -5509,14 +5578,14 @@ const PickUp = () => {
                       buttonCLicked == "Hotel"
                         ? isEdit
                           ? editHotelBill()
-                          : saveHotelBill() :
-                        buttonCLicked == "Delivery"
-                          ? isEdit
-                            ? editBillDelivery()
-                            : saveBillDelivery()
-                          : isEdit
-                            ? editBill()
-                            : saveBill();
+                          : saveHotelBill()
+                        : buttonCLicked == "Delivery"
+                        ? isEdit
+                          ? editBillDelivery()
+                          : saveBillDelivery()
+                        : isEdit
+                        ? editBill()
+                        : saveBill();
                     }}
                   >
                     Save & Print
@@ -5529,10 +5598,10 @@ const PickUp = () => {
                         className="another_1 button text-base px-2 py-1 rounded-md text-white"
                         onClick={() =>
                           buttonCLicked == "Hotel"
-                            ? editHotelBillPrint() :
-                            buttonCLicked == "Delivery"
-                              ? editBillPrintDelivery()
-                              : editBillPrint()
+                            ? editHotelBillPrint()
+                            : buttonCLicked == "Delivery"
+                            ? editBillPrintDelivery()
+                            : editBillPrint()
                         }
                       >
                         Save & Bill
@@ -5543,10 +5612,10 @@ const PickUp = () => {
                         className="another_1 button text-base px-2 py-1 rounded-md text-white"
                         onClick={() =>
                           buttonCLicked == "Hotel"
-                            ? editHotelKotPrint() :
-                            buttonCLicked == "Delivery"
-                              ? editKotPrintDelivery()
-                              : editKotPrint()
+                            ? editHotelKotPrint()
+                            : buttonCLicked == "Delivery"
+                            ? editKotPrintDelivery()
+                            : editKotPrint()
                         }
                       >
                         Save & KOT
@@ -5557,10 +5626,10 @@ const PickUp = () => {
                         className="another_2 button text-base px-2 py-1 rounded-md text-white"
                         onClick={() =>
                           buttonCLicked == "Hotel"
-                            ? cancleHotelBill() :
-                            buttonCLicked == "Delivery"
-                              ? cancleBillDelivery()
-                              : cancleBill()
+                            ? cancleHotelBill()
+                            : buttonCLicked == "Delivery"
+                            ? cancleBillDelivery()
+                            : cancleBill()
                         }
                       >
                         Cancel
@@ -5573,10 +5642,10 @@ const PickUp = () => {
                       className="another_2 button text-base px-2 py-1 rounded-md text-white"
                       onClick={() =>
                         buttonCLicked == "Hotel"
-                          ? holdHotelBill() :
-                          buttonCLicked == "Delivery"
-                            ? holdBillDelivery()
-                            : holdBill()
+                          ? holdHotelBill()
+                          : buttonCLicked == "Delivery"
+                          ? holdBillDelivery()
+                          : holdBill()
                       }
                     >
                       HOLD

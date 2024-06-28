@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import Button from "../Button/Button1";
 import { styled, alpha } from "@mui/material/styles";
@@ -20,9 +20,12 @@ import Box from "@mui/material/Box";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import Drawer from "@mui/material/Drawer";
 import axios from "axios";
-import { BACKEND_BASE_URL } from "../../url";
+import { BACKEND_BASE_URL, SOCKET_URL } from "../../url";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import io from "socket.io-client";
+import Badge from "@mui/material/Badge";
+// import io from 'socket.io-client';
 
 const Header = (props) => {
   const dispatch = useDispatch();
@@ -40,6 +43,31 @@ const Header = (props) => {
     setAnchorEl(event.currentTarget);
     setHoveredData(data);
   };
+
+  const StyledBadge = styled(Badge)(({ theme }) => ({
+    "& .MuiBadge-badge": {
+      right: 0,
+      top: 5,
+      // border: `2px solid ${theme.palette.background.paper}`,
+      padding: "0 4px",
+      backgroundColor: "red",
+      color: "white",
+    },
+  }));
+
+  useEffect(() => {
+    const socket = io(SOCKET_URL);
+    socket.on("connect", () => {
+      console.log("Connected to server");
+    });
+    socket.on("getHoldCount", (message) => {
+      setHoldCount(message);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   const handlePopoverClose = () => {
     setAnchorEl(null);
@@ -88,31 +116,32 @@ const Header = (props) => {
             ? res.data.billComment.split(", ")
             : [],
         });
-        res?.data?.billType == 'Hotel' ? props.setCustomerData({
-          customerId: "",
-          addressId: "",
-          mobileNo: res?.data?.hotelDetails?.mobileNo,
-          customerName: res?.data?.hotelDetails?.customerName,
-          address: "",
-          locality: "",
-          birthDate: "",
-          aniversaryDate: "",
-        }) : props.setCustomerData(res.data.customerDetails);
+        res?.data?.billType == "Hotel"
+          ? props.setCustomerData({
+              customerId: "",
+              addressId: "",
+              mobileNo: res?.data?.hotelDetails?.mobileNo,
+              customerName: res?.data?.hotelDetails?.customerName,
+              address: "",
+              locality: "",
+              birthDate: "",
+              aniversaryDate: "",
+            })
+          : props.setCustomerData(res.data.customerDetails);
         props.setEditBillData(res.data);
         props.setIsEdit(true);
-        props.setButtonCLicked(
-          res?.data?.billType
-        );
-        res?.data?.billType == 'Hotel' && (props.setHotelFormData({
-          hotelId: res.data?.hotelDetails?.hotelId,
-          roomNo: res.data?.hotelDetails?.roomNo,
-          selectedHotel: res.data?.hotelDetails
-        }))
+        props.setButtonCLicked(res?.data?.billType);
+        res?.data?.billType == "Hotel" &&
+          props.setHotelFormData({
+            hotelId: res.data?.hotelDetails?.hotelId,
+            roomNo: res.data?.hotelDetails?.roomNo,
+            selectedHotel: res.data?.hotelDetails,
+          });
         toggleDrawer("right", false);
         setOpenHold(false);
       })
       .catch((error) => {
-        console.log("ERRRORRR", error)
+        console.log("ERRRORRR", error);
         setError(error.response ? error.response.data : "Network Error ...!!!");
       });
   };
@@ -136,25 +165,26 @@ const Header = (props) => {
             ? res.data.billComment.split(", ")
             : [],
         });
-        res?.data?.billType == 'Hotel' ? props.setCustomerData({
-          customerId: "",
-          addressId: "",
-          mobileNo: res?.data?.hotelDetails?.mobileNo,
-          customerName: res?.data?.hotelDetails?.customerName,
-          address: "",
-          locality: "",
-          birthDate: "",
-          aniversaryDate: "",
-        }) : props.setCustomerData(res.data.customerDetails);
+        res?.data?.billType == "Hotel"
+          ? props.setCustomerData({
+              customerId: "",
+              addressId: "",
+              mobileNo: res?.data?.hotelDetails?.mobileNo,
+              customerName: res?.data?.hotelDetails?.customerName,
+              address: "",
+              locality: "",
+              birthDate: "",
+              aniversaryDate: "",
+            })
+          : props.setCustomerData(res.data.customerDetails);
         props.setEditBillData(res.data);
-        props.setButtonCLicked(
-          res?.data?.billType
-        );
-        res?.data?.billType == 'Hotel' && (props.setHotelFormData({
-          hotelId: res.data?.hotelDetails?.hotelId,
-          roomNo: res.data?.hotelDetails?.roomNo,
-          selectedHotel: res.data?.hotelDetails
-        }))
+        props.setButtonCLicked(res?.data?.billType);
+        res?.data?.billType == "Hotel" &&
+          props.setHotelFormData({
+            hotelId: res.data?.hotelDetails?.hotelId,
+            roomNo: res.data?.hotelDetails?.roomNo,
+            selectedHotel: res.data?.hotelDetails,
+          });
         // console.log("LLPP", {
         //   customerId: "",
         //   addressId: "",
@@ -186,13 +216,18 @@ const Header = (props) => {
       .then((res) => {
         // toggleDrawer("right", false);
         // setOpenHold(false);
-        getHoldBills()
+        getHoldBills();
       })
       .catch((error) => {
         setError(error.response ? error.response.data : "Network Error ...!!!");
       });
     // }
   };
+
+  useEffect(() => {
+    getHoldCount();
+  }, []);
+
   const SearchIconWrapper = styled("div")(({ theme }) => ({
     padding: theme.spacing(0, 2),
     height: "100%",
@@ -213,6 +248,17 @@ const Header = (props) => {
       })
       .catch((error) => {
         setRecentBill([]);
+        // setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+  };
+  const getHoldCount = async () => {
+    await axios
+      .get(`${BACKEND_BASE_URL}billingrouter/getHoldCount`, config)
+      .then((res) => {
+        setHoldCount(res.data.holdNo);
+      })
+      .catch((error) => {
+        // setRecentBill([]);
         // setError(error.response ? error.response.data : "Network Error ...!!!");
       });
   };
@@ -249,6 +295,7 @@ const Header = (props) => {
   const [openHold, setOpenHold] = useState(false);
   const [activeTab, setActiveTab] = useState("Pick Up");
   const [recentBill, setRecentBill] = useState([]);
+  const [holdCount, setHoldCount] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const [logOutPopup, setLogOutPopUp] = useState(false);
   const [holdBills, setHoldBills] = useState([]);
@@ -330,15 +377,16 @@ const Header = (props) => {
     <Box
       sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 400 }}
       role="presentation"
-    // onClick={toggleDrawer(anchor, false)}
+      // onClick={toggleDrawer(anchor, false)}
     >
       <div className="p-2 my-1 text-base">Recent</div>
       <hr className="mb-2" />
 
       <div className="flex p-2 my-1 sticky">
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Hotel" ? "active" : ""
-            }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${
+            activeTab === "Hotel" ? "active" : ""
+          }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Hotel");
@@ -349,8 +397,9 @@ const Header = (props) => {
           Hotel
         </div>
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Pick Up" ? "active" : ""
-            }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${
+            activeTab === "Pick Up" ? "active" : ""
+          }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Pick Up");
@@ -361,8 +410,9 @@ const Header = (props) => {
           Pick Up
         </div>
         <div
-          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Delivery" ? "active" : ""
-            }`}
+          className={`tabButton py-2 w-full text-center cursor-pointer ${
+            activeTab === "Delivery" ? "active" : ""
+          }`}
           onClick={(event) => {
             event.stopPropagation();
             setActiveTab("Delivery");
@@ -467,8 +517,8 @@ const Header = (props) => {
     <Box
       sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 400 }}
       role="presentation"
-    // onClick={toggleDrawer(anchor, false)}
-    // onKeyDown={toggleDrawer(anchor, false)}
+      // onClick={toggleDrawer(anchor, false)}
+      // onKeyDown={toggleDrawer(anchor, false)}
     >
       <div className="p-2 my-1  text-base">Hold Bills</div>
       <hr className="mb-2"></hr>
@@ -531,21 +581,34 @@ const Header = (props) => {
             className="recentBillRow pb-2 pt-2 flex justify-between"
             key={index}
           >
-            <div className="pl-6" onClick={() => {
-              getHoldBbill(data.holdId);
-            }}>{index + 1}</div>
-            <div className="pl-6" onClick={() => {
-              getHoldBbill(data.holdId);
-            }}>{data.billType}</div>
-            <div className="pr-4" onClick={() => {
-              getHoldBbill(data.holdId);
-            }}>{data.totalAmount}</div>
+            <div
+              className="pl-6"
+              onClick={() => {
+                getHoldBbill(data.holdId);
+              }}
+            >
+              {index + 1}
+            </div>
+            <div
+              className="pl-6"
+              onClick={() => {
+                getHoldBbill(data.holdId);
+              }}
+            >
+              {data.billType}
+            </div>
+            <div
+              className="pr-4"
+              onClick={() => {
+                getHoldBbill(data.holdId);
+              }}
+            >
+              {data.totalAmount}
+            </div>
             <div>
               <button
                 className="discardBtn"
-                onClick={() =>
-                  discardBill(data.holdId)
-                }
+                onClick={() => discardBill(data.holdId)}
               >
                 Discard
               </button>
@@ -553,7 +616,7 @@ const Header = (props) => {
           </div>
         ))}
       </div>
-    </Box >
+    </Box>
   );
   const navigate = useNavigate();
   const handleCommonSearch = async () => {
@@ -641,14 +704,20 @@ const Header = (props) => {
               <LocalPrintshopOutlinedIcon />
             </div>
             <div className="header_icon cursor-pointer grid content-center">
-              <WatchLaterTwoToneIcon
-                onClick={() => {
-                  if (location.pathname.split("/")[1] == "main") {
-                    setOpenHold(true);
-                    getHoldBills();
-                  }
-                }}
-              />
+              <StyledBadge
+                badgeContent={holdCount}
+                color="primary"
+                invisible={holdCount == 0}
+              >
+                <WatchLaterTwoToneIcon
+                  onClick={() => {
+                    if (location.pathname.split("/")[1] == "main") {
+                      setOpenHold(true);
+                      getHoldBills();
+                    }
+                  }}
+                />
+              </StyledBadge>
             </div>
             <div className="header_icon cursor-pointer grid content-center">
               <PendingActionsIcon onClick={toggleDrawer("right", true)} />

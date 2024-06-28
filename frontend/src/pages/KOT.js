@@ -13,7 +13,7 @@ const KOT = (props) => {
 
   useEffect(() => {
     console.log(props);
-  },[]);
+  }, []);
 
   return (
     <div
@@ -47,7 +47,12 @@ const KOT = (props) => {
             {props.data.billType} - KOT
             <br />
             {props.isEdit ? "( NEW BILL )" : ""}
-            <p style={{fontSize:'14px', margin:'0'}}>{props.data.billPayType == "complimentary" ? "Complimentary" : ""}{props.data.billPayType == "cash" ? "Cash" : ""}{props.data.billPayType == "due" ? "Due" : ""} {props.data.billPayType == "online" ? "Online" : ""}</p>
+            <p style={{ fontSize: "14px", margin: "0" }}>
+              {props.data.billPayType == "complimentary" ? "Complimentary" : ""}
+              {props.data.billPayType == "cash" ? "Cash" : ""}
+              {props.data.billPayType == "due" ? "Due" : ""}{" "}
+              {props.data.billPayType == "online" ? "Online" : ""}
+            </p>
           </div>
         </div>
         <div
@@ -142,29 +147,34 @@ const KOT = (props) => {
           customerData.locality) ? (
           <div
             style={{
-              padding: "8px 4px 8px 4px ",
+              padding: "4px 4px 8px 4px ",
               width: "260px",
               height: "min-content",
-              borderTop: "2px solid black",
+              borderTop: "1px solid black",
             }}
           >
             {customerData.mobileNo && (
               <div
                 style={{
                   textAlign: "start",
-                  marginTop: "6px",
-                  fontSize: "12px",
+                  marginTop: "2px",
+                  fontSize: "14px",
                 }}
               >
-                <div>Phone No : {customerData.mobileNo} </div>
+                <div>
+                  Phone No :{" "}
+                  <span style={{ fontWeight: "600" }}>
+                    {customerData.mobileNo}
+                  </span>{" "}
+                </div>
               </div>
             )}
             {customerData.customerName && (
               <div
                 style={{
                   textAlign: "start",
-                  marginTop: "6px",
-                  fontSize: "12px",
+                  marginTop: "2px",
+                  fontSize: "14px",
                 }}
               >
                 <div>Name : {customerData.customerName} </div>
@@ -174,19 +184,22 @@ const KOT = (props) => {
               <div
                 style={{
                   textAlign: "start",
-                  marginTop: "6px",
-                  fontSize: "12px",
+                  marginTop: "2px",
+                  fontSize: "14px",
                 }}
               >
-                <div style={{width:'90%'}}>Address : {customerData.address}</div>
+                <div style={{ width: "95%" }}>
+                  {" "}
+                  Address : {customerData.address}
+                </div>
               </div>
             )}
             {customerData.locality && (
               <div
                 style={{
                   textAlign: "start",
-                  marginTop: "6px",
-                  fontSize: "12px",
+                  marginTop: "2px",
+                  fontSize: "14px",
                 }}
               >
                 <div>Locality : {customerData.locality}</div>

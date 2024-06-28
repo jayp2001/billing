@@ -30,9 +30,9 @@ const HotelBill = (props) => {
           <div
             style={{
               fontWeight: "700",
-              fontSize: "14px",
+              fontSize: "16px",
               lineHeight: "24px",
-              paddingBottom: "1rem",
+              paddingBottom: "6px",
               paddingTop: "0.6rem",
             }}
           >
@@ -52,23 +52,21 @@ const HotelBill = (props) => {
               paddingBottom: "4px",
             }}
           >
-            PHONE: {props.data.firmData.firmMobileNo} : {props.data.firmData.otherMobileNo}
+            PHONE: {props.data.firmData.firmMobileNo} :{" "}
+            {props.data.firmData.otherMobileNo}
           </div>
         </div>
         <div style={{ paddingBottom: "0px", borderBottom: "2px solid black" }}>
           <div
             className="name font-medium text-sm"
-            style={{ fontWeight: "500", fontSize: '12px' }}
+            style={{
+              fontWeight: "500",
+              fontSize: "12px",
+              paddingTop: "3px",
+              paddingBottom: "3px",
+            }}
           >
             GSTIN: {props.data.firmData.gstNumber}
-          </div>
-        </div>
-        <div style={{ paddingBottom: "0px", borderBottom: "2px solid black" }}>
-          <div
-            className="name font-bold text-sm"
-            style={{ fontWeight: "700", fontSize: "12px", lineHeight: "20px" }}
-          >
-            HOTEL {props?.data?.billPayType?.toUpperCase()}
           </div>
         </div>
         <div style={{ paddingBottom: "0px", borderBottom: "2px solid black" }}>
@@ -79,7 +77,72 @@ const HotelBill = (props) => {
             BILL OF SUPPLY
           </div>
         </div>
-        <div style={{ width: "260px", height: "min-content", padding: '1px' }}>
+        <div style={{ paddingBottom: "0px", borderBottom: "2px solid black" }}>
+          <div
+            className="name font-bold text-sm"
+            style={{ fontWeight: "700", fontSize: "12px", lineHeight: "20px" }}
+          >
+            HOTEL {props?.data?.billPayType?.toUpperCase()}
+          </div>
+        </div>
+        {(props?.data?.customerName || props?.data?.mobileNo) && (
+          <div
+            style={{
+              borderBottom: "1px solid black",
+              width: "258px",
+              padding: "1px",
+            }}
+          >
+            <div
+              style={{
+                justifyContent: "space-between",
+                fontWeight: "500",
+                fontSize: "12px",
+                lineHeight: "16px",
+                marginTop: "8px",
+                marginBottom: "8px",
+                paddingRight: "2px",
+                paddingLeft: "2px",
+              }}
+            >
+              {props?.data?.customerName && (
+                <div
+                  className="text-start upper_right"
+                  style={{
+                    textAlign: "start",
+                    maxWidth: "75%",
+                    fontSize: "10p",
+                  }}
+                >
+                  <div>
+                    Customer Name:{" "}
+                    <span style={{ fontWeight: "700", fontSize: "10p" }}>
+                      {props.data.customerName}
+                    </span>
+                  </div>
+                </div>
+              )}
+              {props?.data?.mobileNo && (
+                <div
+                  className="text-start upper_right"
+                  style={{
+                    textAlign: "start",
+                    maxWidth: "75%",
+                    fontSize: "10p",
+                  }}
+                >
+                  <div>
+                    Customer Number:{" "}
+                    <span style={{ fontWeight: "700", fontSize: "10p" }}>
+                      {props.data.mobileNo}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+        <div style={{ width: "260px", height: "min-content" }}>
           <div
             style={{
               display: "flex",
@@ -87,14 +150,19 @@ const HotelBill = (props) => {
               fontWeight: "500",
               fontSize: "12px",
               lineHeight: "16px",
-              padding: '1px'
+              padding: "1px",
+              paddingRight: "5px",
+              paddingLeft: "5px",
+              paddingTop: "7px",
             }}
           >
             <div style={{ textAlign: "start" }}>
-              <div style={{ fontSize: '10px' }}>Date : {props.data.billDate}</div>
+              <div style={{ fontSize: "10p" }}>
+                Date : {props.data.billDate}
+              </div>
             </div>
             <div style={{ textAlign: "start" }}>
-              <div style={{ fontSize: '10px' }}>Time: {props.data.billTime}</div>
+              <div style={{ fontSize: "10p" }}>Time: {props.data.billTime}</div>
             </div>
           </div>
           <div
@@ -105,54 +173,56 @@ const HotelBill = (props) => {
               fontSize: "12px",
               lineHeight: "16px",
               marginTop: "8px",
+              paddingRight: "5px",
+              paddingLeft: "5px",
             }}
           >
             <div
               className="text-start upper_right"
-              style={{ textAlign: "start", maxWidth: "75%", fontSize: '10p' }}
+              style={{ textAlign: "start", maxWidth: "75%", fontSize: "10p" }}
             >
               <div>
                 BILL NO:{" "}
-                <span style={{ fontWeight: "700", fontSize: '10p' }}>{props.data.billNumber}</span>
-              </div>
-              <div style={{ marginTop: "4px", fontSize: '10p' }}>
-                HOTEL : {props.data.hotelDetails.hotelName}
-              </div>
-              <div style={{ marginTop: "4px", fontSize: '10p' }}>
-                ROOM NO : <span className="font-bold">{props.data.hotelDetails.roomNo}</span>
-              </div>
-              <div
-                style={{
-                  marginTop: "4px",
-                  textAlign: "start",
-                  fontWeight: "100",
-                  fontSize: "12px",
-                  lineHeight: "16px",
-                }}
-              >
-                ADDRESS :{" "}
-                <span className="text-xs font-thin" style={{ fontSize: '12px' }}>
-                  {props.data.hotelDetails.hotelAddress}{" "}
+                <span style={{ fontWeight: "700", fontSize: "10p" }}>
+                  {props.data.officialBillNo}
                 </span>
               </div>
             </div>
             <div
-              style={{ textAlign: "start", width: "50%", marginRight: '6px' }}
+              className="text-start upper_right"
+              style={{ textAlign: "start", maxWidth: "75%", fontSize: "10p" }}
+            >
+              <div>
+                TOKEN:{" "}
+                <span style={{ fontWeight: "700", fontSize: "10p" }}>
+                  {props.data.billType == "Pick Up"
+                    ? props.data.justToken
+                    : props.data.tokenNo}{" "}
+                </span>
+              </div>
+            </div>
+            {/* <div
+              style={{
+                textAlign: "start",
+                maxWidth: "34%",
+                padding: "2px",
+                marginRight: "10px",
+              }}
             >
               <div
                 style={{
-                  border: "1px solid black",
-                  borderCollapse: "collapse",
                   padding: "2px",
                 }}
               >
-                TOKEN NO
-              </div>
-              <div
+                TOKEN NO{" "} {props.data.billType == "Pick Up"
+                  ? props.data.justToken
+                  : props.data.tokenNo}{" "}
+                
+              </div> */}
+            {/* <div
                 style={{
                   border: "1px solid black",
                   borderCollapse: "collapse",
-                  borderTop: "0px",
                   padding: "2px",
                 }}
               >
@@ -160,17 +230,130 @@ const HotelBill = (props) => {
                   style={{
                     textAlign: "center",
                     fontWeight: "700",
-                    fontSize: "20px",
-                    lineHeight: "28px",
+                    fontSize: "16px",
+                    lineHeight: "18px",
                   }}
                 >
-                  {props.data.tokenNo}
+                  {props.data.billType == "Pick Up"
+                    ? props.data.justToken
+                    : props.data.tokenNo}{" "}
+                </p>
+              </div> */}
+            {/* </div> */}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              fontWeight: "500",
+              fontSize: "12px",
+              lineHeight: "16px",
+              marginTop: "8px",
+              paddingRight: "5px",
+              paddingLeft: "5px",
+              borderTop: "2px solid black",
+            }}
+          >
+            <div
+              className="text-start upper_right"
+              style={{ textAlign: "start", maxWidth: "100%", fontSize: "10p" }}
+            >
+              {/* <div>
+                BILL NO:{" "}
+                <span style={{ fontWeight: "700", fontSize: "10p" }}>
+                  {props.data.billNumber}
+                </span>
+              </div> */}
+              <div
+                style={{
+                  marginTop: "4px",
+                  fontSize: "10p",
+                  paddingBottom: "4px",
+                }}
+              >
+                HOTEL :{" "}
+                <span style={{ fontSize: "13px", fontWeight: "bold" }}>
+                  {props.data.hotelDetails.hotelName}
+                </span>
+              </div>
+              {props.data.hotelDetails.roomNo && (
+                <div style={{ marginTop: "4px", fontSize: "10p" }}>
+                  ROOM NO :{" "}
+                  <span className="font-bold">
+                    {props.data.hotelDetails.roomNo}
+                  </span>
+                </div>
+              )}
+              {props.data.hotelDetails.hotelAddress && (
+                <div
+                  style={{
+                    marginTop: "4px",
+                    textAlign: "start",
+                    fontWeight: "100",
+                    fontSize: "12px",
+                    lineHeight: "16px",
+                  }}
+                >
+                  ADDRESS :{" "}
+                  <span
+                    className="text-xs font-thin"
+                    style={{ fontSize: "12px" }}
+                  >
+                    {props.data.hotelDetails.hotelAddress}{" "}
+                  </span>
+                </div>
+              )}
+              {props.data.hotelDetails.hotelLocality && (
+                <div style={{ marginTop: "4px", fontSize: "10p" }}>
+                  LOCALITY :{" "}
+                  <span className="font-bold">
+                    {props.data.hotelDetails.hotelLocality}
+                  </span>
+                </div>
+              )}
+            </div>
+            {/* <div
+              style={{
+                textAlign: "start",
+                maxWidth: "34%",
+                padding: "2px",
+                marginRight: "10px",
+              }}
+            >
+              <div
+                style={{
+                  padding: "2px",
+                }}
+              >
+                TOKEN NO{" "}
+                {props.data.billType == "Pick Up"
+                  ? props.data.justToken
+                  : props.data.tokenNo}{" "}
+              </div>
+              <div
+                style={{
+                  border: "1px solid black",
+                  borderCollapse: "collapse",
+                  padding: "2px",
+                }}
+              >
+                <p
+                  style={{
+                    textAlign: "center",
+                    fontWeight: "700",
+                    fontSize: "16px",
+                    lineHeight: "18px",
+                  }}
+                >
+                  {props.data.billType == "Pick Up"
+                    ? props.data.justToken
+                    : props.data.tokenNo}{" "}
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
 
-          <div
+          {/* <div
             style={{
               marginTop: "4px",
               textAlign: "start",
@@ -180,7 +363,7 @@ const HotelBill = (props) => {
             }}
           >
             LOCALITY : {props.data.hotelDetails.hotelLocality}
-          </div>
+          </div> */}
         </div>
         <div
           className="main_bill h-min"
@@ -193,6 +376,9 @@ const HotelBill = (props) => {
               width: "260px",
               border: "1px solid black",
               borderCollapse: "collapse",
+              borderRight: "0px",
+              borderLeft: "0px",
+              borderBottom: "0px",
             }}
           >
             <thead>
@@ -204,7 +390,8 @@ const HotelBill = (props) => {
                     paddingTop: "8px",
                     paddingBottom: "8px",
                     textAlign: "start",
-                    fontSize: '14px'
+                    fontSize: "14px",
+                    borderLeft: "0px",
                   }}
                 >
                   Particulars
@@ -216,7 +403,7 @@ const HotelBill = (props) => {
                     paddingTop: "8px",
                     paddingBottom: "8px",
                     textAlign: "center",
-                    fontSize: '14px'
+                    fontSize: "14px",
                   }}
                 >
                   Qty
@@ -228,7 +415,8 @@ const HotelBill = (props) => {
                     paddingTop: "8px",
                     paddingBottom: "8px",
                     textAlign: "center",
-                    fontSize: '14px'
+                    fontSize: "14px",
+                    borderRight: "0px",
                   }}
                 >
                   Amount
@@ -241,15 +429,19 @@ const HotelBill = (props) => {
                   <td
                     style={{
                       border: "1px solid black",
-                      borderCollapse: "collapse",
                       width: "60%",
-                      paddingRight: "2px",
-                      paddingLeft: "2px",
+                      padding: "8px 4px 8px 4px",
+                      borderLeft: "0px",
                       textAlign: "start",
-                      fontSize: '12px'
+                      fontSize: "14px",
                     }}
                   >
-                    {data.itemName}{" "}
+                    {data.itemName} <br />{" "}
+                    {data.comment && (
+                      <span className="text-xs" style={{ fontSize: "10px" }}>
+                        ({data.comment})
+                      </span>
+                    )}{" "}
                   </td>
                   <td
                     style={{
@@ -257,7 +449,7 @@ const HotelBill = (props) => {
                       borderCollapse: "collapse",
                       width: "20%",
                       textAlign: "center",
-                      fontSize: '12px'
+                      fontSize: "12px",
                     }}
                   >
                     {data.qty} {data.unit}
@@ -272,14 +464,14 @@ const HotelBill = (props) => {
                       textAlign: "end",
                       paddingRight: "2px",
                       paddingLeft: "2px",
-                      fontSize: '12px'
+                      fontSize: "12px",
+                      borderRight: "0px",
                     }}
                   >
-                    {data.price}
+                    {data.price.toFixed(2)}
                   </td>
                 </tr>
-              ))
-              }
+              ))}
               <tr>
                 <td
                   style={{
@@ -289,6 +481,7 @@ const HotelBill = (props) => {
                     paddingRight: "2px",
                     paddingLeft: "2px",
                     textAlign: "start",
+                    borderLeft: "0px",
                   }}
                 ></td>
                 <td
@@ -297,7 +490,7 @@ const HotelBill = (props) => {
                     borderCollapse: "collapse",
                     width: "20%",
                     textAlign: "center",
-                    fontSize: '12px'
+                    fontSize: "12px",
                   }}
                 >
                   Total:
@@ -312,12 +505,30 @@ const HotelBill = (props) => {
                     textAlign: "end",
                     paddingRight: "2px",
                     paddingLeft: "2px",
-                    fontSize: '12px'
+                    fontSize: "12px",
+                    borderRight: "0px",
                   }}
                 >
-                  {props.data.subTotal}
+                  {props.data.subTotal.toFixed(2)}
                 </td>
               </tr>
+              {props.data.billComment && (
+                <tr>
+                  <td
+                    colSpan="3"
+                    style={{
+                      textAlign: "start",
+                      paddingTop: "7px",
+                      paddingBottom: "7px",
+                      borderBottom: "1px solid black",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {" "}
+                    Note: {props.data.billComment}
+                  </td>
+                </tr>
+              )}
               <tr>
                 <td colSpan="3">
                   {" "}
@@ -337,7 +548,7 @@ const HotelBill = (props) => {
                     textAlign: "end",
                     paddingTop: "8px",
                     paddingBottom: "8px",
-                    fontSize: '14px'
+                    fontSize: "14px",
                   }}
                 >
                   Discount:
@@ -347,10 +558,13 @@ const HotelBill = (props) => {
                     textAlign: "center",
                     paddingTop: "8px",
                     paddingBottom: "8px",
-                    fontSize: '14px'
+                    fontSize: "14px",
+                    borderRight: "0px",
+                    borderLeft: "0px",
                   }}
                 >
-                  {props.data.totalDiscount}
+                  {props.data.discountValue}{" "}
+                  {props.data.discountType == "percentage" ? "%" : "Rs"}
                 </td>
               </tr>
               <tr>
@@ -361,10 +575,14 @@ const HotelBill = (props) => {
                     borderTop: "1px solid black",
                     paddingTop: "8px",
                     paddingBottom: "8px",
-                    fontSize: '14px'
+                    fontSize: "14px",
+                    borderRight: "0px",
+                    borderLeft: "0px",
+                    fontWeight: "bold",
+                    paddingRight: "3px",
                   }}
                 >
-                  Grand Total Rs. {props.data.settledAmount}
+                  Grand Total Rs. {props.data.settledAmount.toFixed(2)}
                 </td>
               </tr>
               <tr>
@@ -376,9 +594,11 @@ const HotelBill = (props) => {
                     borderTop: "1px solid black",
                     paddingTop: "8px",
                     paddingRight: "8px",
+                    borderRight: "0px",
+                    borderLeft: "0px",
                   }}
                 >
-                  Thanks
+                  {props.data.footerBill}
                 </td>
               </tr>
             </tbody>
