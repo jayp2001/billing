@@ -33,7 +33,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <Routes>
-        <Route path="/main/:tab" element={<MainComponent />} />
+        <Route path="/main/:tab/:billId" element={<MainComponent />} />
         {/* <Route path="/" element={<TestPage />} /> */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/" element={<RestaurantBill />} />

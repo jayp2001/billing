@@ -192,7 +192,7 @@ const PickUp = () => {
     aniversaryDate: "",
   });
   const [isEnglish, setIsEnglish] = React.useState(false);
-  let { tab } = useParams();
+  let { tab, billId } = useParams();
   const [customerList, setCustomerList] = React.useState([]);
   const [hotelList, setHotelList] = React.useState([]);
   const [editBillData, setEditBillData] = React.useState();
@@ -346,8 +346,8 @@ const PickUp = () => {
           ? editBillDelivery()
           : saveBillDelivery()
         : isEdit
-        ? editBill()
-        : saveBill();
+          ? editBill()
+          : saveBill();
     }
     if (event.key === "F1") {
       buttonCLicked === "Delivery"
@@ -355,17 +355,130 @@ const PickUp = () => {
           ? justEditBillDelivery()
           : justSaveBillDelivery()
         : isEdit
-        ? justEditBill()
-        : justSaveBill();
+          ? justEditBill()
+          : justSaveBill();
     }
     if (event.key === "F5") {
       window.location.reload();
     }
   };
-
+  const getBbill = async (id) => {
+    await axios
+      .get(
+        `${BACKEND_BASE_URL}billingrouter/getBillDataById?billId=${id}`,
+        config
+      )
+      .then((res) => {
+        setItems(res.data.itemData);
+        setBillData({
+          subTotal: res.data.totalAmount,
+          discountType: res.data.discountType,
+          discountValue: res.data.discountValue,
+          settledAmount: res.data.settledAmount,
+          totalDiscount: res.data.totalDiscount,
+          billPayType: res.data.billPayType,
+          billComment: res.data.billComment,
+          billCommentAuto: res.data.billComment
+            ? res.data.billComment.split(", ")
+            : [],
+        });
+        res?.data?.billType == "Hotel"
+          ? setCustomerData({
+            customerId: "",
+            addressId: "",
+            mobileNo: res?.data?.hotelDetails?.mobileNo,
+            customerName: res?.data?.hotelDetails?.customerName,
+            address: "",
+            locality: "",
+            birthDate: "",
+            aniversaryDate: "",
+          })
+          : setCustomerData(res.data.customerDetails);
+        setEditBillData(res.data);
+        setIsEdit(true);
+        setButtonCLicked(res?.data?.billType);
+        res?.data?.billType == "Hotel" &&
+          setHotelFormData({
+            hotelId: res.data?.hotelDetails?.hotelId,
+            roomNo: res.data?.hotelDetails?.roomNo,
+            selectedHotel: res.data?.hotelDetails,
+          });
+      })
+      .catch((error) => {
+        console.log("ERRRORRR", error);
+        setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+  };
+  const getHoldBbill = async (id) => {
+    await axios
+      .get(
+        `${BACKEND_BASE_URL}billingrouter/getHoldBillDataById?holdId=${id}`,
+        config
+      )
+      .then((res) => {
+        setItems(res.data.itemData);
+        setBillData({
+          subTotal: res.data.totalAmount,
+          discountType: res.data.discountType,
+          discountValue: res.data.discountValue,
+          settledAmount: res.data.settledAmount,
+          totalDiscount: res.data.totalDiscount,
+          billPayType: res.data.billPayType,
+          billComment: res.data.billComment,
+          billCommentAuto: res.data.billComment
+            ? res.data.billComment.split(", ")
+            : [],
+        });
+        res?.data?.billType == "Hotel"
+          ? setCustomerData({
+            customerId: "",
+            addressId: "",
+            mobileNo: res?.data?.hotelDetails?.mobileNo,
+            customerName: res?.data?.hotelDetails?.customerName,
+            address: "",
+            locality: "",
+            birthDate: "",
+            aniversaryDate: "",
+          })
+          : setCustomerData(res.data.customerDetails);
+        setEditBillData(res.data);
+        setButtonCLicked(res?.data?.billType);
+        res?.data?.billType == "Hotel" &&
+          setHotelFormData({
+            hotelId: res.data?.hotelDetails?.hotelId,
+            roomNo: res.data?.hotelDetails?.roomNo,
+            selectedHotel: res.data?.hotelDetails,
+          });
+        // console.log("LLPP", {
+        //   customerId: "",
+        //   addressId: "",
+        //   mobileNo: res?.data?.hotelDetails?.mobileNo,
+        //   customerName: res?.data?.hotelDetails?.customerName,
+        //   address: "",
+        //   locality: "",
+        //   birthDate: "",
+        //   aniversaryDate: "",
+        // }, {
+        //   hotelId: res?.data?.hotelDetails?.hotelId,
+        //   roomNo: res?.data?.hotelDetails?.roomNo,
+        //   selectedHotel: res?.data?.hotelDetails
+        // })
+      })
+      .catch((error) => {
+        setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+  };
   useEffect(() => {
     first.current.focus();
     // getData();
+    if (billId != 'x') {
+      if (billId?.split('_')[0] == 'hold') {
+        getHoldBbill(billId);
+      } else {
+        getBbill(billId);
+      }
+    }
+
     getBillTypes();
     getcustomerDDL();
     getHotelDDL();
@@ -431,12 +544,12 @@ const PickUp = () => {
         discountValue: value.discount,
         settledAmount: billData.subTotal
           ? Math.ceil(
-              value.discountType == "none"
-                ? billData.subTotal
-                : value.discountType == "fixed"
+            value.discountType == "none"
+              ? billData.subTotal
+              : value.discountType == "fixed"
                 ? billData.subTotal - value.discount
                 : billData.subTotal * (1 - value.discount / 100)
-            )
+          )
           : 0,
         billPayType: value.payType,
       }));
@@ -490,7 +603,7 @@ const PickUp = () => {
       billType: "Pick Up",
       printBill: true,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory['Pick Up']?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -699,7 +812,7 @@ const PickUp = () => {
       billType: "Delivery",
       printBill: true,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory?.Delivery?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -801,7 +914,7 @@ const PickUp = () => {
       billType: "Pick Up",
       printBill: true,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory["Pick Up"]?.firmId,
       billStatus: "Hold",
       totalDiscount:
         billData.discountType == "none"
@@ -979,7 +1092,7 @@ const PickUp = () => {
       billType: "Delivery",
       printBill: true,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory?.Delivery?.firmId,
       billStatus: "Hold",
       totalDiscount:
         billData.discountType == "none"
@@ -1081,7 +1194,7 @@ const PickUp = () => {
       billType: "Pick Up",
       printBill: true,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory['Pick Up']?.firmId,
       billStatus: "Cancel",
       totalDiscount:
         billData.discountType == "none"
@@ -1289,7 +1402,7 @@ const PickUp = () => {
       billType: "Delivery",
       printBill: true,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory?.Delivery?.firmId,
       billStatus: "Cancel",
       totalDiscount:
         billData.discountType == "none"
@@ -1297,7 +1410,7 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
-      billPayType: "Cancel",
+      billPayType: billData.billPayType,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
       footerBill: "Thank You",
@@ -1393,7 +1506,7 @@ const PickUp = () => {
       billType: "Pick Up",
       printBill: true,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory['Pick Up']?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -1572,7 +1685,7 @@ const PickUp = () => {
       billType: "Delivery",
       printBill: true,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory?.Delivey?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -1675,7 +1788,7 @@ const PickUp = () => {
       billType: "Pick Up",
       printBill: true,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory['Pick Up']?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -1738,9 +1851,9 @@ const PickUp = () => {
           );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
-              <RestaurantBill data={res.data} />
+              <RestaurantBill data={res.data} isEdit={true} />
             ) : (
-              <TokenBil data={res.data} />
+              <TokenBil data={res.data} isEdit={true} />
             )
           );
           const printerDataKot = {
@@ -1849,7 +1962,7 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         try {
-          const HotelPrint = renderToString(<HotelBill data={res.data} />);
+          const HotelPrint = renderToString(<HotelBill data={res.data} isEdit={true} />);
           const printerDataKot = {
             printer: hotelkot[0],
             data: HotelPrint,
@@ -1896,7 +2009,7 @@ const PickUp = () => {
       billType: "Delivery",
       printBill: true,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory?.Delivery?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -1959,9 +2072,9 @@ const PickUp = () => {
           );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
-              <RestaurantBill data={res.data} />
+              <RestaurantBill data={res.data} isEdit={true} />
             ) : (
-              <TokenBil data={res.data} />
+              <TokenBil data={res.data} isEdit={true} />
             )
           );
           const printerDataKot = {
@@ -2010,7 +2123,7 @@ const PickUp = () => {
       billType: "Pick Up",
       printBill: false,
       printKot: false,
-      firmId: "A",
+      firmId: billTypeCategory['Pick Up']?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -2170,7 +2283,7 @@ const PickUp = () => {
       billType: "Delivery",
       printBill: false,
       printKot: false,
-      firmId: "A",
+      firmId: billTypeCategory?.Delivery?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -2250,7 +2363,7 @@ const PickUp = () => {
       billType: "Pick Up",
       printBill: true,
       printKot: false,
-      firmId: "A",
+      firmId: billTypeCategory['Pick Up']?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -2313,9 +2426,9 @@ const PickUp = () => {
           );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
-              <RestaurantBill data={res.data} />
+              <RestaurantBill data={res.data} isEdit={true} />
             ) : (
-              <TokenBil data={res.data} />
+              <TokenBil data={res.data} isEdit={true} />
             )
           );
           const printerDataKot = {
@@ -2424,7 +2537,7 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         try {
-          const HotelPrint = renderToString(<HotelBill data={res.data} />);
+          const HotelPrint = renderToString(<HotelBill data={res.data} isEdit={true} />);
           const printerDataKot = {
             printer: hotelkot[0],
             data: HotelPrint,
@@ -2471,7 +2584,7 @@ const PickUp = () => {
       billType: "Delivery",
       printBill: true,
       printKot: false,
-      firmId: "A",
+      firmId: billTypeCategory?.Delivery?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -2534,9 +2647,9 @@ const PickUp = () => {
           );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
-              <RestaurantBill data={res.data} />
+              <RestaurantBill data={res.data} isEdit={true} />
             ) : (
-              <TokenBil data={res.data} />
+              <TokenBil data={res.data} isEdit={true} />
             )
           );
           const printerDataKot = {
@@ -2585,7 +2698,7 @@ const PickUp = () => {
       billType: "Pick Up",
       printBill: false,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory['Pick Up']?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -2647,9 +2760,9 @@ const PickUp = () => {
           );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
-              <RestaurantBill data={res.data} />
+              <RestaurantBill data={res.data} isEdit={true} />
             ) : (
-              <TokenBil data={res.data} />
+              <TokenBil data={res.data} isEdit={true} />
             )
           );
           const printerDataKot = {
@@ -2758,7 +2871,7 @@ const PickUp = () => {
           billCommentAuto: [],
         });
         try {
-          const HotelPrint = renderToString(<HotelBill data={res.data} />);
+          const HotelPrint = renderToString(<HotelBill data={res.data} isEdit={true} />);
           const printerDataKot = {
             printer: hotelkot[0],
             data: HotelPrint,
@@ -2806,7 +2919,7 @@ const PickUp = () => {
       billType: "Delivery",
       printBill: false,
       printKot: true,
-      firmId: "A",
+      firmId: billTypeCategory?.Delivery?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
@@ -2868,9 +2981,9 @@ const PickUp = () => {
           );
           const pickupBillPrint = renderToString(
             res && res.data && res.data.isOfficial ? (
-              <RestaurantBill data={res.data} />
+              <RestaurantBill data={res.data} isEdit={true} />
             ) : (
-              <TokenBil data={res.data} />
+              <TokenBil data={res.data} isEdit={true} />
             )
           );
           const printerDataKot = {
@@ -3263,16 +3376,14 @@ const PickUp = () => {
         !billData.subTotal ||
         !billData.settledAmount ||
         !billData.discountType ||
-        (billData.discountType != "none" && !billData.discountValue) ||
-        !customerData.mobileNo ||
-        customerData.mobileNo.length != 10
+        (billData.discountType != "none" && !billData.discountValue)
       ) {
-        if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
-          setBillError((perv) => ({
-            ...perv,
-            mobileNo: true,
-          }));
-        }
+        // if (!customerData.mobileNo || customerData.mobileNo.length != 10) {
+        //   setBillError((perv) => ({
+        //     ...perv,
+        //     mobileNo: true,
+        //   }));
+        // }
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -3704,11 +3815,11 @@ const PickUp = () => {
     const value = e.target.value;
     const options =
       fullFormData &&
-      fullFormData.selectedItem &&
-      fullFormData.selectedItem.variantsList
+        fullFormData.selectedItem &&
+        fullFormData.selectedItem.variantsList
         ? fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+        fullFormData.selectedItem &&
+        fullFormData.selectedItem.variantsList
         : [];
 
     if (!isNaN(value)) {
@@ -3753,11 +3864,11 @@ const PickUp = () => {
       e.preventDefault();
       const matchingProduct = data
         ? data?.find(
-            (item) =>
-              item.itemCode.toString() === value ||
-              item.itemShortKey.toString().toLocaleLowerCase() ===
-                value.toString().toLocaleLowerCase()
-          )
+          (item) =>
+            item.itemCode.toString() === value ||
+            item.itemShortKey.toString().toLocaleLowerCase() ===
+            value.toString().toLocaleLowerCase()
+        )
         : [];
       console.log("Search Item", matchingProduct);
       //    if (matchingProduct) {
@@ -3783,7 +3894,7 @@ const PickUp = () => {
         } else if (
           value === matchingProduct?.itemCode?.toString() ||
           matchingProduct.itemShortKey?.toString()?.toLocaleLowerCase() ===
-            value.toString().toLocaleLowerCase()
+          value.toString().toLocaleLowerCase()
         ) {
           e.preventDefault();
           setValidationError(false);
@@ -3840,26 +3951,26 @@ const PickUp = () => {
         ...perv,
         unit:
           fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+            fullFormData.selectedItem &&
+            fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].unit
             : "",
         itemPrice:
           fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+            fullFormData.selectedItem &&
+            fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].price
             : 0,
         selectedUnit:
           fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+            fullFormData.selectedItem &&
+            fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0]
             : {},
         price:
           (fullFormData &&
-          fullFormData.selectedItem &&
-          fullFormData.selectedItem.variantsList
+            fullFormData.selectedItem &&
+            fullFormData.selectedItem.variantsList
             ? fullFormData.selectedItem.variantsList[0].price
             : 0) * fullFormData.qty,
       }));
@@ -3867,8 +3978,8 @@ const PickUp = () => {
       e.preventDefault();
       if (
         fullFormData &&
-        fullFormData.selectedItem &&
-        fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
           ? fullFormData.selectedItem.variantsList.length > 1
             ? true
             : false
@@ -3877,8 +3988,8 @@ const PickUp = () => {
         unitInputRef.current && unitInputRef.current.focus();
       } else if (
         fullFormData &&
-        fullFormData.selectedItem &&
-        fullFormData.selectedItem.variantsList
+          fullFormData.selectedItem &&
+          fullFormData.selectedItem.variantsList
           ? fullFormData.selectedItem.variantsList.length == 1
             ? true
             : false
@@ -3920,15 +4031,15 @@ const PickUp = () => {
             settledAmount:
               billData.subTotal + fullFormData.price
                 ? Math.ceil(
-                    billData.discountType == "none"
-                      ? billData.subTotal + fullFormData.price
-                      : billData.discountType == "fixed"
+                  billData.discountType == "none"
+                    ? billData.subTotal + fullFormData.price
+                    : billData.discountType == "fixed"
                       ? billData.subTotal +
-                        fullFormData.price -
-                        billData.discountValue
+                      fullFormData.price -
+                      billData.discountValue
                       : (billData.subTotal + fullFormData.price) *
-                        (1 - billData.discountValue / 100)
-                  )
+                      (1 - billData.discountValue / 100)
+                )
                 : 0,
             // settledAmount: Math.ceil(billData.subTotal + fullFormData.price),
           }));
@@ -3936,14 +4047,14 @@ const PickUp = () => {
             prevItems?.map((data, index) =>
               isExist == index
                 ? {
-                    ...data,
-                    qty: parseFloat(data.qty) + parseFloat(fullFormData.qty),
-                    comment: data.comment
-                      ? data.comment + ", " + fullFormData.comment
-                      : fullFormData.comment,
-                    price:
-                      data.price + fullFormData.qty * fullFormData.itemPrice,
-                  }
+                  ...data,
+                  qty: parseFloat(data.qty) + parseFloat(fullFormData.qty),
+                  comment: data.comment
+                    ? data.comment + ", " + fullFormData.comment
+                    : fullFormData.comment,
+                  price:
+                    data.price + fullFormData.qty * fullFormData.itemPrice,
+                }
                 : data
             )
           );
@@ -3985,15 +4096,15 @@ const PickUp = () => {
             settledAmount:
               billData.subTotal + fullFormData.price
                 ? Math.ceil(
-                    billData.discountType == "none"
-                      ? billData.subTotal + fullFormData.price
-                      : billData.discountType == "fixed"
+                  billData.discountType == "none"
+                    ? billData.subTotal + fullFormData.price
+                    : billData.discountType == "fixed"
                       ? billData.subTotal +
-                        fullFormData.price -
-                        billData.discountValue
+                      fullFormData.price -
+                      billData.discountValue
                       : (billData.subTotal + fullFormData.price) *
-                        (1 - billData.discountValue / 100)
-                  )
+                      (1 - billData.discountValue / 100)
+                )
                 : 0,
             // settledAmount: Math.ceil(billData.subTotal + fullFormData.price),
           }));
@@ -4077,9 +4188,9 @@ const PickUp = () => {
         subTotal: newSubTotal,
         settledAmount: Math.ceil(
           newSubTotal -
-            (prev.discountType === "fixed"
-              ? prev.discountValue
-              : prev.discountType === "percentage"
+          (prev.discountType === "fixed"
+            ? prev.discountValue
+            : prev.discountType === "percentage"
               ? newSubTotal * (prev.discountValue / 100)
               : 0)
         ),
@@ -4121,19 +4232,19 @@ const PickUp = () => {
       settledAmount: Math.ceil(
         qty1 > 1
           ? billData.subTotal -
-              items[index].itemPrice -
-              (billData.discountType == "fixed"
-                ? billData.discountValue
-                : billData.discountType == "percentage"
-                ? (billData.subTotal - items[index].itemPrice) *
-                  (billData.discountValue / 100)
-                : 0)
+          items[index].itemPrice -
+          (billData.discountType == "fixed"
+            ? billData.discountValue
+            : billData.discountType == "percentage"
+              ? (billData.subTotal - items[index].itemPrice) *
+              (billData.discountValue / 100)
+              : 0)
           : billData.subTotal -
-              (billData.discountType == "fixed"
-                ? billData.discountValue
-                : billData.discountType == "percentage"
-                ? billData.subTotal * (billData.discountValue / 100)
-                : 0)
+          (billData.discountType == "fixed"
+            ? billData.discountValue
+            : billData.discountType == "percentage"
+              ? billData.subTotal * (billData.discountValue / 100)
+              : 0)
       ),
     }));
   };
@@ -4158,12 +4269,12 @@ const PickUp = () => {
           subTotal: newSubTotal,
           settledAmount: Math.ceil(
             newSubTotal -
-              (prev.discountType === "fixed"
-                ? prev.discountValue
-                : prev.discountType === "percentage"
+            (prev.discountType === "fixed"
+              ? prev.discountValue
+              : prev.discountType === "percentage"
                 ? newSubTotal * (prev.discountValue / 100)
                 : 0
-              ).toFixed(2)
+            ).toFixed(2)
           ),
         };
       });
@@ -4384,8 +4495,8 @@ const PickUp = () => {
                 onBlur={(e) => {
                   const json = fullFormData.selectedItem.variantsList
                     ? fullFormData.selectedItem.variantsList?.filter(
-                        (varient) => varient.unit == e.target.value
-                      )
+                      (varient) => varient.unit == e.target.value
+                    )
                     : {};
                   setFullFormData((perv) => ({
                     ...perv,
@@ -4400,8 +4511,8 @@ const PickUp = () => {
                 onChange={(e) => {
                   const json = fullFormData.selectedItem.variantsList
                     ? fullFormData.selectedItem.variantsList?.filter(
-                        (varient) => varient.unit == e.target.value
-                      )
+                      (varient) => varient.unit == e.target.value
+                    )
                     : {};
                   setFullFormData((perv) => ({
                     ...perv,
@@ -4578,9 +4689,8 @@ const PickUp = () => {
                             <td className="autocompleteTxt">
                               <input
                                 type="text"
-                                className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${
-                                  billError.mobileNo ? "mobileNoError" : ""
-                                }`}
+                                className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${billError.mobileNo ? "mobileNoError" : ""
+                                  }`}
                                 name="mobileNo"
                                 // value={customerData.mobileNo}
                                 // onChange={(e) => {
@@ -4621,7 +4731,7 @@ const PickUp = () => {
                                 }
                                 autoComplete="off"
 
-                                // onBlur={() => setopenSuggestions(false)}
+                              // onBlur={() => setopenSuggestions(false)}
                               />
                               {customerList.length > 0 && (
                                 <div
@@ -4640,11 +4750,10 @@ const PickUp = () => {
                                       onClick={() => handleSuggestionClick(val)}
                                     >
                                       <div
-                                        className={`suggestionValue px-2 py-1 ${
-                                          suggestionIndex === index
-                                            ? "bg-gray-200"
-                                            : ""
-                                        }`}
+                                        className={`suggestionValue px-2 py-1 ${suggestionIndex === index
+                                          ? "bg-gray-200"
+                                          : ""
+                                          }`}
                                       >
                                         {val.mobileNo} - {val.customerName} -{" "}
                                         {val.address}
@@ -4846,9 +4955,8 @@ const PickUp = () => {
                               }));
                             }}
                             autoComplete="off"
-                            className={`w-20 p-1 border-2 rounded-sm ${
-                              billError.roomNo ? "mobileNoError" : ""
-                            }`}
+                            className={`w-20 p-1 border-2 rounded-sm ${billError.roomNo ? "mobileNoError" : ""
+                              }`}
                           />
                         </div>
                       </div>
@@ -4878,9 +4986,8 @@ const PickUp = () => {
                               <td className="autocompleteTxt">
                                 <input
                                   type="text"
-                                  className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${
-                                    billError.mobileNo ? "mobileNoError" : ""
-                                  }`}
+                                  className={`border-2 w-48 p-1 rounded-sm mobileNo relative ${billError.mobileNo ? "mobileNoError" : ""
+                                    }`}
                                   name="mobileNo"
                                   // value={customerData.mobileNo}
                                   // onChange={(e) => {
@@ -4924,7 +5031,7 @@ const PickUp = () => {
                                   }
                                   autoComplete="off"
 
-                                  // onBlur={() => setopenSuggestions(false)}
+                                // onBlur={() => setopenSuggestions(false)}
                                 />
                                 {/* {customerList.length > 0 && (
                                   <div
@@ -5497,8 +5604,8 @@ const PickUp = () => {
                       (billData.discountType == "none"
                         ? 0
                         : (billData.subTotal - billData.settledAmount).toFixed(
-                            2
-                          ))}
+                          2
+                        ))}
                   </div>
                 </div>
               </div>
@@ -5561,12 +5668,12 @@ const PickUp = () => {
                           ? justEditHotelBill()
                           : justSaveHotelBill()
                         : buttonCLicked == "Delivery"
-                        ? isEdit
-                          ? justEditBillDelivery()
-                          : justSaveBillDelivery()
-                        : isEdit
-                        ? justEditBill()
-                        : justSaveBill()
+                          ? isEdit
+                            ? justEditBillDelivery()
+                            : justSaveBillDelivery()
+                          : isEdit
+                            ? justEditBill()
+                            : justSaveBill()
                     }
                   >
                     Save
@@ -5581,12 +5688,12 @@ const PickUp = () => {
                           ? editHotelBill()
                           : saveHotelBill()
                         : buttonCLicked == "Delivery"
-                        ? isEdit
-                          ? editBillDelivery()
-                          : saveBillDelivery()
-                        : isEdit
-                        ? editBill()
-                        : saveBill();
+                          ? isEdit
+                            ? editBillDelivery()
+                            : saveBillDelivery()
+                          : isEdit
+                            ? editBill()
+                            : saveBill();
                     }}
                   >
                     Save & Print
@@ -5601,8 +5708,8 @@ const PickUp = () => {
                           buttonCLicked == "Hotel"
                             ? editHotelBillPrint()
                             : buttonCLicked == "Delivery"
-                            ? editBillPrintDelivery()
-                            : editBillPrint()
+                              ? editBillPrintDelivery()
+                              : editBillPrint()
                         }
                       >
                         Save & Bill
@@ -5615,8 +5722,8 @@ const PickUp = () => {
                           buttonCLicked == "Hotel"
                             ? editHotelKotPrint()
                             : buttonCLicked == "Delivery"
-                            ? editKotPrintDelivery()
-                            : editKotPrint()
+                              ? editKotPrintDelivery()
+                              : editKotPrint()
                         }
                       >
                         Save & KOT
@@ -5629,8 +5736,8 @@ const PickUp = () => {
                           buttonCLicked == "Hotel"
                             ? cancleHotelBill()
                             : buttonCLicked == "Delivery"
-                            ? cancleBillDelivery()
-                            : cancleBill()
+                              ? cancleBillDelivery()
+                              : cancleBill()
                         }
                       >
                         Cancel
@@ -5645,8 +5752,8 @@ const PickUp = () => {
                         buttonCLicked == "Hotel"
                           ? holdHotelBill()
                           : buttonCLicked == "Delivery"
-                          ? holdBillDelivery()
-                          : holdBill()
+                            ? holdBillDelivery()
+                            : holdBill()
                       }
                     >
                       HOLD

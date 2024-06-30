@@ -8,19 +8,19 @@ function Dashboard() {
             <Header />
             <div className='flex justify-end gap-8 pl-6 pr-6 pt-6'>
                 <div className='dashboardCard' onClick={() => {
-                    navigate('/main/Delivery')
+                    navigate(`/main/Delivery/x`)
                 }}>
                     Delivery
                 </div>
                 <div className='dashboardCard'
                     onClick={() => {
-                        navigate('/main/Pick Up')
+                        navigate(`/main/Pick Up/x`)
                     }}>
                     Pick Up
                 </div>
                 <div className='dashboardCard'
                     onClick={() => {
-                        navigate('/main/Hotel')
+                        navigate(`/main/Hotel/x`)
                     }}>
                     Hotel
                 </div>

@@ -28,11 +28,12 @@ const TokenBil = (props) => {
           overflow: "hidden",
         }}
       >
-        <div
-          style={{ fontWeight: "bold", fontSize: "14px", lineHeight: "24px", borderBottom:'1px solid black',padding:'5px 0px 5px' }}
-        >
-          New Bill
-        </div>
+        {props.isEdit &&
+          <div
+            style={{ fontWeight: "bold", fontSize: "14px", lineHeight: "24px", borderBottom: '1px solid black', padding: '5px 0px 5px' }}
+          >
+            New Bill
+          </div>}
         <div
           style={{
             padding: "16px 0px 16px 0px",
@@ -140,10 +141,10 @@ const TokenBil = (props) => {
           </div>
         </div>
         {customerData &&
-        (customerData.mobileNo ||
-          customerData.customerName ||
-          customerData.address ||
-          customerData.locality) ? (
+          (customerData.mobileNo ||
+            customerData.customerName ||
+            customerData.address ||
+            customerData.locality) ? (
           <div
             style={{
               padding: "8px 4px 8px 4px ",
@@ -397,8 +398,8 @@ const TokenBil = (props) => {
                         {props.data.discountType == "fixed"
                           ? ""
                           : props.data.discountType == "none"
-                          ? ""
-                          : "%"}
+                            ? ""
+                            : "%"}
                         , {props.data.totalDiscount.toFixed(2)}
                       </pre>
                     </td>

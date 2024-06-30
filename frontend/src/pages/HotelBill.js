@@ -27,17 +27,18 @@ const HotelBill = (props) => {
             borderBottom: "2px solid black",
           }}
         >
-          <div
-            style={{
-              fontWeight: "bold",
-              fontSize: "14px",
-              lineHeight: "24px",
-              borderBottom: "1px solid black",
-              padding: "5px 0px 5px",
-            }}
-          >
-            New Bill
-          </div>
+          {props.isEdit &&
+            <div
+              style={{
+                fontWeight: "bold",
+                fontSize: "14px",
+                lineHeight: "24px",
+                borderBottom: "1px solid black",
+                padding: "5px 0px 5px",
+              }}
+            >
+              New Bill
+            </div>}
           <div
             style={{
               fontWeight: "700",

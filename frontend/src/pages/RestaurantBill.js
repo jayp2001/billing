@@ -27,17 +27,18 @@ const RestaurantBill = (props) => {
           textAlign: "center",
         }}
       >
-        <div
-          style={{
-            fontWeight: "bold",
-            fontSize: "14px",
-            lineHeight: "24px",
-            borderBottom: "1px solid black",
-            padding: "5px 0px 5px",
-          }}
-        >
-          New Bill
-        </div>
+        {props.isEdit &&
+          <div
+            style={{
+              fontWeight: "bold",
+              fontSize: "14px",
+              lineHeight: "24px",
+              borderBottom: "1px solid black",
+              padding: "5px 0px 5px",
+            }}
+          >
+            New Bill
+          </div>}
         <div
           style={{
             paddingTop: "6px",
@@ -117,10 +118,10 @@ const RestaurantBill = (props) => {
           </div>
         )}
         {customerData &&
-        (customerData.mobileNo ||
-          customerData.customerName ||
-          customerData.address ||
-          customerData.locality) ? (
+          (customerData.mobileNo ||
+            customerData.customerName ||
+            customerData.address ||
+            customerData.locality) ? (
           <div
             style={{
               padding: "8px 4px 8px 4px ",
@@ -437,8 +438,8 @@ const RestaurantBill = (props) => {
                         {props.data.discountType === "fixed"
                           ? ""
                           : props.data.discountType === "none"
-                          ? ""
-                          : "%"}
+                            ? ""
+                            : "%"}
                         , {props.data.totalDiscount.toFixed(2)}
                       </pre>
                     </td>
