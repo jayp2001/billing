@@ -29,6 +29,11 @@ const TokenBil = (props) => {
         }}
       >
         <div
+          style={{ fontWeight: "bold", fontSize: "14px", lineHeight: "24px", borderBottom:'1px solid black',padding:'5px 0px 5px' }}
+        >
+          New Bill
+        </div>
+        <div
           style={{
             padding: "16px 0px 16px 0px",
             borderBottom: "1px solid black",
@@ -182,7 +187,10 @@ const TokenBil = (props) => {
                   fontSize: "14px",
                 }}
               >
-                <div style={{width:'95%'}}> Address : {customerData.address}</div>
+                <div style={{ width: "95%" }}>
+                  {" "}
+                  Address : {customerData.address}
+                </div>
               </div>
             )}
             {customerData.locality && (
@@ -337,7 +345,7 @@ const TokenBil = (props) => {
                 >
                   <pre style={{ fontFamily: "Verdana" }}>
                     <pre style={{ fontFamily: "Verdana", fontSize: "14px" }}>
-                      Total Qty: {itemList.length}   Sub Total:{" "}
+                      Total Qty: {itemList.length} Sub Total:{" "}
                       {props.data.subTotal.toFixed(2)}
                     </pre>
                   </pre>
@@ -356,7 +364,14 @@ const TokenBil = (props) => {
                     fontSize: "12px",
                   }}
                 >
-                  <p style={{ fontSize: "14px", margin: "0", width:'100%',textAlign:'center' }}>
+                  <p
+                    style={{
+                      fontSize: "14px",
+                      margin: "0",
+                      width: "100%",
+                      textAlign: "center",
+                    }}
+                  >
                     Pay Type: {props.data.billPayType == "cash" ? "Cash" : ""}
                     {props.data.billPayType == "due" ? "Due" : ""}{" "}
                     {props.data.billPayType == "online" ? "Online" : ""}

@@ -385,6 +385,7 @@ const PickUp = () => {
     editBillData,
     billError,
     items,
+    tab,
   ]);
   const handleInputNameChange = (e, value) => {
     // const filtered = value ? data.filter(item =>
@@ -1199,7 +1200,7 @@ const PickUp = () => {
     };
     await axios
       .post(
-        `${BACKEND_BASE_URL}billingrouter/updatePickUpBillData`,
+        `${BACKEND_BASE_URL}billingrouter/updateHotelBillData`,
         customData,
         config
       )
@@ -3007,13 +3008,11 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         !hotelFormData.hotelId ||
-        !hotelFormData.roomNo ||
         (billData.discountType != "none" && !billData.discountValue)
       ) {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false,
         }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -3086,13 +3085,11 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         !hotelFormData.hotelId ||
-        !hotelFormData.roomNo ||
         (billData.discountType != "none" && !billData.discountValue)
       ) {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false,
         }));
         // console.log('><<<<>>>LLL', !hotelFormData.hotelId ? true : false, !hotelFormData.roomNo ? true : false)
         setError("Please Fill All Field");
@@ -3165,14 +3162,12 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         !hotelFormData.hotelId ||
-        !hotelFormData.roomNo ||
         (billData.discountType != "none" && !billData.discountValue)
       ) {
         setError("Please Fill All Field");
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false,
         }));
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
@@ -3243,13 +3238,11 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         !hotelFormData.hotelId ||
-        !hotelFormData.roomNo ||
         (billData.discountType != "none" && !billData.discountValue)
       ) {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false,
         }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -3323,13 +3316,11 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         !hotelFormData.hotelId ||
-        !hotelFormData.roomNo ||
         (billData.discountType != "none" && !billData.discountValue)
       ) {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false,
         }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -3405,13 +3396,11 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         !hotelFormData.hotelId ||
-        !hotelFormData.roomNo ||
         (billData.discountType != "none" && !billData.discountValue)
       ) {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false,
         }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -3483,13 +3472,11 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         !hotelFormData.hotelId ||
-        !hotelFormData.roomNo ||
         (billData.discountType != "none" && !billData.discountValue)
       ) {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false,
         }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -3582,13 +3569,11 @@ const PickUp = () => {
         !billData.settledAmount ||
         !billData.discountType ||
         !hotelFormData.hotelId ||
-        !hotelFormData.roomNo ||
         (billData.discountType != "none" && !billData.discountValue)
       ) {
         setBillError((perv) => ({
           ...perv,
           hotelId: !hotelFormData.hotelId ? true : false,
-          roomNo: !hotelFormData.roomNo ? true : false,
         }));
         setError("Please Fill All Field");
       } else if (billData.settledAmount <= 0) {
@@ -4859,10 +4844,6 @@ const PickUp = () => {
                                 ...perv,
                                 roomNo: e.target.value,
                               }));
-                              setBillError((perv) => ({
-                                ...perv,
-                                roomNo: e.target.value ? false : true,
-                              }));
                             }}
                             autoComplete="off"
                             className={`w-20 p-1 border-2 rounded-sm ${
@@ -5053,7 +5034,7 @@ const PickUp = () => {
                                     renderInput={(params) => (
                                       <TextField
                                         {...params}
-                                        placeholder="Order Comment"
+                                        placeholder="Order Comments"
                                       />
                                     )}
                                   />
@@ -5297,23 +5278,43 @@ const PickUp = () => {
                             label="Cash"
                           />
                         </div>
-                        <div>
-                          <FormControlLabel
-                            value="due"
-                            control={
-                              <Radio
-                                name="radio"
-                                sx={{
-                                  color: "#fff",
-                                  "&.Mui-checked": {
+                        {buttonCLicked != "Hotel" ? (
+                          <div>
+                            <FormControlLabel
+                              value="due"
+                              control={
+                                <Radio
+                                  name="radio"
+                                  sx={{
                                     color: "#fff",
-                                  },
-                                }}
-                              />
-                            }
-                            label="Due"
-                          />
-                        </div>
+                                    "&.Mui-checked": {
+                                      color: "#fff",
+                                    },
+                                  }}
+                                />
+                              }
+                              label="Due"
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <FormControlLabel
+                              value="debit"
+                              control={
+                                <Radio
+                                  name="radio"
+                                  sx={{
+                                    color: "#fff",
+                                    "&.Mui-checked": {
+                                      color: "#fff",
+                                    },
+                                  }}
+                                />
+                              }
+                              label="Debit"
+                            />
+                          </div>
+                        )}
                         {buttonCLicked != "Hotel" && (
                           <>
                             <div>

@@ -17,6 +17,12 @@ body{
   height: calc(100vh - 125px) !important;
   overflow: hidden !important;
 }
+.MuiInputBase-inputAdornedStart.MuiInputBase-inputAdornedEnd{
+  padding: 12px !important;
+}
+.css-1j0qgw8-MuiAutocomplete-root .MuiOutlinedInput-root{
+  padding: 2px !important;
+}
 
 ul {
   list-style-type: none;

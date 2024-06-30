@@ -37,10 +37,27 @@ body{
 .tabButton.active{
     border-bottom: 4px solid rgb(198, 7, 7);
 }
+.grayColor{
+    color: rgb(91, 90, 90) !important;
+}
 
 .recentBillHeader{
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.7);
+}
+.HoldBillsIcons{
+    color: gray !important;
+    font-size: 20px !important;
+    margin-right: 5px !important;
+}
+.rupeesIcon{
+    font-size: 15px !important;
+}
+.blackBorder{
+    border-color: rgb(201 201 201);
+}
+.CustomWisthToDisableArea{
+    width: 85%;
 }
 
 .recentBillRow:hover{
@@ -82,6 +99,9 @@ input:focus {
 }
 .customHeight{
     height: calc(100vh - 200px) !important;
+}
+.customHeightHold{
+    height: calc(100vh - 60px) !important;
 }
 
 .discardBtn{

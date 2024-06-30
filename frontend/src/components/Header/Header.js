@@ -13,11 +13,14 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSwitch } from "../../pages/app/toggleSlice";
+import CloseIcon from "@mui/icons-material/Close";
 import LocalPrintshopOutlinedIcon from "@mui/icons-material/LocalPrintshopOutlined";
 import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
+import UpdateIcon from "@mui/icons-material/Update";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import Box from "@mui/material/Box";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
+import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
 import axios from "axios";
 import { BACKEND_BASE_URL, SOCKET_URL } from "../../url";
@@ -379,7 +382,15 @@ const Header = (props) => {
       role="presentation"
       // onClick={toggleDrawer(anchor, false)}
     >
-      <div className="p-2 my-1 text-base">Recent</div>
+      <div className="flex justify-between items-center">
+        <div className="p-2 my-1 text-base">Recent</div>
+        <div
+          className="icons pr-3 cursor-pointer"
+          onClick={toggleDrawer(anchor, false)}
+        >
+          <CloseIcon />
+        </div>
+      </div>
       <hr className="mb-2" />
 
       <div className="flex p-2 my-1 sticky">
@@ -503,9 +514,9 @@ const Header = (props) => {
           <div className="customHeight flex justify-center text-center items-center ">
             <div className="text-center mb-20">
               <div>
-                <HourglassEmptyIcon className="noFoundIcon" />
+                <HourglassEmptyIcon className="noFoundIcon grayColor" />
               </div>
-              <p className="text-lg font-bold">No Data Found</p>
+              <p className="text-lg font-bold grayColor">No Data Found</p>
             </div>
           </div>
         )}
@@ -515,12 +526,20 @@ const Header = (props) => {
 
   const listHold = (anchor) => (
     <Box
-      sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 400 }}
+      sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 500 }}
       role="presentation"
       // onClick={toggleDrawer(anchor, false)}
       // onKeyDown={toggleDrawer(anchor, false)}
     >
-      <div className="p-2 my-1  text-base">Hold Bills</div>
+      <div className="flex justify-between items-center">
+        <div className="p-2 my-1 text-base">Hold Bills</div>
+        <div
+          className="icons pr-3 cursor-pointer"
+          onClick={toggleDrawer("right", false)}
+        >
+          <CloseIcon />
+        </div>
+      </div>
       <hr className="mb-2"></hr>
       {/* <div className="flex p-2 my-1">
         <div
@@ -570,51 +589,94 @@ const Header = (props) => {
           KOT
         </div> */}
       {/* </div> */}
-      <div className="flex pl-6 pr-6 mt-1 justify-between recentBillHeader">
+      {/* <div className="flex pl-6 pr-6 mt-1 justify-between recentBillHeader">
         <div>No</div>
         <div>Type</div>
         <div>Rs.</div>
-      </div>
-      <div className="recentBillContainer ">
-        {holdBills?.map((data, index) => (
-          <div
-            className="recentBillRow pb-2 pt-2 flex justify-between"
-            key={index}
-          >
-            <div
-              className="pl-6"
-              onClick={() => {
-                getHoldBbill(data.holdId);
-              }}
-            >
-              {index + 1}
-            </div>
-            <div
-              className="pl-6"
-              onClick={() => {
-                getHoldBbill(data.holdId);
-              }}
-            >
-              {data.billType}
-            </div>
-            <div
-              className="pr-4"
-              onClick={() => {
-                getHoldBbill(data.holdId);
-              }}
-            >
-              {data.totalAmount}
-            </div>
-            <div>
-              <button
-                className="discardBtn"
-                onClick={() => discardBill(data.holdId)}
+      </div> */}
+      <div className="recentBillContainer px-2 ">
+        {holdBills.length > 0 ? (
+          <>
+            {holdBills?.map((data, index) => (
+              <div
+                key={index}
+                className="border-2 blackBorder rounded-lg pt-1 my-4 overflow-hidden shadow-md"
               >
-                Discard
-              </button>
+                <div
+                  className="flex justify-between px-2"
+                  onClick={() => {
+                    getHoldBbill(data.holdId);
+                  }}
+                >
+                  <div className="flex items-center">
+                    <p className="font-semibold text-xs">
+                      Hold No: {index + 1}
+                    </p>
+                    <p className="p-1 rounded-md text-xs ml-3 bg-orange-50">
+                      {data?.billType}
+                    </p>
+                  </div>
+                  <div className="daateTimeForHold">
+                    <div className="flex items-center text-xs">
+                      <CalendarMonthIcon className="HoldBillsIcons" />
+                      <p className="text-gray-500">2024-06-28 15:22:49</p>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className=" mt-2 flex justify-between px-2 "
+                  onClick={() => {
+                    getHoldBbill(data.holdId);
+                  }}
+                >
+                  <div>
+                    <div className="font-semibold text-xs flex items-center">
+                      Order Status: {data.orderStatus}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-semibold text-xs flex items-center">
+                      <CurrencyRupeeIcon className="rupeesIcon" />{" "}
+                      {parseFloat(data.totalAmount)
+                        .toFixed(2)
+                        .toLocaleString("en-IN")}
+                    </div>
+                  </div>
+                </div>
+                <div className="border-t-2 mt-2">
+                  <div className="flex bg-gray-200 justify-between items-center px-2 py-1">
+                    <div
+                      onClick={() => {
+                        getHoldBbill(data.holdId);
+                      }}
+                      className="CustomWisthToDisableArea"
+                    >
+                      <p className="text-gray-500 text-xs">Kept On Hold by</p>
+                      <p className="mt-1 text-sm">{data.holdBy}</p>
+                    </div>
+                    <div>
+                      <button
+                        className="px-2 py-1 border border-black bg-white rounded-md text-xs"
+                        onClick={() => discardBill(data.holdId)}
+                      >
+                        Discard
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </>
+        ) : (
+          <div className="customHeightHold flex justify-center text-center items-center ">
+            <div className="text-center mb-20">
+              <div>
+                <UpdateIcon className="noFoundIcon grayColor" />
+              </div>
+              <p className="text-lg font-bold grayColor">No Hold Bills</p>
             </div>
           </div>
-        ))}
+        )}
       </div>
     </Box>
   );
@@ -703,20 +765,21 @@ const Header = (props) => {
             >
               <LocalPrintshopOutlinedIcon />
             </div>
-            <div className="header_icon cursor-pointer grid content-center">
+            <div
+              className="header_icon cursor-pointer grid content-center"
+              onClick={() => {
+                if (location.pathname.split("/")[1] == "main") {
+                  setOpenHold(true);
+                  getHoldBills();
+                }
+              }}
+            >
               <StyledBadge
                 badgeContent={holdCount}
                 color="primary"
                 invisible={holdCount == 0}
               >
-                <WatchLaterTwoToneIcon
-                  onClick={() => {
-                    if (location.pathname.split("/")[1] == "main") {
-                      setOpenHold(true);
-                      getHoldBills();
-                    }
-                  }}
-                />
+                <WatchLaterTwoToneIcon />
               </StyledBadge>
             </div>
             <div className="header_icon cursor-pointer grid content-center">

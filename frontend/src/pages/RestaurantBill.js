@@ -29,6 +29,17 @@ const RestaurantBill = (props) => {
       >
         <div
           style={{
+            fontWeight: "bold",
+            fontSize: "14px",
+            lineHeight: "24px",
+            borderBottom: "1px solid black",
+            padding: "5px 0px 5px",
+          }}
+        >
+          New Bill
+        </div>
+        <div
+          style={{
             paddingTop: "6px",
             paddingBottom: "0px",
             borderBottom: "2px solid black",

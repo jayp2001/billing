@@ -22,11 +22,22 @@ const HotelBill = (props) => {
       >
         <div
           style={{
-            paddingTop: "6px",
+            paddingTop: "0px",
             paddingBottom: "0px",
             borderBottom: "2px solid black",
           }}
         >
+          <div
+            style={{
+              fontWeight: "bold",
+              fontSize: "14px",
+              lineHeight: "24px",
+              borderBottom: "1px solid black",
+              padding: "5px 0px 5px",
+            }}
+          >
+            New Bill
+          </div>
           <div
             style={{
               fontWeight: "700",
@@ -103,38 +114,39 @@ const HotelBill = (props) => {
                 marginBottom: "8px",
                 paddingRight: "2px",
                 paddingLeft: "2px",
+                width: "260px",
               }}
             >
-              {props?.data?.customerName && (
-                <div
-                  className="text-start upper_right"
-                  style={{
-                    textAlign: "start",
-                    maxWidth: "75%",
-                    fontSize: "10p",
-                  }}
-                >
-                  <div>
-                    Customer Name:{" "}
-                    <span style={{ fontWeight: "700", fontSize: "10p" }}>
-                      {props.data.customerName}
-                    </span>
-                  </div>
-                </div>
-              )}
               {props?.data?.mobileNo && (
                 <div
                   className="text-start upper_right"
                   style={{
                     textAlign: "start",
-                    maxWidth: "75%",
+                    maxWidth: "100%",
                     fontSize: "10p",
                   }}
                 >
                   <div>
-                    Customer Number:{" "}
+                    Number:{" "}
                     <span style={{ fontWeight: "700", fontSize: "10p" }}>
                       {props.data.mobileNo}
+                    </span>
+                  </div>
+                </div>
+              )}
+              {props?.data?.customerName && (
+                <div
+                  className="text-start upper_right"
+                  style={{
+                    textAlign: "start",
+                    maxWidth: "100%",
+                    fontSize: "10p",
+                  }}
+                >
+                  <div>
+                    Name:{" "}
+                    <span style={{ fontWeight: "700", fontSize: "10p" }}>
+                      {props.data.customerName}
                     </span>
                   </div>
                 </div>
@@ -276,12 +288,10 @@ const HotelBill = (props) => {
                   {props.data.hotelDetails.hotelName}
                 </span>
               </div>
-              {props.data.hotelDetails.roomNo && (
+              {props?.data?.roomNo && (
                 <div style={{ marginTop: "4px", fontSize: "10p" }}>
                   ROOM NO :{" "}
-                  <span className="font-bold">
-                    {props.data.hotelDetails.roomNo}
-                  </span>
+                  <span className="font-bold">{props.data.roomNo}</span>
                 </div>
               )}
               {props.data.hotelDetails.hotelAddress && (
@@ -543,7 +553,7 @@ const HotelBill = (props) => {
               </tr>
               <tr className="">
                 <td
-                  colSpan="2"
+                  colSpan="3"
                   style={{
                     textAlign: "end",
                     paddingTop: "8px",
@@ -551,9 +561,10 @@ const HotelBill = (props) => {
                     fontSize: "14px",
                   }}
                 >
-                  Discount:
+                  Discount: {props.data.discountValue.toFixed(2)}{" "}
+                  {props.data.discountType == "percentage" ? "%" : "Rs"}
                 </td>
-                <td
+                {/* <td
                   style={{
                     textAlign: "center",
                     paddingTop: "8px",
@@ -562,10 +573,7 @@ const HotelBill = (props) => {
                     borderRight: "0px",
                     borderLeft: "0px",
                   }}
-                >
-                  {props.data.discountValue}{" "}
-                  {props.data.discountType == "percentage" ? "%" : "Rs"}
-                </td>
+                ></td> */}
               </tr>
               <tr>
                 <td
