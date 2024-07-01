@@ -2,7 +2,7 @@
 // export const BACKEND_BASE_URL = "http://192.168.1.223:8000/";
 // export const BACKEND_BASE_URL = "http://192.168.1.224:8000/";
 // export const BACKEND_BASE_URL = "http://192.168.1.222:8000/api/";
-export const BACKEND_BASE_URL = "http://192.168.1.10:8000/";
+export const BACKEND_BASE_URL = "http://192.168.1.47:8000/";
 export const SOCKET_URL = "http://192.168.1.10:8000";
 // export const BACKEND_BASE_URL = "http://192.168.1.59:8000/";
 // export const BACKEND_BASE_URL = "http://192.168.0.173:8000/";

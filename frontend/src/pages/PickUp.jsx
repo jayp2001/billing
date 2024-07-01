@@ -4436,7 +4436,7 @@ const PickUp = () => {
               getOptionLabel={(options) =>
                 options.itemName ? options.itemName : ""
               }
-              // className={""}
+
               value={fullFormData.inputName}
               onChange={handleInputNameChange}
               inputRef={second}
@@ -4931,6 +4931,7 @@ const PickUp = () => {
                             value={hotelFormData.selectedHotel}
                             onChange={handleHotelInputNameChange}
                             // onKeyDown={handleEnterPressName}
+                            className={"autoCompleteHotel"}
                             renderInput={(params) => (
                               <TextField
                                 {...params}
