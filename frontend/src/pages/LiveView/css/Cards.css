@@ -11,3 +11,45 @@ body{
     height: 120px;
     overflow: auto;
 }
+.HotelHeight{
+    height: 133px;
+    overflow: auto;
+}
+.HotelDetailsHeight{
+    height: 110px !important;
+    overflow: auto !important;
+}
+.WithoutAddresHeight{
+    height: 169.6px;
+    overflow: auto;
+}
+.ItemDetails{
+    max-height: 242px;
+    overflow: auto;
+}
+.textColorIcon{
+    color: white !important;
+}
+.DeliveryColor{
+    background-color: #F0D3FF !important;
+}
+.DeliveryColorIcon{
+    background-color: #d278ff !important;
+}
+.PickUpColor{
+    background-color: #CEEBF4 !important;
+}
+.PickUpColorIcon{
+    background-color: #4feaff !important;
+}
+.HotelColor{
+    background-color: #FFE6D1 !important;
+}
+.HotelColorIcon{
+    background-color: #ff9844 !important;
+    margin-left: 9px !important;    
+}
+.leftAuto{
+    left: 47%;
+    top: -7%;
+}

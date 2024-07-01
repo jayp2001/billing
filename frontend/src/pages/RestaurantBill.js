@@ -254,7 +254,7 @@ const RestaurantBill = (props) => {
         >
           <div style={{ textAlign: "start", width: "100%" }}>
             <div style={{ textAlign: "start", fontSize: "12px" }}>
-              <div>Comment: {props.data.billComment}</div>
+              <div>Note: {props.data.billComment}</div>
             </div>
           </div>
         </div>
@@ -325,7 +325,7 @@ const RestaurantBill = (props) => {
                     textAlign: "center",
                   }}
                 >
-                  Amount
+                  Amt.
                 </th>
               </tr>
             </thead>
@@ -415,7 +415,7 @@ const RestaurantBill = (props) => {
                 >
                   <pre style={{ fontFamily: "Verdana" }}>
                     Total Qty: {itemList.length}, Sub Total:{" "}
-                    {props.data.subTotal.toFixed(2)}
+                    {parseFloat(props.data.subTotal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </pre>
                 </td>
               </tr>
@@ -459,7 +459,7 @@ const RestaurantBill = (props) => {
                   }}
                 >
                   <pre style={{ fontFamily: "Verdana", fontSize: "18px" }}>
-                    Grand Total Rs. {props.data.settledAmount.toFixed(2)}
+                    Grand Total Rs. {parseFloat(props.data.settledAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </pre>
                 </td>
               </tr>

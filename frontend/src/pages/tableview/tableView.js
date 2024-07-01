@@ -100,28 +100,28 @@ const TableView = () => {
                 {"Pick Up"}
               </TableCell>
               <TableCell align="right">
-                {rows["pickUp"] ? rows["pickUp"].cashAmt : 0}
+                {rows["pickUp"] ? rows["pickUp"].cashAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
-                {rows["pickUp"] ? rows["pickUp"].dueAmt : 0}
+                {rows["pickUp"] ? rows["pickUp"].dueAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
-                {rows["pickUp"] ? rows["pickUp"].onlineAmt : 0}
+                {rows["pickUp"] ? rows["pickUp"].onlineAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
-                {rows["pickUp"] ? rows["pickUp"].complimentaryAmt : 0}
+                {rows["pickUp"] ? rows["pickUp"].complimentaryAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
-                {rows["pickUp"] ? rows["pickUp"].discountAmt : 0}
+                {rows["pickUp"] ? rows["pickUp"].discountAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
-                {rows["pickUp"] ? rows["pickUp"].cancleAmt : 0}
+                {rows["pickUp"] ? rows["pickUp"].cancleAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
                 {rows["pickUp"]
-                  ? rows["pickUp"].cashAmt +
-                  rows["pickUp"].onlineAmt +
-                  rows["pickUp"].dueAmt
+                  ? (rows["pickUp"].cashAmt +
+                    rows["pickUp"].onlineAmt +
+                    rows["pickUp"].dueAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                   : 0}
               </TableCell>
             </TableRow>
@@ -133,28 +133,61 @@ const TableView = () => {
                 {"Delivery"}
               </TableCell>
               <TableCell align="right">
-                {rows["delivery"] ? rows["delivery"].cashAmt : 0}
+                {rows["delivery"] ? rows["delivery"].cashAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
-                {rows["delivery"] ? rows["delivery"].dueAmt : 0}
+                {rows["delivery"] ? rows["delivery"].dueAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
-                {rows["delivery"] ? rows["delivery"].onlineAmt : 0}
+                {rows["delivery"] ? rows["delivery"].onlineAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
-                {rows["delivery"] ? rows["delivery"].complimentaryAmt : 0}
+                {rows["delivery"] ? rows["delivery"].complimentaryAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
-                {rows["delivery"] ? rows["delivery"].discountAmt : 0}
+                {rows["delivery"] ? rows["delivery"].discountAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
-                {rows["delivery"] ? rows["delivery"].cancleAmt : 0}
+                {rows["delivery"] ? rows["delivery"].cancleAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
               </TableCell>
               <TableCell align="right">
                 {rows["delivery"]
-                  ? rows["delivery"].cashAmt +
-                  rows["delivery"].onlineAmt +
-                  rows["delivery"].dueAmt
+                  ? (rows["delivery"].cashAmt +
+                    rows["delivery"].onlineAmt +
+                    rows["delivery"].dueAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                  : 0}
+              </TableCell>
+            </TableRow>
+            <TableRow
+              key={"2"}
+              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            >
+              <TableCell component="th" scope="row">
+                {"Hotel"}
+              </TableCell>
+              <TableCell align="right">
+                {rows["hotel"] ? rows["hotel"].cashAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                  : 0}
+              </TableCell>
+              <TableCell align="right">
+                {rows["hotel"] ? rows["hotel"].dueAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
+              </TableCell>
+              <TableCell align="right">
+                0.00
+              </TableCell>
+              <TableCell align="right">
+                0.00
+              </TableCell>
+              <TableCell align="right">
+                {rows["hotel"] ? rows["hotel"].discountAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
+              </TableCell>
+              <TableCell align="right">
+                {rows["hotel"] ? rows["hotel"].cancleAmt.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 0}
+              </TableCell>
+              <TableCell align="right">
+                {rows["hotel"]
+                  ? (rows["hotel"].cashAmt +
+                    rows["hotel"].dueAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                   : 0}
               </TableCell>
             </TableRow>
@@ -167,43 +200,45 @@ const TableView = () => {
               </TableCell>
               <TableCell align="right">
                 {rows["pickUp"]
-                  ? rows["pickUp"].cashAmt + rows["delivery"].cashAmt
+                  ? (rows["pickUp"].cashAmt + rows["delivery"].cashAmt + rows["hotel"].cashAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                   : 0}
               </TableCell>
               <TableCell align="right">
                 {rows["pickUp"]
-                  ? rows["pickUp"].dueAmt + rows["delivery"].dueAmt
+                  ? (rows["pickUp"].dueAmt + rows["delivery"].dueAmt + rows["hotel"].dueAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                   : 0}
               </TableCell>
               <TableCell align="right">
                 {rows["pickUp"]
-                  ? rows["pickUp"].onlineAmt + rows["delivery"].onlineAmt
+                  ? (rows["pickUp"].onlineAmt + rows["delivery"].onlineAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                   : 0}
               </TableCell>
               <TableCell align="right">
                 {rows["pickUp"]
-                  ? rows["pickUp"].complimentaryAmt +
-                  rows["delivery"].complimentaryAmt
+                  ? (rows["pickUp"].complimentaryAmt +
+                    rows["delivery"].complimentaryAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                   : 0}
               </TableCell>
               <TableCell align="right">
                 {rows["pickUp"]
-                  ? rows["pickUp"].discountAmt + rows["delivery"].discountAmt
+                  ? (rows["pickUp"].discountAmt + rows["delivery"].discountAmt + rows["hotel"].discountAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                   : 0}
               </TableCell>
               <TableCell align="right">
                 {rows["pickUp"]
-                  ? rows["pickUp"].cancleAmt + rows["delivery"].cancleAmt
+                  ? (rows["pickUp"].cancleAmt + rows["delivery"].cancleAmt + rows["hotel"].cancleAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                   : 0}
               </TableCell>
               <TableCell align="right">
                 {rows["pickUp"]
-                  ? rows["pickUp"].cashAmt +
-                  rows["pickUp"].onlineAmt +
-                  rows["pickUp"].dueAmt +
-                  rows["delivery"].cashAmt +
-                  rows["delivery"].onlineAmt +
-                  rows["delivery"].dueAmt
+                  ? (rows["pickUp"].cashAmt +
+                    rows["pickUp"].onlineAmt +
+                    rows["pickUp"].dueAmt +
+                    rows["delivery"].cashAmt +
+                    rows["delivery"].onlineAmt +
+                    rows["delivery"].dueAmt +
+                    rows["hotel"].cashAmt +
+                    rows["hotel"].dueAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                   : 0}
               </TableCell>
             </TableRow>

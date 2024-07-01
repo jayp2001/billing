@@ -141,10 +141,10 @@ const KOT = (props) => {
           </div>
         </div>
         {customerData &&
-        (customerData.mobileNo ||
-          customerData.customerName ||
-          customerData.address ||
-          customerData.locality) ? (
+          (customerData.mobileNo ||
+            customerData.customerName ||
+            customerData.address ||
+            customerData.locality) ? (
           <div
             style={{
               padding: "4px 4px 8px 4px ",
@@ -311,7 +311,7 @@ const KOT = (props) => {
                   fontWeight: "500",
                 }}
               >
-                <div>Commnet: {props.data.billComment}</div>
+                <div>Note: {props.data.billComment}</div>
               </div>
             </div>
           </div>

@@ -247,7 +247,7 @@ const TokenBil = (props) => {
                     fontSize: "14px",
                   }}
                 >
-                  Amount
+                  Amt.
                 </th>
               </tr>
             </thead>
@@ -347,38 +347,39 @@ const TokenBil = (props) => {
                   <pre style={{ fontFamily: "Verdana" }}>
                     <pre style={{ fontFamily: "Verdana", fontSize: "14px" }}>
                       Total Qty: {itemList.length} Sub Total:{" "}
-                      {props.data.subTotal.toFixed(2)}
+                      {parseFloat(props.data.subTotal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </pre>
                   </pre>
                 </td>
               </tr>
-              <tr style={{ padding: "5px" }}>
-                <td
-                  colSpan="3"
-                  style={{
-                    border: "1px solid black",
-                    padding: "8px 4px 8px 0px",
-                    width: "60%",
-                    borderLeft: "0px",
-                    textAlign: "right",
-                    borderRight: "0px",
-                    fontSize: "12px",
-                  }}
-                >
-                  <p
+              {props.data.billPayType != "complimentary" &&
+                <tr style={{ padding: "5px" }}>
+                  <td
+                    colSpan="3"
                     style={{
-                      fontSize: "14px",
-                      margin: "0",
-                      width: "100%",
-                      textAlign: "center",
+                      border: "1px solid black",
+                      padding: "8px 4px 8px 0px",
+                      width: "60%",
+                      borderLeft: "0px",
+                      textAlign: "right",
+                      borderRight: "0px",
+                      fontSize: "12px",
                     }}
                   >
-                    Pay Type: {props.data.billPayType == "cash" ? "Cash" : ""}
-                    {props.data.billPayType == "due" ? "Due" : ""}{" "}
-                    {props.data.billPayType == "online" ? "Online" : ""}
-                  </p>
-                </td>
-              </tr>
+                    <p
+                      style={{
+                        fontSize: "14px",
+                        margin: "0",
+                        width: "100%",
+                        textAlign: "center",
+                      }}
+                    >
+                      Pay Type: {props.data.billPayType == "cash" ? "Cash" : ""}
+                      {props.data.billPayType == "due" ? "Due" : ""}{" "}
+                      {props.data.billPayType == "online" ? "Online" : ""}
+                    </p>
+                  </td>
+                </tr>}
               <tr className="">
                 {props.data.discountType == "none" ? (
                   <></>
@@ -419,15 +420,15 @@ const TokenBil = (props) => {
                   }}
                 >
                   <pre style={{ fontFamily: "Verdana", fontSize: "16px" }}>
-                    Grand Total Rs. {props.data.settledAmount.toFixed(2)}
+                    Grand Total Rs. {parseFloat(props.data.settledAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </pre>
                 </td>
               </tr>
               {props.data.billComment && (
                 <tr>
-                  <td colSpan="3" style={{ textAlign: "center" }}>
+                  <td colSpan="3" style={{ textAlign: "start" }}>
                     {" "}
-                    Commnet: {props.data.billComment}
+                    Note: {props.data.billComment}
                   </td>
                 </tr>
               )}

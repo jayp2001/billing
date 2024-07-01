@@ -430,7 +430,7 @@ const HotelBill = (props) => {
                     borderRight: "0px",
                   }}
                 >
-                  Amount
+                  Amt.
                 </th>
               </tr>
             </thead>
@@ -520,7 +520,7 @@ const HotelBill = (props) => {
                     borderRight: "0px",
                   }}
                 >
-                  {props.data.subTotal.toFixed(2)}
+                  {parseFloat(props.data.subTotal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </td>
               </tr>
               {props.data.billComment && (
@@ -552,20 +552,21 @@ const HotelBill = (props) => {
                   />
                 </td>
               </tr>
-              <tr className="">
-                <td
-                  colSpan="3"
-                  style={{
-                    textAlign: "end",
-                    paddingTop: "8px",
-                    paddingBottom: "8px",
-                    fontSize: "14px",
-                  }}
-                >
-                  Discount: {props.data.discountValue.toFixed(2)}{" "}
-                  {props.data.discountType == "percentage" ? "%" : "Rs"}
-                </td>
-                {/* <td
+              {props.data.discountType != 'none' &&
+                < tr className="">
+                  <td
+                    colSpan="3"
+                    style={{
+                      textAlign: "end",
+                      paddingTop: "8px",
+                      paddingBottom: "8px",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Discount: {props.data.discountValue.toFixed(2)}{" "}
+                    {props.data.discountType == "percentage" ? "%" : "Rs"}
+                  </td>
+                  {/* <td
                   style={{
                     textAlign: "center",
                     paddingTop: "8px",
@@ -575,7 +576,8 @@ const HotelBill = (props) => {
                     borderLeft: "0px",
                   }}
                 ></td> */}
-              </tr>
+                </tr>
+              }
               <tr>
                 <td
                   colSpan="3"
@@ -591,7 +593,7 @@ const HotelBill = (props) => {
                     paddingRight: "3px",
                   }}
                 >
-                  Grand Total Rs. {props.data.settledAmount.toFixed(2)}
+                  Grand Total Rs. {(parseFloat(props.data.settledAmount)).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </td>
               </tr>
               <tr>
@@ -614,7 +616,7 @@ const HotelBill = (props) => {
           </table>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

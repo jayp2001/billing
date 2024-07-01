@@ -498,7 +498,7 @@ const PickUp = () => {
     editBillData,
     billError,
     items,
-    tab,
+    // tab,
   ]);
   const handleInputNameChange = (e, value) => {
     // const filtered = value ? data.filter(item =>
@@ -1304,7 +1304,7 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       ...billData,
       itemsData: items,
-      billPayType: "Cancel",
+      billPayType: billData.billPayType,
       billComment: billData.billCommentAuto?.join(", "),
       hotelId: hotelFormData?.selectedHotel?.hotelId,
       roomNo: hotelFormData?.roomNo,

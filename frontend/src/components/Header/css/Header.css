@@ -87,7 +87,7 @@ input:focus {
 }
 .customername{
     white-space: nowrap; 
-    width: 35%; 
+    width: 50%; 
     overflow: hidden;
     text-overflow: ellipsis; 
 }
@@ -97,8 +97,8 @@ input:focus {
 .noFoundIcon{
     font-size: 96px !important;
 }
-.customHeight{
-    height: calc(100vh - 200px) !important;
+.customHeightRecent{
+    height: calc(100vh - 210px) !important;
 }
 .customHeightHold{
     height: calc(100vh - 60px) !important;

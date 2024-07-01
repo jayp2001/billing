@@ -391,7 +391,7 @@ const Header = (props) => {
   );
   const list = (anchor) => (
     <Box
-      sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 400 }}
+      sx={{ width: anchor === "top" || anchor === "bottom" ? "auto" : 500 }}
       role="presentation"
     // onClick={toggleDrawer(anchor, false)}
     >
@@ -459,17 +459,17 @@ const Header = (props) => {
       </div>
       <hr className="my-2" />
       <div className="flex pl-6 pr-4 mt-1 justify-between recentBillHeader">
-        <div>Token No</div>
+        <div className="font-semibold">Tkn No</div>
         {activeTab === 'Delivery' ? (
-          <div className="mr-20">Customer Name</div>
+          <div className="mr-12 font-semibold" style={{ textAlign: 'center' }}>Address</div>
         ) : activeTab === "Hotel" ? (
-          <><div className="mr-28">Hotel Name</div></>
+          <><div className="mr-12 font-semibold" style={{ textAlign: 'center' }}>Hotel</div></>
         ) : (<></>)}
-        <div>Rs.</div>
+        <div className="font-semibold">Rs.</div>
       </div>
 
       <div
-        className="recentBillContainer customHeight"
+        className="recentBillContainer customHeightRecent"
         onClick={toggleDrawer(anchor, false)}
       >
         {filteredBills.length > 0 ? (
@@ -484,7 +484,8 @@ const Header = (props) => {
               <div className="pl-6">{data.tokenNo}</div>
               {activeTab === "Delivery" || activeTab === "Hotel" ? (
                 <div
-                  className="customername ml-3"
+                  className="customername ml-14"
+                  style={{ textAlign: 'center' }}
                   onMouseEnter={(event) => handlePopoverOpen(event, data)}
                   onMouseLeave={handlePopoverClose}
                 >
@@ -493,7 +494,7 @@ const Header = (props) => {
               ) : (
                 <></>
               )}
-              <div className="pr-4 w-16 text-end">{data.totalAmount}</div>
+              <div className="pr-2 w-28 text-end">{(data.totalAmount).toLocaleString('en-In', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
               <Popover
                 id="mouse-over-popover"
                 sx={{
@@ -507,16 +508,16 @@ const Header = (props) => {
                 anchorEl={anchorEl}
                 anchorOrigin={{
                   vertical: "bottom",
-                  horizontal: "left",
+                  horizontal: "center",
                 }}
                 transformOrigin={{
                   vertical: "top",
-                  horizontal: "left",
+                  horizontal: "center",
                 }}
                 onClose={handlePopoverClose}
                 disableRestoreFocus
               >
-                <Typography sx={{ p: 1, width: 400 }}>
+                <Typography sx={{ p: 1, maxWidth: 400, minWidth: 'fit-content' }}>
                   {hoveredData && hoveredData.info
                     ? hoveredData.info
                     : "No address available"}
@@ -525,7 +526,7 @@ const Header = (props) => {
             </div>
           ))
         ) : (
-          <div className="customHeight flex justify-center text-center items-center ">
+          <div className="customHeightRecent flex justify-center text-center items-center ">
             <div className="text-center mb-20">
               <div>
                 <HourglassEmptyIcon className="noFoundIcon grayColor" />
@@ -649,11 +650,9 @@ const Header = (props) => {
                     </div>
                   </div>
                   <div>
-                    <div className="font-semibold text-xs flex items-center">
+                    <div className="font-semibold text-xs flex items-center ">
                       <CurrencyRupeeIcon className="rupeesIcon" />{" "}
-                      {parseFloat(data.totalAmount)
-                        .toFixed(2)
-                        .toLocaleString("en-IN")}
+                      {parseFloat(data.totalAmount).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </div>
                   </div>
                 </div>
