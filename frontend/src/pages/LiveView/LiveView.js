@@ -60,13 +60,13 @@ const LiveView = () => {
   };
 
   useEffect(() => {
-    getData(selectedTab); 
+    getData(selectedTab);
 
     const intervalId = setInterval(() => {
       getData(selectedTab);
     }, 6000);
 
-    return () => clearInterval(intervalId); 
+    return () => clearInterval(intervalId);
   }, [selectedTab]);
 
   const handleSearchChange = (event) => {
@@ -266,7 +266,7 @@ const LiveView = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap gap-6  w-full fiedCardsHeight  px-2 py-6 pb-14">
+      <div className="flex flex-wrap gap-6  w-full fiedCardsHeight gapFor20Inch  px-2 py-6 pb-14">
         {filteredData.length > 0 ? (
           filteredData.map((item, index) => (
             <div key={index} className=" px-2 my-2 minWidth">

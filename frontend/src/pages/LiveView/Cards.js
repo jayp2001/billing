@@ -32,7 +32,7 @@ const Cards = ({ data }) => {
       <Card
         className="shadow-md  rounded-md relative w-full h-full"
       >
-        <CardContent sx={{ padding: 0 }} className="CardContent">
+        <CardContent sx={{ padding: 0 }} className="CardContent h-full">
           <div className="absolute" style={{ left: '46%', top: '-7%' }}>
             <div className={` ${data.billType === 'Delivery' ? 'DeliveryColorIcon' : data.billType === 'Hotel' ? 'HotelColorIcon' : data.billType === 'Pick Up' ? 'PickUpColorIcon' : ''} rounded-full p-2 flex items-center justify-center`}>
               {data.billType === 'Delivery' ? <DeliveryDiningIcon className="text-2xl textColorIcon" /> :
@@ -53,7 +53,7 @@ const Cards = ({ data }) => {
                 </div>
               </div>
               <div className="self-center">
-                <div className="ml-2 text-black border border-black mr-14 p-1 rounded-2xl px-2 text-xs bg-white">
+                <div className="ml-2 text-black border border-gray-300 mr-14 p-1 rounded-2xl px-3 mt-3 text-xs bg-white">
                   {/* <Timer id={data.billId} billTime={data.timeDifference} /> */}
                   <Timer startTime={data?.timeDifference} />
                 </div>
@@ -124,11 +124,11 @@ const Cards = ({ data }) => {
                     <div>
                       {data?.hotelName && (
                         <div className="headr_icon text-xs">
-                          <div className="text-sm font-medium">Hotel : <span className="font-thin ">{data?.hotelName} {data.roomNo}</span></div>
+                          <div className="text-xs font-medium">Hotel : <span className="font-thin ">{data?.hotelName} {data.roomNo}</span></div>
                         </div>
                       )}
                       {(data.customerName || data.phoneNumber) && (
-                        <div className="header_icon text-xs pb-2">
+                        <div className="header_icon text-xs ">
                           {data.phoneNumber && `${data.phoneNumber}`}
                           {data.phoneNumber && data.customerName && ' - '}
                           {data.customerName}
@@ -157,7 +157,7 @@ const Cards = ({ data }) => {
                   </div>
                 )}
               </div>
-              <div className="border-t border-gray-400 ">
+              <div className="border-t border-gray-300 ">
                 {/* <div className="flex flex-wrap items-center mb-2"> */}
                 {/* <div className=" my-2 text-sm w-2/4">1x Pau</div>
                   <div className=" my-2 text-sm w-2/4">1x Veg. Sandwich</div>
@@ -166,11 +166,11 @@ const Cards = ({ data }) => {
                   className={` ${data?.customerDetails?.address ? 'itemCustomheight my-2 px-2 border-gray-100' : data.hotelName ? 'HotelHeight my-2 px-2' : 'WithoutAddresHeight my-2 px-2'} ${data.customerName && data.billType === 'Hotel' ? 'HotelDetailsHeight my-2 px-2' : ''}`}
                 >
 
-                  <div className="flex flex-wrap items-center mb-2">
+                  <div className="flex flex-wrap items-start mb-2">
                     {data.itemData.map((item, index) => (
                       <div
                         key={index}
-                        className="my-2 text-xs font-semibold w-2/4"
+                        className="my-2 text-sm font-meduim w-2/4"
                       >
                         {item.qty}x {item.itemName} ({item.unit})
                       </div>

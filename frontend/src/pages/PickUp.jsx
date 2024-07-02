@@ -210,6 +210,8 @@ const PickUp = () => {
   const unitInputRef = useRef(null);
   const commentInputRef = useRef(null);
   const first = useRef(null);
+  const hotelName = useRef(null);
+  const roomNoFocus = useRef(null);
   const second = useRef(null);
   const mobileNo = useRef(null);
   const [suggestionData, setSuggestionData] = useState([]);
@@ -469,7 +471,8 @@ const PickUp = () => {
       });
   };
   useEffect(() => {
-    first.current.focus();
+    tab == 'Hotel' ? hotelName.current.focus() : first.current.focus();
+    // roomNoFocus.current && roomNoFocus.current.focus();
     // getData();
     if (billId != 'x') {
       if (billId?.split('_')[0] == 'hold') {
@@ -3937,6 +3940,20 @@ const PickUp = () => {
       }
     }
   };
+  const handleEnterPressHotelNameName = (e) => {
+    if (e.key === "Enter") {
+      if (hotelFormData.selectedHotel) {
+        roomNoFocus.current && roomNoFocus.current.focus();
+      }
+    }
+  };
+  const handleEnterPressRoomNo = (e) => {
+    if (e.key === "Enter") {
+      // if (hotelFormData.selectedHotel) {
+      first.current && first.current.focus();
+      // }
+    }
+  };
 
   const handleEnterPressThird = (e) => {
     if (e.key === "Enter") {
@@ -4919,7 +4936,7 @@ const PickUp = () => {
                       <p className="w-full">Hotel Information </p>
                       <hr />
                       <div className="py-2 flex justify-between main_div ">
-                        <div className="w-80">
+                        <div className="w-80 autocompleteTxt">
                           <Autocomplete
                             options={hotelList ? hotelList : []}
                             defaultValue={null}
@@ -4930,13 +4947,14 @@ const PickUp = () => {
                             // error={true}
                             value={hotelFormData.selectedHotel}
                             onChange={handleHotelInputNameChange}
-                            // onKeyDown={handleEnterPressName}
+                            onKeyDown={handleEnterPressHotelNameName}
                             className={"autoCompleteHotel"}
                             renderInput={(params) => (
                               <TextField
                                 {...params}
                                 placeholder="Auto fill the name only"
                                 variant="outlined"
+                                inputRef={hotelName}
                                 error={billError.hotelId}
                               />
                             )}
@@ -4955,7 +4973,9 @@ const PickUp = () => {
                                 roomNo: e.target.value,
                               }));
                             }}
-                            autoComplete="off"
+                            onKeyDown={handleEnterPressRoomNo}
+                            ref={roomNoFocus}
+                            // autoComplete="off"
                             className={`w-20 p-1 border-2 rounded-sm ${billError.roomNo ? "mobileNoError" : ""
                               }`}
                           />
@@ -5190,6 +5210,7 @@ const PickUp = () => {
                         }));
                         setValidationError(false);
                         getData(billTypeCategory?.Delivery?.menuId);
+                        first.current.focus();
                       }
                     }}
                     className={
@@ -5216,6 +5237,7 @@ const PickUp = () => {
                         }));
                         setValidationError(false);
                         getData(billTypeCategory["Pick Up"]?.menuId);
+                        first.current.focus();
                       }
                     }}
                     className={
@@ -5242,6 +5264,9 @@ const PickUp = () => {
                         }));
                         setValidationError(false);
                         getData(billTypeCategory?.Hotel?.menuId);
+                        setTimeout(() => {
+                          hotelName.current && hotelName.current.focus();
+                        }, 100)
                       }
                     }}
                     className={

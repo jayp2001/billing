@@ -8,19 +8,19 @@ body{
     padding: 0px !important;
 }
 .itemCustomheight{
-    height: 120px;
+    height: 77px;
     overflow: auto;
 }
 .HotelHeight{
-    height: 133px;
+    height: 90px;
     overflow: auto;
 }
 .HotelDetailsHeight{
-    height: 110px !important;
+    height: 75px !important;
     overflow: auto !important;
 }
 .WithoutAddresHeight{
-    height: 169.6px;
+    height: 124.6px;
     overflow: auto;
 }
 .ItemDetails{

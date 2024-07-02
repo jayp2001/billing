@@ -14,14 +14,47 @@
 }
 
 .minWidth {
-    width: 32% !important;
-    min-width: 32% !important;
+    width: 99% !important;
+    min-width: 99% !important;
 }
 
-@media (max-width: 1347px) {
+@media (min-width: 2801px) and (max-width: 3072px) {
     .minWidth {
-        width: 49% !important;
-        min-width: 49% !important;
+        width: 13% !important;
+        min-width: 13% !important;
+    }
+}
+@media (max-width: 2800px) {
+    .minWidth {
+        width: 17% !important;
+        min-width: 17% !important;
+    }
+}
+@media (max-width: 2000px) {
+    .minWidth {
+        width: 23% !important;
+        min-width: 23% !important;
+    }
+}
+@media (min-width: 1525px) and (max-width: 1950px) {
+    .minWidth {
+        width: 23% !important;
+        min-width: 23% !important;
+    }
+    .gapFor20Inch{
+        gap: 40px !important;
+    }
+}
+@media (min-width:1251px) and (max-width: 1524px) {
+    .minWidth {
+        width: 32% !important;
+        min-width: 32% !important;
+    }
+}
+@media (min-width: 890px) and (max-width: 1250px)  {
+    .minWidth {
+        width: 48% !important;
+        min-width: 48% !important;
     }
 }
 @media (max-width: 899px) {

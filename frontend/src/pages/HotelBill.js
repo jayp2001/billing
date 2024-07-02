@@ -563,8 +563,9 @@ const HotelBill = (props) => {
                       fontSize: "14px",
                     }}
                   >
-                    Discount: {props.data.discountValue.toFixed(2)}{" "}
-                    {props.data.discountType == "percentage" ? "%" : "Rs"} , {props.data.totalDiscount.toFixed(2)}
+                    Discount: {props.data.totalDiscount.toFixed(2)}
+                    {/* {props.data.discountValue.toFixed(2)}{" "}
+                    {props.data.discountType == "percentage" ? "%" : "Rs"} ,  */}
                   </td>
                   {/* <td
                   style={{
