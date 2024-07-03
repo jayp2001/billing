@@ -343,22 +343,30 @@ const PickUp = () => {
   };
   const handleShoetCutKey = (event) => {
     if (event.key === "F12") {
-      buttonCLicked === "Delivery"
+      buttonCLicked == "Hotel"
         ? isEdit
-          ? editBillDelivery()
-          : saveBillDelivery()
-        : isEdit
-          ? editBill()
-          : saveBill();
+          ? editHotelBill()
+          : saveHotelBill() :
+        buttonCLicked === "Delivery"
+          ? isEdit
+            ? editBillDelivery()
+            : saveBillDelivery()
+          : isEdit
+            ? editBill()
+            : saveBill();
     }
     if (event.key === "F1") {
-      buttonCLicked === "Delivery"
+      buttonCLicked == "Hotel"
         ? isEdit
-          ? justEditBillDelivery()
-          : justSaveBillDelivery()
-        : isEdit
-          ? justEditBill()
-          : justSaveBill();
+          ? justEditHotelBill()
+          : justSaveHotelBill() :
+        buttonCLicked === "Delivery"
+          ? isEdit
+            ? justEditBillDelivery()
+            : justSaveBillDelivery()
+          : isEdit
+            ? justEditBill()
+            : justSaveBill();
     }
     if (event.key === "F5") {
       window.location.reload();
@@ -500,6 +508,7 @@ const PickUp = () => {
     customerData,
     editBillData,
     billError,
+    hotelFormData,
     items,
     // tab,
   ]);
@@ -603,6 +612,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Pick Up",
       printBill: true,
       printKot: true,
@@ -612,7 +622,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -704,6 +713,7 @@ const PickUp = () => {
     setLoading(true);
     const customData = {
       ...customerData,
+      ...billData,
       billType: "Hotel",
       printBill: true,
       printKot: true,
@@ -713,7 +723,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       hotelId: hotelFormData?.selectedHotel?.hotelId,
@@ -812,6 +821,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Delivery",
       printBill: true,
       printKot: true,
@@ -821,7 +831,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -914,6 +923,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Pick Up",
       printBill: true,
       printKot: true,
@@ -923,7 +933,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -1013,6 +1022,7 @@ const PickUp = () => {
     setLoading(true);
     const customData = {
       ...customerData,
+      ...billData,
       billType: "Hotel",
       printBill: true,
       printKot: true,
@@ -1022,7 +1032,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       hotelId: hotelFormData?.selectedHotel?.hotelId,
@@ -1092,6 +1101,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Delivery",
       printBill: true,
       printKot: true,
@@ -1101,7 +1111,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -1194,6 +1203,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Pick Up",
       printBill: true,
       printKot: true,
@@ -1203,7 +1213,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billPayType: "Cancel",
       billComment: billData.billCommentAuto?.join(", "),
@@ -1296,6 +1305,7 @@ const PickUp = () => {
     const customData = {
       ...editBillData,
       ...customerData,
+      ...billData,
       billType: "Hotel",
       printBill: true,
       printKot: true,
@@ -1305,7 +1315,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billPayType: billData.billPayType,
       billComment: billData.billCommentAuto?.join(", "),
@@ -1402,6 +1411,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Delivery",
       printBill: true,
       printKot: true,
@@ -1411,7 +1421,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billPayType: billData.billPayType,
       billComment: billData.billCommentAuto?.join(", "),
@@ -1506,6 +1515,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Pick Up",
       printBill: true,
       printKot: true,
@@ -1515,7 +1525,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -1605,6 +1614,7 @@ const PickUp = () => {
     setLoading(true);
     const customData = {
       ...customerData,
+      ...billData,
       billType: "Hotel",
       printBill: true,
       printKot: true,
@@ -1614,7 +1624,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       hotelId: hotelFormData?.selectedHotel?.hotelId,
@@ -1685,16 +1694,16 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Delivery",
       printBill: true,
       printKot: true,
-      firmId: billTypeCategory?.Delivey?.firmId,
+      firmId: billTypeCategory?.Delivery?.firmId,
       billStatus: "Print",
       totalDiscount:
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -1788,6 +1797,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Pick Up",
       printBill: true,
       printKot: true,
@@ -1797,7 +1807,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -1900,6 +1909,7 @@ const PickUp = () => {
     const customData = {
       ...editBillData,
       ...customerData,
+      ...billData,
       billType: "Hotel",
       printBill: true,
       printKot: true,
@@ -1909,7 +1919,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       hotelId: hotelFormData?.selectedHotel?.hotelId,
@@ -2009,6 +2018,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Delivery",
       printBill: true,
       printKot: true,
@@ -2018,7 +2028,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -2123,6 +2132,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Pick Up",
       printBill: false,
       printKot: false,
@@ -2132,7 +2142,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -2200,6 +2209,7 @@ const PickUp = () => {
     const customData = {
       ...editBillData,
       ...customerData,
+      ...billData,
       billType: "Hotel",
       printBill: false,
       printKot: false,
@@ -2209,7 +2219,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       hotelId: hotelFormData?.selectedHotel?.hotelId,
@@ -2283,6 +2292,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Delivery",
       printBill: false,
       printKot: false,
@@ -2292,7 +2302,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -2363,6 +2372,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Pick Up",
       printBill: true,
       printKot: false,
@@ -2372,7 +2382,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -2475,6 +2484,7 @@ const PickUp = () => {
     const customData = {
       ...editBillData,
       ...customerData,
+      ...billData,
       billType: "Hotel",
       printBill: true,
       printKot: false,
@@ -2484,7 +2494,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       hotelId: hotelFormData?.selectedHotel?.hotelId,
@@ -2584,6 +2593,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Delivery",
       printBill: true,
       printKot: false,
@@ -2593,7 +2603,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -2698,6 +2707,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Pick Up",
       printBill: false,
       printKot: true,
@@ -2707,7 +2717,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -2810,6 +2819,7 @@ const PickUp = () => {
     const customData = {
       ...editBillData,
       ...customerData,
+      ...billData,
       billType: "Hotel",
       printBill: false,
       printKot: true,
@@ -2819,7 +2829,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       hotelId: hotelFormData?.selectedHotel?.hotelId,
@@ -2919,6 +2928,7 @@ const PickUp = () => {
       customerDetails: {
         ...customerData,
       },
+      ...billData,
       billType: "Delivery",
       printBill: false,
       printKot: true,
@@ -2928,7 +2938,6 @@ const PickUp = () => {
         billData.discountType == "none"
           ? 0
           : billData.subTotal - billData.settledAmount,
-      ...billData,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       footerKot: "Thank You",
@@ -3237,7 +3246,8 @@ const PickUp = () => {
             mobileNo: true,
           }));
         }
-        setError("Please Fill All Field");
+
+        setError("Please Fill All Field?????");
       } else if (billData.settledAmount <= 0) {
         setError("Sattle Amount can not be less than zero");
       } else {
@@ -4727,7 +4737,7 @@ const PickUp = () => {
                                     ...billError,
                                     mobileNo: false,
                                   });
-                                  if (regex.test(e.target.value)) {
+                                  if ((regexMobile.test(e.target.value) || e.target.value == '') && e.target.value.length < 11) {
                                     setCustomerData((perv) => ({
                                       ...perv,
                                       mobileNo: e.target.value,
