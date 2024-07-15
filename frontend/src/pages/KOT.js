@@ -277,7 +277,7 @@ const KOT = (props) => {
                     style={{
                       padding: "8px 0px 6px 0px",
                       border: "1px solid black",
-                      textAlign: "center",
+                      textAlign: "end",
                       minWidth: "25%",
                       maxWidth: "35%",
                       fontSize: "14px",

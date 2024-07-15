@@ -4,6 +4,7 @@ import { Routes, Route } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "./pages/app/store";
 import PickUp from "./pages/PickUp";
+import { renderToString } from "react-dom/server";
 import PickUp1 from "./pages/PickUp1";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSwitch } from "./pages/app/toggleSlice";
@@ -17,17 +18,89 @@ import LoginPage from "./pages/login/login";
 import TableView from "./pages/tableview/tableView";
 import Dashboard from "./pages/tempDashboard/dashboard";
 import LiveView from "./pages/LiveView/LiveView"
+import { SOCKET_URL } from "./url";
+import io from "socket.io-client";
+const { ipcRenderer } = window.require("electron");
 // import TestPage from "./testPage";
 // import Test from './pages/Test';
 // import Test from './pages/Test';
 
 const App = () => {
+  const systemPrinter = JSON.parse(localStorage.getItem("printerPreference"));
+  const macAddress = localStorage.getItem("macAddress");
+  const pickupkot = systemPrinter?.filter(
+    (printer) => printer.categoryId == "pickupKot"
+  );
+  const pickupbill = systemPrinter?.filter(
+    (printer) => printer.categoryId == "pickupBill"
+  );
+  const deliverykot = systemPrinter?.filter(
+    (printer) => printer.categoryId == "deliveryKot"
+  );
+  const deliverybill = systemPrinter?.filter(
+    (printer) => printer.categoryId == "deliveryBill"
+  );
+  const hotelbill = systemPrinter?.filter(
+    (printer) => printer.categoryId == "hotelBill"
+  );
+  const hotelkot = systemPrinter?.filter(
+    (printer) => printer.categoryId == "hotelKot"
+  );
+  const getPrinter = (data) => {
+    switch (data.billType) {
+      case 'Pick Up':
+        return pickupbill[0];
+      case 'Delivery':
+        return deliverybill[0];
+      case 'Hotel':
+        return hotelbill[0];
+      // case 'Dine In':
+      //   return hotelbill;
+      default:
+        return pickupbill[0];
+      // return <CurrencyExchangeIcon fontSize='large' />;
+    }
+  }
+  const getPrintData = (data) => {
+    switch (data.billType) {
+      case 'Pick Up':
+        return renderToString(<RestaurantBill data={data} />);
+      case 'Delivery':
+        return renderToString(<RestaurantBill data={data} />);
+      case 'Hotel':
+        return renderToString(<HotelBill data={data} />);
+      default:
+        return renderToString(<RestaurantBill data={data} />);
+      // return <CurrencyExchangeIcon fontSize='large' />;
+    }
+  }
   useEffect(() => {
     if (store.getState().toggle.isSwitchOn) {
       localStorage.setItem("isSwitchOn", "true");
     } else {
       localStorage.setItem("isSwitchOn", "false");
     }
+  }, []);
+
+  useEffect(() => {
+    const socket = io(SOCKET_URL);
+    socket.on("connect", () => {
+      console.log("Connected to server>>>>><<<<", macAddress);
+    });
+    socket.on(`print_Bill_${macAddress}`, (message) => {
+      // setHoldCount(message);
+      console.log('Socket test', message);
+      // alert('hello')
+      const printerBill = {
+        printer: getPrinter(message),
+        data: getPrintData(message),
+      };
+      ipcRenderer.send("set-title", printerBill);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
   }, []);
 
   return (

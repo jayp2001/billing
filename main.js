@@ -96,10 +96,9 @@ function createWindow() {
   });
 
   ipcMain.on("set-title", async (event, title) => {
-    console.log(">>>> ONCLICK", title);
     const printer = title.printer;
     const data = title.data;
-    console.log("titel", printer.marginTop);
+    console.log("titel");
     const printWindow = new BrowserWindow({ show: true });
     await printWindow.loadURL(`data:text/html,` + encodeURIComponent(data));
     // await printWindow.loadURL(`http://localhost:3000`);

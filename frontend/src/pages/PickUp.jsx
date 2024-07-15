@@ -42,6 +42,7 @@ import BlockIcon from "@mui/icons-material/Block";
 import KOT from "./KOT";
 import RestaurantBill from "./RestaurantBill";
 import Chip from "@mui/material/Chip";
+import Select from '@mui/material/Select';
 
 import TokenBil from "./TokenBill";
 import { Switch } from "@mui/material";
@@ -159,7 +160,7 @@ const PickUp = () => {
     hotelId: false,
     roomNo: false,
   });
-
+  const [upiList, setUpiList] = useState([])
   const [items, setItems] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [itemComment, setItemComment] = useState({
@@ -168,6 +169,7 @@ const PickUp = () => {
     comment: "",
     oldComment: "",
   });
+  const [upiId, setUpiId] = useState()
   const [billData, setBillData] = useState({
     subTotal: 0,
     discountType: "none",
@@ -248,6 +250,7 @@ const PickUp = () => {
   };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorElO, setAnchorElO] = React.useState(null);
 
   const handleClick = (event, index) => {
     setAnchorEl(event.currentTarget);
@@ -265,6 +268,11 @@ const PickUp = () => {
     }));
     // console.log('split', items && items[index] && items[index].comment ? items[index].comment?.split(/,\s*/) : [],)
   };
+
+  const handleClickO = (event) => {
+    setAnchorElO(event.currentTarget);
+    // console.log('split', items && items[index] && items[index].comment ? items[index].comment?.split(/,\s*/) : [],)
+  };
   const handleClose = () => {
     setItemComment({
       itemComment: [],
@@ -274,9 +282,16 @@ const PickUp = () => {
     });
     setAnchorEl(null);
   };
+  const handleCloseO = () => {
+    setItemComment();
+    setAnchorElO(null);
+  };
 
   const open = Boolean(anchorEl);
   const id = open ? "simple-popover" : undefined;
+
+  const openO = Boolean(anchorElO);
+  const idO = openO ? "simple-popover" : undefined;
 
   const saveItemComment = async () => {
     setItems((perv) =>
@@ -489,8 +504,8 @@ const PickUp = () => {
         getBbill(billId);
       }
     }
-
     getBillTypes();
+    getUpiDDl();
     getcustomerDDL();
     getHotelDDL();
     getComments();
@@ -608,6 +623,7 @@ const PickUp = () => {
   };
   const addBillData = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
     const customData = {
       customerDetails: {
         ...customerData,
@@ -624,8 +640,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
+      footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
     };
     await axios
       .post(
@@ -817,6 +835,7 @@ const PickUp = () => {
   };
   const addBillDataDelivery = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
     const customData = {
       customerDetails: {
         ...customerData,
@@ -833,8 +852,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
+      footerBill: billTypeCategory?.Delivery?.billFooterNote,
     };
     await axios
       .post(
@@ -1511,6 +1532,8 @@ const PickUp = () => {
   };
   const justSaveBillData = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
+    console.log('upiid', upiJson);
     const customData = {
       customerDetails: {
         ...customerData,
@@ -1527,8 +1550,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
+      footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
     };
     await axios
       .post(
@@ -1690,6 +1715,7 @@ const PickUp = () => {
   };
   const justSaveBillDataDelivery = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
     const customData = {
       customerDetails: {
         ...customerData,
@@ -1706,8 +1732,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
+      footerBill: billTypeCategory?.Delivery?.billFooterNote,
     };
     await axios
       .post(
@@ -1792,6 +1820,7 @@ const PickUp = () => {
 
   const editBillDataFunction = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
     const customData = {
       ...editBillData,
       customerDetails: {
@@ -1809,8 +1838,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
+      footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
     };
     await axios
       .post(
@@ -2013,6 +2044,7 @@ const PickUp = () => {
   };
   const editBillDataFunctionDelivery = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
     const customData = {
       ...editBillData,
       customerDetails: {
@@ -2030,8 +2062,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
+      footerBill: billTypeCategory?.Delivery?.billFooterNote,
     };
     await axios
       .post(
@@ -2127,6 +2161,7 @@ const PickUp = () => {
   };
   const justEditBillDataFunction = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
     const customData = {
       ...editBillData,
       customerDetails: {
@@ -2144,8 +2179,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
+      footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
     };
     await axios
       .post(
@@ -2287,6 +2324,7 @@ const PickUp = () => {
   };
   const justEditBillDataFunctionDelivery = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
     const customData = {
       ...editBillData,
       customerDetails: {
@@ -2304,8 +2342,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
+      footerBill: billTypeCategory?.Delivery?.billFooterNote,
     };
     await axios
       .post(
@@ -2367,6 +2407,7 @@ const PickUp = () => {
 
   const editBillPrintDataFunction = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
     const customData = {
       ...editBillData,
       customerDetails: {
@@ -2384,8 +2425,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
+      footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
     };
     await axios
       .post(
@@ -2588,6 +2631,7 @@ const PickUp = () => {
   };
   const editBillPrintDataFunctionDelivery = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
     const customData = {
       ...editBillData,
       customerDetails: {
@@ -2605,8 +2649,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
+      footerBill: billTypeCategory?.Delivery?.billFooterNote,
     };
     await axios
       .post(
@@ -2702,6 +2748,7 @@ const PickUp = () => {
   };
   const editKotPrintDataFunction = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
     const customData = {
       ...editBillData,
       customerDetails: {
@@ -2719,8 +2766,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
+      footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
     };
     await axios
       .post(
@@ -2923,6 +2972,7 @@ const PickUp = () => {
   };
   const editKotPrintDataFunctionDelivery = async () => {
     setLoading(true);
+    const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
     const customData = {
       ...editBillData,
       customerDetails: {
@@ -2940,8 +2990,10 @@ const PickUp = () => {
           : billData.subTotal - billData.settledAmount,
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
-      footerKot: "Thank You",
-      footerBill: "Thank You",
+      isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      onlineId: upiId,
+      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
+      footerBill: billTypeCategory?.Delivery?.billFooterNote,
     };
     await axios
       .post(
@@ -3075,6 +3127,20 @@ const PickUp = () => {
       )
       .then((res) => {
         setCustomerList(res.data);
+      })
+      .catch((error) => {
+        setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+  };
+  const getUpiDDl = async () => {
+    await axios
+      .get(
+        `${BACKEND_BASE_URL}billingrouter/ddlUPI`,
+        config
+      )
+      .then((res) => {
+        setUpiList(res.data);
+        setUpiId(res?.data[0]?.onlineId)
       })
       .catch((error) => {
         setError(error.response ? error.response.data : "Network Error ...!!!");
@@ -5463,6 +5529,7 @@ const PickUp = () => {
                             <div>
                               <FormControlLabel
                                 value="online"
+                                onClick={(e) => handleClickO(e)}
                                 control={
                                   <Radio
                                     name="radio"
@@ -5694,109 +5761,114 @@ const PickUp = () => {
                   />
                 </div>
               </div>
-              <div className="w-full text-base flex justify-center gap-4 p-1 mt-1 ">
-                <div>
-                  <button
-                    className="text-base button px-2 py-1 rounded-md text-white"
-                    onClick={() =>
-                      buttonCLicked == "Hotel"
-                        ? isEdit
-                          ? justEditHotelBill()
-                          : justSaveHotelBill()
-                        : buttonCLicked == "Delivery"
+              {(editBillData && editBillData.billStatus == 'Cancel') ?
+                <div className="text-center mt-2 text-lg font-semibold text-red-500">
+                  This bill is canceled ...!
+                </div> :
+                <div className="w-full text-base flex justify-center gap-4 p-1 mt-1 ">
+                  <div>
+                    <button
+                      className="text-base button px-2 py-1 rounded-md text-white"
+                      onClick={() =>
+                        buttonCLicked == "Hotel"
                           ? isEdit
-                            ? justEditBillDelivery()
-                            : justSaveBillDelivery()
-                          : isEdit
-                            ? justEditBill()
-                            : justSaveBill()
-                    }
-                  >
-                    Save
-                  </button>
-                </div>
-                <div>
-                  <button
-                    className="text-base button save_button py-1 rounded-md text-white"
-                    onClick={() => {
-                      buttonCLicked == "Hotel"
-                        ? isEdit
-                          ? editHotelBill()
-                          : saveHotelBill()
-                        : buttonCLicked == "Delivery"
+                            ? justEditHotelBill()
+                            : justSaveHotelBill()
+                          : buttonCLicked == "Delivery"
+                            ? isEdit
+                              ? justEditBillDelivery()
+                              : justSaveBillDelivery()
+                            : isEdit
+                              ? justEditBill()
+                              : justSaveBill()
+                      }
+                    >
+                      Save
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      className="text-base button save_button py-1 rounded-md text-white"
+                      onClick={() => {
+                        buttonCLicked == "Hotel"
                           ? isEdit
-                            ? editBillDelivery()
-                            : saveBillDelivery()
-                          : isEdit
-                            ? editBill()
-                            : saveBill();
-                    }}
-                  >
-                    Save & Print
-                  </button>
-                </div>
-                {isEdit ? (
-                  <>
-                    <div>
-                      <button
-                        className="another_1 button text-base px-2 py-1 rounded-md text-white"
-                        onClick={() =>
-                          buttonCLicked == "Hotel"
-                            ? editHotelBillPrint()
-                            : buttonCLicked == "Delivery"
-                              ? editBillPrintDelivery()
-                              : editBillPrint()
-                        }
-                      >
-                        Save & Bill
-                      </button>
-                    </div>
-                    <div>
-                      <button
-                        className="another_1 button text-base px-2 py-1 rounded-md text-white"
-                        onClick={() =>
-                          buttonCLicked == "Hotel"
-                            ? editHotelKotPrint()
-                            : buttonCLicked == "Delivery"
-                              ? editKotPrintDelivery()
-                              : editKotPrint()
-                        }
-                      >
-                        Save & KOT
-                      </button>
-                    </div>
+                            ? editHotelBill()
+                            : saveHotelBill()
+                          : buttonCLicked == "Delivery"
+                            ? isEdit
+                              ? editBillDelivery()
+                              : saveBillDelivery()
+                            : isEdit
+                              ? editBill()
+                              : saveBill();
+                      }}
+                    >
+                      Save & Print
+                    </button>
+                  </div>
+                  {isEdit ? (
+                    <>
+                      <div>
+                        <button
+                          className="another_1 button text-base px-2 py-1 rounded-md text-white"
+                          onClick={() =>
+                            buttonCLicked == "Hotel"
+                              ? editHotelBillPrint()
+                              : buttonCLicked == "Delivery"
+                                ? editBillPrintDelivery()
+                                : editBillPrint()
+                          }
+                        >
+                          Save & Bill
+                        </button>
+                      </div>
+                      <div>
+                        <button
+                          className="another_1 button text-base px-2 py-1 rounded-md text-white"
+                          onClick={() =>
+                            buttonCLicked == "Hotel"
+                              ? editHotelKotPrint()
+                              : buttonCLicked == "Delivery"
+                                ? editKotPrintDelivery()
+                                : editKotPrint()
+                          }
+                        >
+                          Save & KOT
+                        </button>
+                      </div>
+                      <div>
+                        <button
+                          className="another_2 button text-base px-2 py-1 rounded-md text-white"
+                          onClick={() =>
+                            buttonCLicked == "Hotel"
+                              ? cancleHotelBill()
+                              : buttonCLicked == "Delivery"
+                                ? cancleBillDelivery()
+                                : cancleBill()
+                          }
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </>
+                  ) : (
                     <div>
                       <button
                         className="another_2 button text-base px-2 py-1 rounded-md text-white"
                         onClick={() =>
                           buttonCLicked == "Hotel"
-                            ? cancleHotelBill()
+                            ? holdHotelBill()
                             : buttonCLicked == "Delivery"
-                              ? cancleBillDelivery()
-                              : cancleBill()
+                              ? holdBillDelivery()
+                              : holdBill()
                         }
                       >
-                        Cancel
+                        HOLD
                       </button>
                     </div>
-                  </>
-                ) : (
-                  <div>
-                    <button
-                      className="another_2 button text-base px-2 py-1 rounded-md text-white"
-                      onClick={() =>
-                        buttonCLicked == "Hotel"
-                          ? holdHotelBill()
-                          : buttonCLicked == "Delivery"
-                            ? holdBillDelivery()
-                            : holdBill()
-                      }
-                    >
-                      HOLD
-                    </button>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              }
             </div>
           </div>
         </div>
@@ -5822,7 +5894,7 @@ const PickUp = () => {
               // getOptionLabel={commentList ? commentList : []}
               defaultValue={[]}
               freeSolo
-              value={itemComment.itemComment ? itemComment.itemComment : []}
+              value={itemComment && itemComment.itemComment ? itemComment.itemComment : []}
               onChange={(e, value) => {
                 setItemComment((perv) => ({
                   ...perv,
@@ -5855,7 +5927,67 @@ const PickUp = () => {
         </div>
         {/* <Typography sx={{ p: 2 }}>The content of the Popover.</Typography> */}
       </Popover>
-    </div>
+      <Popover
+        id={idO}
+        open={openO}
+        anchorEl={anchorElO}
+        placement={'top-start'}
+        onClose={handleCloseO}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <div className="upiPopUp">
+          <div className="commentHeader">Select UPI id</div>
+          <div className="mt-6 mb-4">
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">UPI id</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={upiId}
+                label="UPI id"
+                defaultValue={upiList[0]?.onlineId}
+                onChange={(e) => setUpiId(e.target.value)}
+              >
+                {
+                  upiList?.map((data) => (
+                    <MenuItem key={data.onlineId} value={data.onlineId}>{data.upiId}</MenuItem>
+                  ))
+                }
+                {
+                  < MenuItem key={'other'} value={'other'}>Other</MenuItem>
+                }
+              </Select>
+            </FormControl>
+          </div>
+          <div className="w-full text-base flex justify-end gap-4 p-1 mt-1 ">
+            <div>
+              <button
+                className="text-base button px-2 py-1 rounded-md text-white"
+                onClick={() => handleCloseO()}
+              >
+                Save
+              </button>
+            </div>
+            <div>
+              <button
+                className="another_2 button text-base px-2 py-1 rounded-md text-white"
+                onClick={() => handleCloseO()}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+        {/* <Typography sx={{ p: 2 }}>The content of the Popover.</Typography> */}
+      </Popover >
+    </div >
   );
 };
 

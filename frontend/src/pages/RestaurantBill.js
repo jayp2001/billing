@@ -1,6 +1,7 @@
 import React from "react";
 import "./css/Bill.css";
 import "./css/RestaurantBill.css";
+import { QRCode } from "react-qrcode-logo"
 
 const RestaurantBill = (props) => {
   const customerData =
@@ -58,7 +59,7 @@ const RestaurantBill = (props) => {
             {props.data.firmData.firmName}
           </div>
           <div
-            style={{ fontSize: "16px", lineHeight: "20px", fontWeight: "600" }}
+            style={{ fontSize: "14px", lineHeight: "20px", fontWeight: "400" }}
           >
             {props.data.firmData.firmAddress}
           </div>
@@ -70,9 +71,11 @@ const RestaurantBill = (props) => {
               marginBottom: "8px",
               paddingBottom: "4px",
               paddingTop: "10px",
+              fontWeight: '600',
+              letterSpacing: '1px'
             }}
           >
-            No: {props.data.firmData.otherMobileNo}
+            {props.data.firmData.firmMobileNo}
           </div>
         </div>
         <div
@@ -125,30 +128,63 @@ const RestaurantBill = (props) => {
           <div
             style={{
               padding: "8px 4px 8px 4px ",
-              width: "260px",
+              width: "253px",
               height: "min-content",
+              borderBottom: '1px solid black'
             }}
           >
-            <div
-              style={{ textAlign: "start", marginTop: "8px", fontSize: "18px" }}
-            >
-              <div>Phone No : {customerData.mobileNo} </div>
-            </div>
-            <div
-              style={{ textAlign: "start", marginTop: "8px", fontSize: "18px" }}
-            >
-              <div>Name : {customerData.customerName} </div>
-            </div>
-            <div
-              style={{ textAlign: "start", marginTop: "8px", fontSize: "18px" }}
-            >
-              <div>Address : {customerData.address}</div>
-            </div>
-            <div
-              style={{ textAlign: "start", marginTop: "8px", fontSize: "18px" }}
-            >
-              <div>Locality : {customerData.locality}</div>
-            </div>
+            {customerData.mobileNo && (
+              <div
+                style={{
+                  textAlign: "start",
+                  marginTop: "6px",
+                  fontSize: "14px",
+                }}
+              >
+                <div>
+                  Phone No :{" "}
+                  <span style={{ fontWeight: "600" }}>
+                    {customerData.mobileNo}
+                  </span>{" "}
+                </div>
+              </div>
+            )}
+            {customerData.customerName && (
+              <div
+                style={{
+                  textAlign: "start",
+                  marginTop: "6px",
+                  fontSize: "14px",
+                }}
+              >
+                <div>Name : {customerData.customerName} </div>
+              </div>
+            )}
+            {customerData.address && (
+              <div
+                style={{
+                  textAlign: "start",
+                  marginTop: "6px",
+                  fontSize: "14px",
+                }}
+              >
+                <div style={{ width: "95%" }}>
+                  {" "}
+                  Address : {customerData.address}
+                </div>
+              </div>
+            )}
+            {customerData.locality && (
+              <div
+                style={{
+                  textAlign: "start",
+                  marginTop: "6px",
+                  fontSize: "14px",
+                }}
+              >
+                <div>Locality : {customerData.locality}</div>
+              </div>
+            )}
           </div>
         ) : (
           <></>
@@ -193,7 +229,7 @@ const RestaurantBill = (props) => {
                 BILL NO :{" "}
                 <span style={{ fontWeight: "700", fontSize: "12px" }}>
                   {" "}
-                  {props.data.billNo}
+                  {props.data.officialBillNo}
                 </span>
               </div>
               <div style={{ marginTop: "4px", fontSize: "12px" }}>
@@ -246,7 +282,7 @@ const RestaurantBill = (props) => {
         </div>
         <div
           style={{
-            width: "260px",
+            width: "257px",
             height: "min-content",
             borderTop: "1px solid black",
             padding: "2px",
@@ -266,7 +302,7 @@ const RestaurantBill = (props) => {
             className="table-auto w-full"
             style={{
               tableLayout: "auto",
-              width: "100%",
+              width: "260px",
               border: "1px solid black",
               borderCollapse: "collapse",
               borderLeft: "0px",
@@ -446,6 +482,34 @@ const RestaurantBill = (props) => {
                   </>
                 )}
               </tr>
+              {props.data.billPayType != "complimentary" &&
+                <tr style={{ padding: "5px" }}>
+                  <td
+                    colSpan="4"
+                    style={{
+                      border: "1px solid black",
+                      padding: "8px 4px 8px 0px",
+                      width: "100%",
+                      borderLeft: "0px",
+                      textAlign: "right",
+                      borderRight: "0px",
+                      fontSize: "P",
+                    }}
+                  >
+                    <p
+                      style={{
+                        fontSize: "14px",
+                        margin: "0",
+                        width: "100%",
+                        textAlign: "center",
+                      }}
+                    >
+                      Pay Type: {props.data.billPayType == "cash" ? "Cash" : ""}
+                      {props.data.billPayType == "due" ? "Due" : ""}{" "}
+                      {props.data.billPayType == "online" ? "Online" : ""}
+                    </p>
+                  </td>
+                </tr>}
               <tr>
                 <td
                   colSpan="4"
@@ -455,10 +519,10 @@ const RestaurantBill = (props) => {
                     borderBottom: "1px solid black",
                     padding: "10px 4px 10px 0px",
                     fontWeight: "bold",
-                    fontSize: "18px",
+                    fontSize: "16px",
                   }}
                 >
-                  <pre style={{ fontFamily: "Verdana", fontSize: "18px" }}>
+                  <pre style={{ fontFamily: "Verdana", fontSize: "16px" }}>
                     Grand Total Rs. {parseFloat(props.data.settledAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </pre>
                 </td>
