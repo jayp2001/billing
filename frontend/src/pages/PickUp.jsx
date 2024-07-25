@@ -4120,7 +4120,7 @@ const PickUp = () => {
           // console.log("<>LOG<>",fullFormData.price,fullFormData.itemPrice)
           setBillData((perv) => ({
             ...perv,
-            subTotal: billData.subTotal + fullFormData.price,
+            subTotal: Math.ceil(billData.subTotal + fullFormData.price),
             settledAmount:
               billData.subTotal + fullFormData.price
                 ? Math.ceil(
@@ -4146,7 +4146,7 @@ const PickUp = () => {
                     ? data.comment + ", " + fullFormData.comment
                     : fullFormData.comment,
                   price:
-                    data.price + fullFormData.qty * fullFormData.itemPrice,
+                    data.price + Math.ceil(fullFormData.qty * fullFormData.itemPrice),
                 }
                 : data
             )
@@ -4185,7 +4185,7 @@ const PickUp = () => {
           console.log("<>LOG<>", fullFormData.price, fullFormData.itemPrice);
           setBillData((perv) => ({
             ...perv,
-            subTotal: billData.subTotal + fullFormData.price,
+            subTotal: Math.ceil(billData.subTotal + fullFormData.price),
             settledAmount:
               billData.subTotal + fullFormData.price
                 ? Math.ceil(
@@ -4255,10 +4255,19 @@ const PickUp = () => {
       updatedItems.splice(index, 1);
       return updatedItems;
     });
-    setBillData((perv) => ({
-      ...perv,
-      subTotal: billData.subTotal - items[index].price,
+    const newSubTotal = billData.subTotal - items[index].price
+    setBillData((prev) => ({
+      ...prev,
+      subTotal: Math.ceil(billData.subTotal - items[index].price),
       settledAmount: Math.ceil(billData.subTotal - items[index].price),
+      settledAmount: Math.ceil(
+        newSubTotal -
+        (prev.discountType === "fixed"
+          ? prev.discountValue
+          : prev.discountType === "percentage"
+            ? newSubTotal * (prev.discountValue / 100)
+            : 0)
+      ),
     }));
   };
   const handleIncreaseQuantity = (index, currentQty) => {
@@ -4278,7 +4287,7 @@ const PickUp = () => {
       );
       return {
         ...prev,
-        subTotal: newSubTotal,
+        subTotal: Math.ceil(newSubTotal),
         settledAmount: Math.ceil(
           newSubTotal -
           (prev.discountType === "fixed"
@@ -4320,8 +4329,8 @@ const PickUp = () => {
       ...perv,
       subTotal:
         qty1 > 1
-          ? billData.subTotal - items[index].itemPrice
-          : billData.subTotal,
+          ? Math.ceil(billData.subTotal - items[index].itemPrice)
+          : Math.ceil(billData.subTotal),
       settledAmount: Math.ceil(
         qty1 > 1
           ? billData.subTotal -
@@ -4359,7 +4368,7 @@ const PickUp = () => {
         );
         return {
           ...prev,
-          subTotal: newSubTotal,
+          subTotal: Math.ceil(newSubTotal),
           settledAmount: Math.ceil(
             newSubTotal -
             (prev.discountType === "fixed"
@@ -5284,6 +5293,13 @@ const PickUp = () => {
                           ...perv,
                           mobileNo: false,
                         }));
+                        setBillData((prev) => ({
+                          ...prev,
+                          totalDiscount: 0,
+                          discountType: 'none',
+                          discountValue: 0,
+                          settledAmount: prev.subTotal
+                        }))
                         setValidationError(false);
                         getData(billTypeCategory?.Delivery?.menuId);
                         first.current.focus();
@@ -5311,6 +5327,13 @@ const PickUp = () => {
                           ...perv,
                           mobileNo: false,
                         }));
+                        setBillData((prev) => ({
+                          ...prev,
+                          totalDiscount: 0,
+                          discountType: 'none',
+                          discountValue: 0,
+                          settledAmount: prev.subTotal
+                        }))
                         setValidationError(false);
                         getData(billTypeCategory["Pick Up"]?.menuId);
                         first.current.focus();
@@ -5338,6 +5361,19 @@ const PickUp = () => {
                           ...perv,
                           mobileNo: false,
                         }));
+                        setBillData((prev) => ({
+                          ...prev,
+                          totalDiscount: 0,
+                          discountType: 'none',
+                          discountValue: 0,
+                          settledAmount: prev.subTotal
+                        }))
+                        setHotelFormData((prev) => ({
+                          ...prev,
+                          hotelId: '',
+                          selectedHotel: '',
+                          roomNo: ''
+                        }))
                         setValidationError(false);
                         getData(billTypeCategory?.Hotel?.menuId);
                         setTimeout(() => {
@@ -5445,10 +5481,10 @@ const PickUp = () => {
                           <p className="pl-2">{item.unit}</p>
                         </div>
                         <div className="col-span-1 justify-self-end">
-                          <p className="pl-2">{item.itemPrice.toFixed(0)}</p>
+                          <p className="pl-2">{Math.ceil(item.itemPrice)}</p>
                         </div>
                         <div className="col-span-1 justify-self-end">
-                          <p className="pl-2">{item.price.toFixed(0)}</p>
+                          <p className="pl-2">{Math.ceil(item.price)}</p>
                         </div>
                       </div>
                     </div>
