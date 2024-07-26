@@ -5500,10 +5500,12 @@ const PickUp = () => {
                         value={billData.billPayType}
                         onChange={(e) => {
                           console.log("radio", e.target.value);
-                          setBillData((perv) => ({
-                            ...perv,
-                            billPayType: e.target.value,
-                          }));
+                          if (!(isEdit && buttonCLicked == 'Hotel')) {
+                            setBillData((perv) => ({
+                              ...perv,
+                              billPayType: e.target.value,
+                            }));
+                          }
                         }}
                       >
                         <div>
