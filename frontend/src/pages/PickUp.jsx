@@ -578,7 +578,7 @@ const PickUp = () => {
                 : billData.subTotal * (1 - value.discount / 100)
           )
           : 0,
-        billPayType: value.payType,
+        billPayType: isEdit ? perv.billPayType : value.payType,
       }));
     } else {
       setHotelFormData((perv) => ({
@@ -5298,7 +5298,8 @@ const PickUp = () => {
                           totalDiscount: 0,
                           discountType: 'none',
                           discountValue: 0,
-                          settledAmount: prev.subTotal
+                          settledAmount: prev.subTotal,
+                          billPayType: 'cash'
                         }))
                         setValidationError(false);
                         getData(billTypeCategory?.Delivery?.menuId);
@@ -5332,7 +5333,8 @@ const PickUp = () => {
                           totalDiscount: 0,
                           discountType: 'none',
                           discountValue: 0,
-                          settledAmount: prev.subTotal
+                          settledAmount: prev.subTotal,
+                          billPayType: 'cash'
                         }))
                         setValidationError(false);
                         getData(billTypeCategory["Pick Up"]?.menuId);
@@ -5366,7 +5368,8 @@ const PickUp = () => {
                           totalDiscount: 0,
                           discountType: 'none',
                           discountValue: 0,
-                          settledAmount: prev.subTotal
+                          settledAmount: prev.subTotal,
+                          billPayType: 'cash'
                         }))
                         setHotelFormData((prev) => ({
                           ...prev,
