@@ -25,6 +25,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { renderToString } from "react-dom/server";
 import TokenBil from '../TokenBill';
 import Modal from "@mui/material/Modal";
+import TableBarIcon from '@mui/icons-material/TableBar';
 import { pad } from 'crypto-js';
 import { TbBorderRadius } from 'react-icons/tb';
 const { ipcRenderer } = window.require("electron");
@@ -452,8 +453,8 @@ function Dashboard() {
         <div>
             <Header />
             <div className='flex justify-between gap-4 pl-6 pr-6 pt-6'>
-                <div className='text-lg font-medium pt-1'>
-                    Table View
+                <div className='text-lg font-medium pt-1 text-gray-700'>
+                    <TableBarIcon />&nbsp;&nbsp;Table View
                 </div>
                 <div className='flex gap-4'>
                     <div className='dashboardCard'
@@ -518,7 +519,7 @@ function Dashboard() {
                                 setIsTable(true);
                                 setNoOfTable(tableList.length)
                             }}>
-                            Add Table
+                            + Add Table
                         </div>
                     }
                 </div>
@@ -538,10 +539,10 @@ function Dashboard() {
                 <div>
                     Dine In
                 </div>
-                <div className='tableWrapper px-2 mt-4 flex gap-5'>
+                <div className='tableWrapper px-2 mt-4 flex gap-5 gap-y-1'>
                     {tableList?.map((data, index) => (
                         <Tooltip title={data.assignCaptain} arrow placement="top" >
-                            <div>
+                            <div style={{ minHeight: '125px' }}>
                                 < div className={data.tableStatus == 'running' ? 'tableIconRunning' : data.tableStatus == 'print' ? 'tableIconPrint' : 'tableIcon'} onClick={() => {
                                     navigate(`/main/DineIn/${data.tableId ? data.tableId : null}/${data.billId ? data.billId : null}/${data.tableStatus ? data.tableStatus : null}`)
                                 }}>
