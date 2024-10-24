@@ -1,7 +1,6 @@
 import React from "react";
 import "./css/Bill.css";
 import "./css/RestaurantBill.css";
-import { QRCode } from "react-qrcode-logo"
 
 const RestaurantBill = (props) => {
   const customerData =
