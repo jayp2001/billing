@@ -64,11 +64,11 @@ const LiveView = () => {
     getData(selectedTab);
 
     const intervalId = setInterval(() => {
-      getData(selectedTab);
+      !searchTerm && getData(selectedTab);
     }, 6000);
 
     return () => clearInterval(intervalId);
-  }, [selectedTab]);
+  }, [selectedTab, searchTerm]);
 
   const handleSearchChange = (event) => {
     const uppercaseTerm = event.target.value.toUpperCase();

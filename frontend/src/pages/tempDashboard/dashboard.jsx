@@ -19,7 +19,7 @@ import Close from '@mui/icons-material/Close';
 import CloseIcon from '@mui/icons-material/Close';
 import CurrencyRupee from '@mui/icons-material/CurrencyRupee';
 import io from "socket.io-client";
-import { TextField, Box, RadioGroup, FormControlLabel, Autocomplete, Typography, Radio, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { TextField, Box, RadioGroup, FormControlLabel, Autocomplete, Typography, Radio, FormControl, InputLabel, Select, MenuItem, Tooltip } from '@mui/material';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { renderToString } from "react-dom/server";
@@ -451,29 +451,34 @@ function Dashboard() {
     return (
         <div>
             <Header />
-            <div className='flex justify-end gap-4 pl-6 pr-6 pt-6'>
-                <div className='dashboardCard'
-                    onClick={() => {
-                        navigate(`/main/DineIn/${null}/${null}/blank`)
-                    }}>
-                    Dine In
+            <div className='flex justify-between gap-4 pl-6 pr-6 pt-6'>
+                <div className='text-lg font-medium pt-1'>
+                    Table View
                 </div>
-                <div className='dashboardCard' onClick={() => {
-                    navigate(`/main/Delivery/x`)
-                }}>
-                    Delivery
-                </div>
-                <div className='dashboardCard'
-                    onClick={() => {
-                        navigate(`/main/Pick Up/x`)
+                <div className='flex gap-4'>
+                    <div className='dashboardCard'
+                        onClick={() => {
+                            navigate(`/main/DineIn/${null}/${null}/blank`)
+                        }}>
+                        Dine In
+                    </div>
+                    <div className='dashboardCard' onClick={() => {
+                        navigate(`/main/Delivery/x`)
                     }}>
-                    Pick Up
-                </div>
-                <div className='dashboardCard'
-                    onClick={() => {
-                        navigate(`/main/Hotel/x`)
-                    }}>
-                    Hotel
+                        Delivery
+                    </div>
+                    <div className='dashboardCard'
+                        onClick={() => {
+                            navigate(`/main/Pick Up/x`)
+                        }}>
+                        Pick Up
+                    </div>
+                    <div className='dashboardCard'
+                        onClick={() => {
+                            navigate(`/main/Hotel/x`)
+                        }}>
+                        Hotel
+                    </div>
                 </div>
             </div>
             <hr className='my-5' style={{ border: '0.5px solid rgba(0,0,0,0.3)' }} />
@@ -535,40 +540,42 @@ function Dashboard() {
                 </div>
                 <div className='tableWrapper px-2 mt-4 flex gap-5'>
                     {tableList?.map((data, index) => (
-                        <div>
-                            < div className={data.tableStatus == 'running' ? 'tableIconRunning' : data.tableStatus == 'print' ? 'tableIconPrint' : 'tableIcon'} onClick={() => {
-                                navigate(`/main/DineIn/${data.tableId ? data.tableId : null}/${data.billId ? data.billId : null}/${data.tableStatus ? data.tableStatus : null}`)
-                            }}>
-                                <div className={data.tableStatus != 'blank' ? 'flex-col pt-1 justify-around gap-2' : 'grid blankIcon content-center'}>
-                                    {data.tableStatus != 'blank' && <TimerMinutes startTime={data?.tableStartTime} />}
-                                    <div className='my-1'>{data.tableId}</div>
-                                    {data.tableStatus != 'blank' && <div className='font-semibold'><CurrencyRupee sx={{ fontSize: '16px' }} />{parseFloat(data.billAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>}
+                        <Tooltip title={data.assignCaptain} arrow placement="top" >
+                            <div>
+                                < div className={data.tableStatus == 'running' ? 'tableIconRunning' : data.tableStatus == 'print' ? 'tableIconPrint' : 'tableIcon'} onClick={() => {
+                                    navigate(`/main/DineIn/${data.tableId ? data.tableId : null}/${data.billId ? data.billId : null}/${data.tableStatus ? data.tableStatus : null}`)
+                                }}>
+                                    <div className={data.tableStatus != 'blank' ? 'flex-col pt-1 justify-around gap-2' : 'grid blankIcon content-center'}>
+                                        {data.tableStatus != 'blank' && <TimerMinutes startTime={data?.tableStartTime} />}
+                                        <div className='my-1'>{data.tableId}</div>
+                                        {data.tableStatus != 'blank' && <div className='font-semibold'><CurrencyRupee sx={{ fontSize: '16px' }} />{parseFloat(data.billAmt).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>}
+                                    </div>
                                 </div>
-                            </div>
-                            {data.tableStatus != 'blank' &&
-                                <div className='printWrap flex justify-around'>
-                                    {data.tableStatus == 'running' ?
-                                        <>
+                                {data.tableStatus != 'blank' &&
+                                    <div className='printWrap flex justify-around'>
+                                        {data.tableStatus == 'running' ?
+                                            <>
+                                                <div className='print' onClick={() => {
+                                                    printBill(data.billId)
+                                                }}>
+                                                    <LocalPrintshopOutlinedIcon />
+                                                </div>
+                                                <div className='print' onClick={() =>
+                                                    navigate(`/main/DineIn/${data.tableId ? data.tableId : null}/${data.billId ? data.billId : null}/${data.tableStatus ? data.tableStatus : null}`)
+                                                }>
+                                                    <VisibilityOutlinedIcon />
+                                                </div>
+                                            </> :
                                             <div className='print' onClick={() => {
-                                                printBill(data.billId)
+                                                handleSettel(data)
                                             }}>
-                                                <LocalPrintshopOutlinedIcon />
+                                                <SaveOutlinedIcon />
                                             </div>
-                                            <div className='print' onClick={() =>
-                                                navigate(`/main/DineIn/${data.tableId ? data.tableId : null}/${data.billId ? data.billId : null}/${data.tableStatus ? data.tableStatus : null}`)
-                                            }>
-                                                <VisibilityOutlinedIcon />
-                                            </div>
-                                        </> :
-                                        <div className='print' onClick={() => {
-                                            handleSettel(data)
-                                        }}>
-                                            <SaveOutlinedIcon />
-                                        </div>
-                                    }
-                                </div>
-                            }
-                        </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </Tooltip>
                     ))
                     }
                 </div>
