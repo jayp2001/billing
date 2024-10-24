@@ -5,7 +5,7 @@ import { styled, alpha } from "@mui/material/styles";
 import InputBase from "@mui/material/InputBase";
 import SearchIcon from "@mui/icons-material/Search";
 import "./css/Header.css";
-import { Modal, Popover, Switch, Tab, Typography } from "@mui/material";
+import { Modal, Popover, Switch, Tab, Tooltip, Typography } from "@mui/material";
 import WatchLaterTwoToneIcon from "@mui/icons-material/WatchLaterTwoTone";
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
 import GridViewIcon from "@mui/icons-material/GridView";
@@ -100,54 +100,64 @@ const Header = (props) => {
     },
   }));
   const getBbill = async (id) => {
-
     await axios
       .get(
         `${BACKEND_BASE_URL}billingrouter/getBillDataById?billId=${id}`,
         config
       )
       .then((res) => {
-        if (location.pathname.split("/")[1] != 'main') {
-          navigate(`/main/${res.data.billType}/${id}`)
+        // console.log('path', location.pathname.split("/"))
+        if (location.pathname.split("/")[1] != 'main' && location.pathname.split("/")[2] != 'DineIn') {
+          res.data.billType == 'Dine In' ? navigate(`/main/DineIn/${res.data.tableInfo.tableNo}/${res.data.billId}/${res.data.billStatus}`) : navigate(`/main/${res.data.billType}/${id}`)
           toggleDrawer("right", false);
           setOpenHold(false);
         } else {
-          props.setItems(res.data.itemData);
-          props.setBillData({
-            subTotal: res.data.totalAmount,
-            discountType: res.data.discountType,
-            discountValue: res.data.discountValue,
-            settledAmount: res.data.settledAmount,
-            totalDiscount: res.data.totalDiscount,
-            billPayType: res.data.billPayType,
-            billComment: res.data.billComment,
-            billCommentAuto: res.data.billComment
-              ? res.data.billComment.split(", ")
-              : [],
-          });
-          res?.data?.billType == "Hotel"
-            ? props.setCustomerData({
-              customerId: "",
-              addressId: "",
-              mobileNo: res?.data?.hotelDetails?.mobileNo,
-              customerName: res?.data?.hotelDetails?.customerName,
-              address: "",
-              locality: "",
-              birthDate: "",
-              aniversaryDate: "",
-            })
-            : props.setCustomerData(res.data.customerDetails);
-          props.setEditBillData(res.data);
-          props.setIsEdit(true);
-          props.setButtonCLicked(res?.data?.billType);
-          res?.data?.billType == "Hotel" &&
-            props.setHotelFormData({
-              hotelId: res.data?.hotelDetails?.hotelId,
-              roomNo: res.data?.hotelDetails?.roomNo,
-              selectedHotel: res.data?.hotelDetails,
+          if (res.data.billType == 'Dine In') {
+            navigate(`/main/DineIn/${res.data.tableInfo.tableNo}/${res.data.billId}/${res.data.billStatus}`)
+          } else {
+            props.setItems(res.data.itemData);
+            props.setDueFormData({
+              accountId: res?.data?.payInfo?.accountId,
+              dueNote: res?.data?.dueNote,
+              selectedAccount: res?.data?.payInfo
             });
-          toggleDrawer("right", false);
-          setOpenHold(false);
+            props.setUpiId(res?.data?.onlineId);
+            props.setBillData({
+              subTotal: res.data.totalAmount,
+              discountType: res.data.discountType,
+              discountValue: res.data.discountValue,
+              settledAmount: res.data.settledAmount,
+              totalDiscount: res.data.totalDiscount,
+              billPayType: res.data.billPayType,
+              billComment: res.data.billComment,
+              billCommentAuto: res.data.billComment
+                ? res.data.billComment.split(", ")
+                : [],
+            });
+            res?.data?.billType == "Hotel"
+              ? props.setCustomerData({
+                customerId: "",
+                addressId: "",
+                mobileNo: res?.data?.hotelDetails?.mobileNo,
+                customerName: res?.data?.hotelDetails?.customerName,
+                address: "",
+                locality: "",
+                birthDate: "",
+                aniversaryDate: "",
+              })
+              : props.setCustomerData(res.data.customerDetails);
+            props.setEditBillData(res.data);
+            props.setIsEdit(true);
+            props.setButtonCLicked(res?.data?.billType);
+            res?.data?.billType == "Hotel" &&
+              props.setHotelFormData({
+                hotelId: res.data?.hotelDetails?.hotelId,
+                roomNo: res.data?.hotelDetails?.roomNo,
+                selectedHotel: res.data?.hotelDetails,
+              });
+            toggleDrawer("right", false);
+            setOpenHold(false);
+          }
         }
       })
       .catch((error) => {
@@ -318,7 +328,7 @@ const Header = (props) => {
 
   const location = useLocation();
   const toggleDrawer = (anchor, open) => (event) => {
-    console.log(">>>path", location.pathname.split("/")[2]);
+    console.log(">>>path", location.pathname.split("/"));
     // if (location.pathname.split("/")[1] == "main") {
     if (
       event.type === "keydown" &&
@@ -443,6 +453,18 @@ const Header = (props) => {
         >
           Hotel
         </div>
+        <div
+          className={`tabButton py-2 w-full text-center cursor-pointer ${activeTab === "Dine In" ? "active" : ""
+            }`}
+          onClick={(event) => {
+            event.stopPropagation();
+            setActiveTab("Dine In");
+            getRecentToken("Dine In");
+            setSearchTerm("");
+          }}
+        >
+          Dine In
+        </div>
       </div>
 
       <div className="w-full px-3">
@@ -460,10 +482,14 @@ const Header = (props) => {
       <hr className="my-2" />
       <div className="flex pl-6 pr-4 mt-1 justify-between recentBillHeader">
         <div className="font-semibold">Tkn No</div>
-        {activeTab === 'Delivery' ? (
+        {activeTab === 'Pick Up' ? (
+          <div className="mr-12 font-semibold" style={{ textAlign: 'center' }}>Info</div>
+        ) : activeTab === 'Delivery' ? (
           <div className="mr-12 font-semibold" style={{ textAlign: 'center' }}>Address</div>
         ) : activeTab === "Hotel" ? (
           <><div className="mr-12 font-semibold" style={{ textAlign: 'center' }}>Hotel</div></>
+        ) : activeTab === "Dine In" ? (
+          <><div className="mr-12 font-semibold" style={{ textAlign: 'center' }}>Table No.</div></>
         ) : (<></>)}
         <div className="font-semibold">Rs.</div>
       </div>
@@ -482,20 +508,22 @@ const Header = (props) => {
               }}
             >
               <div className="pl-6">{data.tokenNo}</div>
-              {activeTab === "Delivery" || activeTab === "Hotel" ? (
+              {/* {activeTab === "Delivery" || activeTab === "Hotel" || activeTab === 'Dine In' ? ( */}
+              <Tooltip title={data?.info} arrow>
                 <div
                   className="customername ml-14"
                   style={{ textAlign: 'center' }}
-                  onMouseEnter={(event) => handlePopoverOpen(event, data)}
-                  onMouseLeave={handlePopoverClose}
+                // onMouseEnter={(event) => handlePopoverOpen(event, data)}
+                // onMouseLeave={handlePopoverClose}
                 >
                   {data?.address}
                 </div>
-              ) : (
-                <></>
-              )}
+              </Tooltip>
+              {/* // ) : (
+              //   <></>
+              // )} */}
               <div className="pr-2 w-28 text-end">{(data.totalAmount).toLocaleString('en-In', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-              <Popover
+              {/* <Popover
                 id="mouse-over-popover"
                 sx={{
                   pointerEvents: "none",
@@ -522,7 +550,7 @@ const Header = (props) => {
                     ? hoveredData.info
                     : "No address available"}
                 </Typography>
-              </Popover>
+              </Popover> */}
             </div>
           ))
         ) : (
@@ -701,26 +729,31 @@ const Header = (props) => {
         config
       )
       .then((res) => {
-        console.log(res);
-        props.setItems(res.data.itemData);
-        props.setBillData({
-          subTotal: res.data.totalAmount,
-          discountType: res.data.discountType,
-          discountValue: res.data.discountValue,
-          settledAmount: res.data.settledAmount,
-          totalDiscount: res.data.totalDiscount,
-          billPayType: res.data.billPayType,
-          billComment: res.data.billComment,
-          billCommentAuto: res.data.billComment
-            ? res.data.billComment.split(", ")
-            : [],
-        });
-        props.setCustomerData(res.data.customerDetails);
-        props.setEditBillData(res.data);
-        props.setIsEdit(true);
-        const billType = res.data.billType;
-        props.setButtonCLicked(billType);
-        setSearch("");
+        if (location.pathname.split("/")[1] == 'main' && location.pathname.split("/")[2] != 'DineIn') {
+          console.log(res);
+          props.setItems(res.data.itemData);
+          props.setBillData({
+            subTotal: res.data.totalAmount,
+            discountType: res.data.discountType,
+            discountValue: res.data.discountValue,
+            settledAmount: res.data.settledAmount,
+            totalDiscount: res.data.totalDiscount,
+            billPayType: res.data.billPayType,
+            billComment: res.data.billComment,
+            billCommentAuto: res.data.billComment
+              ? res.data.billComment.split(", ")
+              : [],
+          });
+          props.setCustomerData(res.data.customerDetails);
+          props.setEditBillData(res.data);
+          props.setIsEdit(true);
+          const billType = res.data.billType;
+          props.setButtonCLicked(billType);
+          setSearch("");
+        } else {
+          // console.log('LLL', `/main/DineIn / ${res.data.tableInfo.tableNo} / ${res.data.billId} / ${res.data.billStatus}`)
+          res.data.billType != 'Dine In' ? naviagate(`/main/${res.data.billType}/${res.data.billId}`) : naviagate(`/main/DineIn/${res.data.tableInfo.tableNo}/${res.data.billId}/${res.data.billStatus}`);
+        }
       })
       .catch((error) => {
         setSearch("");
@@ -880,3 +913,4 @@ const Header = (props) => {
 };
 
 export default Header;
+

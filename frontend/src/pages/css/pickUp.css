@@ -104,11 +104,22 @@ ul li:hover {
   height: calc(100vh - 394px);
   overflow-y: auto;
   }
+    .main_bill1Print {
+      width: 100%;
+      height: calc(100vh - 294px);
+      overflow-y: auto;
+    }
   .main_billError {
     width: 100%;
     height: calc(100vh - 414px);
     overflow-y: auto;
 }
+ .main_billErrorPrint{
+   width: 100%;
+   height: calc(100vh - 314px);
+   overflow-y: auto;
+ }
+
 .itemBorder{
   border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 }
@@ -228,4 +239,36 @@ input[type="number"] {
 
 .no-spinner {
   -moz-appearance: textfield;
+}
+
+.kotList{
+  max-height: calc(100vh - 320px);
+  overflow: scroll;
+  /* scroll-behavior: smooth; */
+}
+.kotList::-webkit-scrollbar {
+  display: none !important;
+}
+
+.printKotBtn{
+  background: linear-gradient(195deg, rgb(102, 187, 106), rgb(67, 160, 71));
+  padding: 0px 4px 4px 4px;
+  border-radius: 3px;
+}
+.editKotBtn {
+  background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(0, 122, 255, 1) 0%, rgba(0, 156, 255, 1) 78%);
+  padding: 0px 4px 4px 4px;
+  border-radius: 3px;
+}
+.deleteKotBtn {
+  background: linear-gradient(195deg, rgb(236, 64, 122), rgb(216, 27, 96));
+  padding: 0px 4px 4px 4px;
+  border-radius: 3px;
+}
+
+.printKotBtn:hover,
+.editKotBtn:hover,
+.deleteKotBtn:hover {
+  transform: translateY(-1px);
+  transition: transform 0.3s ease;
 }

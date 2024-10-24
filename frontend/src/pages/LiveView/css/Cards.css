@@ -8,23 +8,23 @@ body{
     padding: 0px !important;
 }
 .itemCustomheight{
-    height: 77px;
+    height: 102px;
     overflow: auto;
 }
 .HotelHeight{
-    height: 90px;
+    height: 115px;
     overflow: auto;
 }
 .HotelDetailsHeight{
-    height: 75px !important;
+    height: 100px !important;
     overflow: auto !important;
 }
 .WithoutAddresHeight{
-    height: 124.6px;
+    height: 150.6px;
     overflow: auto;
 }
 .ItemDetails{
-    max-height: 242px;
+    max-height: 267px;
     overflow: auto;
 }
 .textColorIcon{
@@ -32,6 +32,12 @@ body{
 }
 .DeliveryColor{
     background-color: #F0D3FF !important;
+}
+.DineInColor{
+    background-color: #DAE4D0 !important ;
+}
+.DineInColorIcon {
+    background-color: #87b658 !important;
 }
 .DeliveryColorIcon{
     background-color: #d278ff !important;
@@ -52,4 +58,23 @@ body{
 .leftAuto{
     left: 47%;
     top: -7%;
+}
+
+.printStatus{
+    background-color: rgb(56 189 248);
+}
+.runningStatus {
+    background-color: rgb(192 38 211);
+}
+.cancelStatus {
+    background-color: rgb(220 38 38);
+}
+.completeStatus {
+    background-color: rgb(101 163 13);
+}
+.onDeliveryStatus {
+    background-color: rgb(249 115 22);
+}
+.foodReadyStatus {
+    background-color: rgb(99 102 241);
 }

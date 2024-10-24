@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import "./css/Bill.css";
-import "./css/RestaurantBill.css";
+// import "./css/Bill.css";
+// import "./css/RestaurantBill.css";
 import { useActionData } from "react-router-dom";
 
-const KOT = (props) => {
+const KOTDineIn = (props) => {
   // console.log('props.data', props.data)
   const customerData =
     props && props.data && props.data.customerDetails
@@ -34,31 +34,27 @@ const KOT = (props) => {
           borderBottom: props.data.billComment ? "1px solid black" : "0px",
         }}
       >
-        <div
-          style={{
-            padding: "16px 0px 16px 0px",
-            borderBottom: "1px solid black",
-          }}
-        >
+        {(props.isEdit || props.isDelete) &&
           <div
-            style={{ fontWeight: "bold", fontSize: "16px", lineHeight: "24px" }}
+            style={{
+              padding: "10px 0px 10px 0px",
+              borderBottom: "1px solid black",
+            }}
           >
-            <meta charSet="utf-8" />
-            {/* {props.data.billPayType == 'cash'?'SHRI BHAGAWATI':props.data.firmData.firmName} */}
-            {props.data.billType} - KOT
-            <br />
-            {props.isEdit ? "( NEW BILL )" : ""}
-            <p style={{ fontSize: "14px", margin: "0" }}>
-              {props.data.billPayType == "complimentary" ? "Complimentary" : ""}
-              {props.data.billPayType == "cash" ? "Cash" : ""}
-              {props.data.billPayType == "due" ? "Due" : ""}{" "}
-              {props.data.billPayType == "online" ? "Online" : ""}
-            </p>
+            <div
+              style={{ fontWeight: "bold", fontSize: "16px", }}
+            >
+              <meta charSet="utf-8" />
+              {props.isEdit ? "Modified" : ""}
+              {
+                props.isDelete ? "Cancelled" : ""
+              }
+            </div>
           </div>
-        </div>
+        }
         <div
           style={{
-            padding: "8px 4px 8px 4px ",
+            padding: "4px 4px 8px 4px ",
             width: "260px",
             height: "min-content",
           }}
@@ -74,7 +70,15 @@ const KOT = (props) => {
             }}
           >
             <div style={{ textAlign: "start" }}>
+              <div
+                style={{ fontWeight: "bold", fontSize: "16px", marginBottom: '5px' }}
+              >
+                {props.data.billType}
+              </div>
               <div style={{ textAlign: "start", fontSize: "13px" }}>
+                {props.data.billDate} {props.data.billTime}
+              </div>
+              {/* <div style={{ textAlign: "start", fontSize: "13px" }}>
                 Date : {props.data.billDate}
               </div>
               <div
@@ -85,25 +89,15 @@ const KOT = (props) => {
                 }}
               >
                 <div>Time: {props.data.billTime}</div>
+              </div> */}
+              <div style={{ textAlign: "start", marginTop: "6px" }}>
+                <div>
+                  KOT No{" "}
+                  <span style={{ fontSize: "16px", fontWeight: "700" }}>
+                    {props.data.tokenNo}
+                  </span>
+                </div>
               </div>
-              {props.data.billType == "Dine In" ?
-                <div style={{ marginTop: "6px", fontSize: "13px" }}>
-                  Captain : {props.data.assignCaptain}
-                </div>
-                : <div style={{ marginTop: "6px", fontSize: "13px" }}>
-                  Cashier : {props.data.cashier}
-                </div>
-              }
-              {props.data.billType == "Dine In" && (
-                <div style={{ textAlign: "start", marginTop: "6px" }}>
-                  <div>
-                    Table No{" "}
-                    <span style={{ fontSize: "16px", fontWeight: "700" }}>
-                      {props.data.tableNo}
-                    </span>
-                  </div>
-                </div>
-              )}
             </div>
 
             <div
@@ -120,7 +114,7 @@ const KOT = (props) => {
                   padding: "2px",
                 }}
               >
-                TOKEN NO
+                Table NO
               </div>
               <div
                 style={{
@@ -135,89 +129,34 @@ const KOT = (props) => {
                     textAlign: "center",
                     fontWeight: "700",
                     fontSize: "16px",
-                    lineHeight: "18px",
+                    lineHeight: "0px",
                   }}
                 >
-                  {props.data.billType == "Pick Up"
-                    ? props.data.justToken
-                    : props.data.tokenNo}{" "}
+                  {props.data.tableNo}{" "}
                 </p>
               </div>
             </div>
           </div>
         </div>
-        {customerData &&
-          (customerData.mobileNo ||
-            customerData.customerName ||
-            customerData.address ||
-            customerData.locality) ? (
-          <div
-            style={{
-              padding: "4px 4px 8px 4px ",
-              width: "260px",
-              height: "min-content",
-              borderTop: "1px solid black",
-            }}
-          >
-            {customerData.mobileNo && (
-              <div
-                style={{
-                  textAlign: "start",
-                  marginTop: "2px",
-                  fontSize: "14px",
-                }}
-              >
-                <div>
-                  Phone No :{" "}
-                  <span style={{ fontWeight: "600" }}>
-                    {customerData.mobileNo}
-                  </span>{" "}
-                </div>
-              </div>
-            )}
-            {customerData.customerName && (
-              <div
-                style={{
-                  textAlign: "start",
-                  marginTop: "2px",
-                  fontSize: "14px",
-                }}
-              >
-                <div>Name : {customerData.customerName} </div>
-              </div>
-            )}
-            {customerData.address && (
-              <div
-                style={{
-                  textAlign: "start",
-                  marginTop: "2px",
-                  fontSize: "14px",
-                }}
-              >
-                <div style={{ width: "95%" }}>
-                  {" "}
-                  Address : {customerData.address}
-                </div>
-              </div>
-            )}
-            {customerData.locality && (
-              <div
-                style={{
-                  textAlign: "start",
-                  marginTop: "2px",
-                  fontSize: "14px",
-                }}
-              >
-                <div>Locality : {customerData.locality}</div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <></>
-        )}
         <div className="main_bill h-min">
           <table style={{ borderCollapse: "collapse", width: "260px" }}>
             <thead>
+              <tr>
+                <th
+                  style={{
+                    border: "1px solid black",
+                    borderRight: 'none',
+                    paddingTop: "5px",
+                    paddingBottom: "5px",
+                    borderLeft: "0px",
+                    textAlign: "start",
+                    fontSize: "14px",
+                  }}
+                  colSpan='2'
+                >
+                  <span style={{ fontWeight: 400 }}>Captain :</span> <span>{props.data.assignCaptain}</span>
+                </th>
+              </tr>
               <tr>
                 <th
                   style={{
@@ -263,8 +202,11 @@ const KOT = (props) => {
                       fontSize: "14px",
                       borderLeft: "0px",
                       textAlign: "start",
+                      textDecoration: props.isDelete || item.kotItemStatus == 'cancelled' ? 'Line-through' : 'none',
+                      // text-decoration: overline;
                     }}
                   >
+                    {item.kotItemStatus && item.kotItemStatus != 'cancelled' ? <span style={{ textTransform: 'capitalize' }}>{'[' + item.kotItemStatus + ']'}</span> : ""}{" "}
                     {item.itemName}{" "}
                     {item.comment && (
                       <div
@@ -288,6 +230,7 @@ const KOT = (props) => {
                       maxWidth: "35%",
                       fontSize: "14px",
                       borderRight: "0px",
+                      textDecoration: props.isDelete || item.kotItemStatus == 'cancelled' ? 'Line-through' : 'none',
                     }}
                   >
                     {item.qty} {item.unit}
@@ -295,9 +238,9 @@ const KOT = (props) => {
                 </tr>
               ))}
               {/* <tr>
-                                <td style={{ border: '1px solid black', width: '60%', padding: '4px', borderLeft: '0px', textAlign: 'start' }}>Panerr Tika Masala <br /> <span className="text-xs">(Small text comment)</span> </td>
-                                <td style={{ border: '1px solid black', padding: '4px 0px 4px 0px', textAlign: 'center' }}>99 Full</td>
-                            </tr> */}
+                  <td style={{ border: '1px solid black', width: '60%', padding: '4px', borderLeft: '0px', textAlign: 'start' }}>Panerr Tika Masala <br /> <span className="text-xs">(Small text comment)</span> </td>
+                  <td style={{ border: '1px solid black', padding: '4px 0px 4px 0px', textAlign: 'center' }}>99 Full</td>
+              </tr> */}
             </tbody>
           </table>
         </div>
@@ -327,4 +270,4 @@ const KOT = (props) => {
   );
 };
 
-export default KOT;
+export default KOTDineIn;

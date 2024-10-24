@@ -12,8 +12,12 @@ import {
   InputLabel,
   NativeSelect,
   MenuItem,
+  Modal,
+  Box,
+  Typography,
 } from "@mui/material";
 // import { useNavigate } from "react-router-dom";
+import Close from "@mui/icons-material/Close";
 import { useParams, useNavigate } from "react-router-dom";
 import Autocomplete from "@mui/material/Autocomplete";
 import Popover from "@mui/material/Popover";
@@ -48,6 +52,19 @@ import TokenBil from "./TokenBill";
 import { Switch } from "@mui/material";
 import HotelBill from "./HotelBill";
 const { ipcRenderer } = window.require("electron");
+const style = {
+  position: 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  paddingTop: '15px',
+  paddingRight: '15px',
+  paddingLeft: '15px',
+};
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
   "label + &": {
     marginTop: theme.spacing(3),
@@ -112,6 +129,54 @@ const PickUp = () => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${userInfo.token}`,
     },
+  };
+  const getAccountList = async () => {
+    await axios
+      .get(`${BACKEND_BASE_URL}billingrouter/ddlDueAccountData`, config)
+      .then((res) => {
+        setAccountList(res.data);
+      })
+      .catch((error) => {
+        setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+  }
+  const handleSaveAccount = async () => {
+    if (!accountFormData.customerName) {
+      setError('Please add customer name')
+    } else if (!accountFormData.customerNumber) {
+      setError('Please add customer number')
+    }
+    else {
+      setLoading(true);
+      await axios
+        .post(
+          `${BACKEND_BASE_URL}billingrouter/addCustomerAccount`,
+          accountFormData,
+          config
+        )
+        .then((res) => {
+          setSuccess(true);
+          setLoading(false);
+          getAccountList();
+          setAccountFormData({
+            customerName: "",
+            customerNumber: ""
+          })
+          setAddAccount(false);
+          setDueFormData((prev) => ({
+            ...prev,
+            accountId: res.data.accountId,
+            selectedAccount: res.data,
+          }))
+        })
+        .catch((error) => {
+          setError(
+            error.response && error.response.data
+              ? error.response.data
+              : "Network Error ...!!!"
+          );
+        });
+    }
   };
   // const data = [
   //   {
@@ -183,6 +248,7 @@ const PickUp = () => {
     quantity: true,
     comment: true,
   });
+  const [accountList, setAccountList] = useState([]);
   const [customerData, setCustomerData] = useState({
     customerId: "",
     addressId: "",
@@ -248,10 +314,60 @@ const PickUp = () => {
     //   }));
     // }
   };
-
+  const [openDue, setOpenDue] = React.useState(false);
+  const [dueFormData, setDueFormData] = useState({
+    accountId: '',
+    dueNote: '',
+    selectedAccount: ''
+  })
+  const [addAccount, setAddAccount] = useState(false);
+  const [accountFormData, setAccountFormData] = useState({
+    customerName: "",
+    customerNumber: ""
+  })
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElO, setAnchorElO] = React.useState(null);
 
+  const handleCloseDue = () => {
+    setOpenDue(false);
+  }
+  const clickAddAccount = () => {
+    setAddAccount(true);
+  }
+  const justDue = () => {
+    setDueFormData({
+      accountId: '',
+      dueNote: '',
+      selectedAccount: ''
+    })
+    setOpenDue(false);
+    setBillData((prev) => ({
+      ...prev,
+      billPayType: 'due'
+    }))
+  }
+  const saveDue = () => {
+    setBillData((prev) => ({
+      ...prev,
+      billPayType: 'due'
+    }))
+    setOpenDue(false)
+  }
+  const handleAccountChange = (e, value) => {
+    if (value) {
+      setDueFormData((prevState) => ({
+        ...prevState,
+        selectedAccount: value,
+        accountId: value.accountId
+      }));
+    } else {
+      setDueFormData((prevState) => ({
+        ...prevState,
+        selectedAccount: '',
+        accountId: ''
+      }));
+    }
+  };
   const handleClick = (event, index) => {
     setAnchorEl(event.currentTarget);
     setItemComment((perv) => ({
@@ -407,6 +523,12 @@ const PickUp = () => {
             ? res.data.billComment.split(", ")
             : [],
         });
+        setUpiId(res?.data?.onlineId);
+        setDueFormData({
+          accountId: res?.data?.payInfo?.accountId,
+          dueNote: res?.data?.dueNote,
+          selectedAccount: res?.data?.payInfo
+        });
         res?.data?.billType == "Hotel"
           ? setCustomerData({
             customerId: "",
@@ -505,6 +627,7 @@ const PickUp = () => {
       }
     }
     getBillTypes();
+    getAccountList();
     getUpiDDl();
     getcustomerDDL();
     getHotelDDL();
@@ -533,25 +656,102 @@ const PickUp = () => {
     //   (item.itemName && item.itemName.toLowerCase().includes(value.toLowerCase()))
     // ) : [];
     console.log("filltered", value);
-    setDisabledFeild({ ...disbledFeild, quantity: false, comment: false });
-    setValidationError(false);
-    setFullFormData((prevState) => ({
-      ...prevState,
-      inputName: value ? value : "",
-      itemName: value && value.itemName ? value.itemName : "",
-      selectedItem: value ? value : "",
-      itemId: value && value.itemId ? value.itemId : "",
-      itemPrice:
-        value && value.variantsList[0] ? value.variantsList[0].price : 0,
-      unit: value && value.variantsList[0] ? value.variantsList[0].unit : "",
-      price: value && value.variantsList[0] ? value.variantsList[0].price : 0,
-    }));
-
     if (value) {
-      setFullFormData((prevState) => ({
-        ...prevState,
-        inputCode: value.itemCode.toString(),
-      }));
+      if (!value.status) {
+        alert(
+          `${value.itemName} is not Available`
+        );
+        setFullFormData({
+          inputCode: "",
+          inputName: "",
+          itemName: "",
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: "",
+          commentAutoComplete: [],
+        });
+        setValidationError(false);
+        first.current && first.current.focus();
+      } else {
+        if (value?.periods?.length > 0 && !isItemAvailableNow(value.periods)) {
+          if (window.confirm(`Item is not Available From ${value?.periods[0].displayStartTime} To ${value?.periods[0].displayEndTime},do you want to add ?`)) {
+            setDisabledFeild({ ...disbledFeild, quantity: false, comment: false });
+            setValidationError(false);
+            setFullFormData((prevState) => ({
+              ...prevState,
+              inputName: value ? value : "",
+              itemName: value && value.itemName ? value.itemName : "",
+              selectedItem: value ? value : "",
+              itemId: value && value.itemId ? value.itemId : "",
+              itemPrice:
+                value && value.variantsList[0] ? value.variantsList[0].price : 0,
+              unit: value && value.variantsList[0] ? value.variantsList[0].unit : "",
+              price: value && value.variantsList[0] ? value.variantsList[0].price : 0,
+            }));
+
+            if (value) {
+              setFullFormData((prevState) => ({
+                ...prevState,
+                inputCode: value.itemCode.toString(),
+              }));
+            }
+          } else {
+            setFullFormData({
+              inputCode: "",
+              inputName: "",
+              itemName: "",
+              qty: 1,
+              unit: "",
+              comment: "",
+              selectedItem: "",
+              selectedUnit: "",
+              itemPrice: "",
+              commentAutoComplete: [],
+            });
+            setValidationError(false);
+            first.current && first.current.focus();
+          }
+        } else {
+          setDisabledFeild({ ...disbledFeild, quantity: false, comment: false });
+          setValidationError(false);
+          setFullFormData((prevState) => ({
+            ...prevState,
+            inputName: value ? value : "",
+            itemName: value && value.itemName ? value.itemName : "",
+            selectedItem: value ? value : "",
+            itemId: value && value.itemId ? value.itemId : "",
+            itemPrice:
+              value && value.variantsList[0] ? value.variantsList[0].price : 0,
+            unit: value && value.variantsList[0] ? value.variantsList[0].unit : "",
+            price: value && value.variantsList[0] ? value.variantsList[0].price : 0,
+          }));
+
+          if (value) {
+            setFullFormData((prevState) => ({
+              ...prevState,
+              inputCode: value.itemCode.toString(),
+            }));
+          }
+        }
+      }
+    } else {
+      setDisabledFeild({ ...disbledFeild, quantity: true, comment: true });
+      setValidationError(false);
+      setFullFormData({
+        inputCode: "",
+        inputName: "",
+        itemName: "",
+        qty: 1,
+        unit: "",
+        comment: "",
+        selectedItem: "",
+        selectedUnit: "",
+        itemPrice: "",
+        commentAutoComplete: [],
+      });
     }
   };
   const handleHotelInputNameChange = (e, value) => {
@@ -629,6 +829,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Pick Up",
       printBill: true,
       printKot: true,
@@ -732,6 +934,8 @@ const PickUp = () => {
     const customData = {
       ...customerData,
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Hotel",
       printBill: true,
       printKot: true,
@@ -841,6 +1045,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Delivery",
       printBill: true,
       printKot: true,
@@ -945,6 +1151,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Pick Up",
       printBill: true,
       printKot: true,
@@ -1044,6 +1252,8 @@ const PickUp = () => {
     const customData = {
       ...customerData,
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Hotel",
       printBill: true,
       printKot: true,
@@ -1123,6 +1333,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Delivery",
       printBill: true,
       printKot: true,
@@ -1225,6 +1437,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Pick Up",
       printBill: true,
       printKot: true,
@@ -1327,6 +1541,8 @@ const PickUp = () => {
       ...editBillData,
       ...customerData,
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Hotel",
       printBill: true,
       printKot: true,
@@ -1433,6 +1649,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Delivery",
       printBill: true,
       printKot: true,
@@ -1539,6 +1757,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Pick Up",
       printBill: true,
       printKot: true,
@@ -1640,6 +1860,8 @@ const PickUp = () => {
     const customData = {
       ...customerData,
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Hotel",
       printBill: true,
       printKot: true,
@@ -1721,6 +1943,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Delivery",
       printBill: true,
       printKot: true,
@@ -1827,6 +2051,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Pick Up",
       printBill: true,
       printKot: true,
@@ -1941,6 +2167,8 @@ const PickUp = () => {
       ...editBillData,
       ...customerData,
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Hotel",
       printBill: true,
       printKot: true,
@@ -2051,6 +2279,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Delivery",
       printBill: true,
       printKot: true,
@@ -2124,11 +2354,11 @@ const PickUp = () => {
             )
           );
           const printerDataKot = {
-            printer: pickupkot[0],
+            printer: deliverykot[0],
             data: pickupKotPrint,
           };
           const printerDataBill = {
-            printer: pickupbill[0],
+            printer: deliverybill[0],
             data: pickupBillPrint,
           };
           // const htmlString = renderToString(<RestaurantBill />)
@@ -2168,6 +2398,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Pick Up",
       printBill: false,
       printKot: false,
@@ -2247,6 +2479,8 @@ const PickUp = () => {
       ...editBillData,
       ...customerData,
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Hotel",
       printBill: false,
       printKot: false,
@@ -2331,6 +2565,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Delivery",
       printBill: false,
       printKot: false,
@@ -2414,6 +2650,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Pick Up",
       printBill: true,
       printKot: false,
@@ -2528,6 +2766,8 @@ const PickUp = () => {
       ...editBillData,
       ...customerData,
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Hotel",
       printBill: true,
       printKot: false,
@@ -2638,6 +2878,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Delivery",
       printBill: true,
       printKot: false,
@@ -2711,11 +2953,11 @@ const PickUp = () => {
             )
           );
           const printerDataKot = {
-            printer: pickupkot[0],
+            printer: deliverykot[0],
             data: pickupKotPrint,
           };
           const printerDataBill = {
-            printer: pickupbill[0],
+            printer: deliverybill[0],
             data: pickupBillPrint,
           };
           // const htmlString = renderToString(<RestaurantBill />)
@@ -2755,6 +2997,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Pick Up",
       printBill: false,
       printKot: true,
@@ -2796,6 +3040,7 @@ const PickUp = () => {
           price: 0,
           commentAutoComplete: [],
         });
+
         setCustomerData({
           customerId: "",
           addressId: "",
@@ -2869,6 +3114,8 @@ const PickUp = () => {
       ...editBillData,
       ...customerData,
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Hotel",
       printBill: false,
       printKot: true,
@@ -2970,6 +3217,7 @@ const PickUp = () => {
         );
       });
   };
+
   const editKotPrintDataFunctionDelivery = async () => {
     setLoading(true);
     const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
@@ -2979,6 +3227,8 @@ const PickUp = () => {
         ...customerData,
       },
       ...billData,
+      accountId: dueFormData.accountId,
+      dueNote: dueFormData.dueNote,
       billType: "Delivery",
       printBill: false,
       printKot: true,
@@ -3039,6 +3289,8 @@ const PickUp = () => {
           billComment: "",
           billCommentAuto: [],
         });
+
+
         try {
           const pickupKotPrint = renderToString(
             <KOT data={res.data} isEdit={true} />
@@ -3058,7 +3310,8 @@ const PickUp = () => {
             printer: deliverybill[0],
             data: pickupBillPrint,
           };
-          // const htmlString = renderToString(<RestaurantBill />)
+
+
           if (res && res.data && res.data.printBill && res.data.printKot) {
             console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
@@ -3070,8 +3323,9 @@ const PickUp = () => {
             console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log(">>>edit else", res.data.printBill, res.data.printKot);
+          // console.log(">>>edit else", res.data.printBill, res.data.printKot);
           setIsEdit(false);
+
         } catch (error) {
           console.log("try catch errror", error);
         }
@@ -3774,6 +4028,25 @@ const PickUp = () => {
       }
     }
   };
+  const changeCategoryUpdate = async (id) => {
+    const newData = {
+      menuId: id,
+      itemsData: items
+    }
+    await axios
+      .post(`${BACKEND_BASE_URL}menuItemrouter/updateItemPriceByMenuId`, newData, config)
+      .then((res) => {
+        setItems(res.data.itemsData);
+        setBillData((prev) => ({
+          ...prev,
+          subTotal: res.data.total,
+          settledAmount: res.data.total,
+        }))
+      })
+      .catch((error) => {
+        setError(error.response ? error.response.data : "Network Error ...!!!");
+      });
+  }
   const editBillDelivery = () => {
     if (loading || success) {
     } else {
@@ -3936,7 +4209,22 @@ const PickUp = () => {
 
     commentInputRef.current && commentInputRef.current.focus();
   };
+  function isItemAvailableNow(periods) {
+    const now = new Date();
 
+    // Get current time in 'HH:mm:ss' format
+    const currentTime = now.toTimeString().split(' ')[0];
+
+    for (const period of periods) {
+      const { startTime, endTime } = period;
+
+      // Check if the current time falls within the start and end time
+      if (currentTime >= startTime && currentTime <= endTime) {
+        return true; // Item is available now
+      }
+    }
+    return false; // Item is not available now
+  }
   const handleEnterPressFirst = (e) => {
     const value = e.target.value;
     if (e.key === "Enter") {
@@ -3950,57 +4238,126 @@ const PickUp = () => {
         )
         : [];
       console.log("Search Item", matchingProduct);
-      //    if (matchingProduct) {
-      //   setFullFormData(prevState => ({
-      //     ...prevState,
-      //     inputName: matchingProduct
-      //   }));
-      // }
-      if (matchingProduct?.periods?.length > 0) {
+      if (matchingProduct && !matchingProduct.status) {
         alert(
-          `Item is not Available From ${matchingProduct?.periods[0].displayStartTime} To ${matchingProduct?.periods[0].displayEndTime}`
+          `${matchingProduct.itemName} is not Available`
         );
+        setFullFormData({
+          inputCode: "",
+          inputName: "",
+          itemName: "",
+          qty: 1,
+          unit: "",
+          comment: "",
+          selectedItem: "",
+          selectedUnit: "",
+          itemPrice: "",
+          commentAutoComplete: [],
+        });
+        setValidationError(false);
+        first.current && first.current.focus();
       } else {
-        if (!matchingProduct || value === "") {
-          setValidationError(true);
-          second.current && second.current.focus();
-          setFullFormData((prevState) => ({
-            ...prevState,
-            selectedItem: "",
-            inputName: "",
-            itemName: "",
-          }));
-        } else if (
-          value === matchingProduct?.itemCode?.toString() ||
-          matchingProduct.itemShortKey?.toString()?.toLocaleLowerCase() ===
-          value.toString().toLocaleLowerCase()
-        ) {
-          e.preventDefault();
-          setValidationError(false);
-          setFullFormData((prevState) => ({
-            ...prevState,
-            inputCode: matchingProduct.itemCode,
-            itemId: matchingProduct.itemId,
-            inputName: matchingProduct,
-            itemName:
-              matchingProduct && matchingProduct.itemName
-                ? matchingProduct.itemName
-                : "",
-            selectedItem: matchingProduct,
-            itemPrice:
-              matchingProduct && matchingProduct.variantsList[0]
-                ? matchingProduct.variantsList[0].price
-                : 0,
-            unit:
-              matchingProduct && matchingProduct.variantsList[0]
-                ? matchingProduct.variantsList[0].unit
-                : "",
-            price:
-              matchingProduct && matchingProduct.variantsList[0]
-                ? matchingProduct.variantsList[0].price
-                : 0,
-          }));
-          quantityInputRef.current && quantityInputRef.current.focus();
+        if (matchingProduct?.periods?.length > 0 && !isItemAvailableNow(matchingProduct.periods)) {
+          if (window.confirm(`Item is not Available From ${matchingProduct?.periods[0].displayStartTime} To ${matchingProduct?.periods[0].displayEndTime},do you want to add ?`)) {
+            if (!matchingProduct || value === "") {
+              setValidationError(true);
+              second.current && second.current.focus();
+              setFullFormData((prevState) => ({
+                ...prevState,
+                selectedItem: "",
+                inputName: "",
+                itemName: "",
+              }));
+            } else if (
+              value === matchingProduct?.itemCode?.toString() ||
+              matchingProduct.itemShortKey?.toString()?.toLocaleLowerCase() ===
+              value.toString().toLocaleLowerCase()
+            ) {
+              e.preventDefault();
+              setValidationError(false);
+              setFullFormData((prevState) => ({
+                ...prevState,
+                inputCode: matchingProduct.itemCode,
+                itemId: matchingProduct.itemId,
+                inputName: matchingProduct,
+                itemName:
+                  matchingProduct && matchingProduct.itemName
+                    ? matchingProduct.itemName
+                    : "",
+                selectedItem: matchingProduct,
+                itemPrice:
+                  matchingProduct && matchingProduct.variantsList[0]
+                    ? matchingProduct.variantsList[0].price
+                    : 0,
+                unit:
+                  matchingProduct && matchingProduct.variantsList[0]
+                    ? matchingProduct.variantsList[0].unit
+                    : "",
+                price:
+                  matchingProduct && matchingProduct.variantsList[0]
+                    ? matchingProduct.variantsList[0].price
+                    : 0,
+              }));
+              quantityInputRef.current && quantityInputRef.current.focus();
+            }
+          } else {
+            setFullFormData({
+              inputCode: "",
+              inputName: "",
+              itemName: "",
+              qty: 1,
+              unit: "",
+              comment: "",
+              selectedItem: "",
+              selectedUnit: "",
+              itemPrice: "",
+              commentAutoComplete: [],
+            });
+            setValidationError(false);
+            first.current && first.current.focus();
+          }
+        } else {
+          if (!matchingProduct || value === "") {
+            setValidationError(true);
+            second.current && second.current.focus();
+            setFullFormData((prevState) => ({
+              ...prevState,
+              selectedItem: "",
+              inputName: "",
+              itemName: "",
+            }));
+          } else if (
+            value === matchingProduct?.itemCode?.toString() ||
+            matchingProduct.itemShortKey?.toString()?.toLocaleLowerCase() ===
+            value.toString().toLocaleLowerCase()
+          ) {
+            e.preventDefault();
+            setValidationError(false);
+            setFullFormData((prevState) => ({
+              ...prevState,
+              inputCode: matchingProduct.itemCode,
+              itemId: matchingProduct.itemId,
+              inputName: matchingProduct,
+              itemName:
+                matchingProduct && matchingProduct.itemName
+                  ? matchingProduct.itemName
+                  : "",
+              selectedItem: matchingProduct,
+              itemPrice:
+                matchingProduct && matchingProduct.variantsList[0]
+                  ? matchingProduct.variantsList[0].price
+                  : 0,
+              unit:
+                matchingProduct && matchingProduct.variantsList[0]
+                  ? matchingProduct.variantsList[0].unit
+                  : "",
+              price:
+                matchingProduct && matchingProduct.variantsList[0]
+                  ? matchingProduct.variantsList[0].price
+                  : 0,
+            }));
+            quantityInputRef.current && quantityInputRef.current.focus();
+          }
         }
       }
     }
@@ -4104,20 +4461,6 @@ const PickUp = () => {
         );
         console.log("<LKLLKK>", isExist, items[isExist]);
         if (isExist != -1) {
-          // const newItem = {
-          //   inputCode: fullFormData.inputCode,
-          //   inputName: fullFormData.inputName,
-          //   qty: fullFormData.qty,
-          //   unit: fullFormData.unit,
-          //   itemPrice: fullFormData.itemPrice,
-          //   unit: fullFormData.unit,
-          //   price: fullFormData.price,
-          //   // comment: fullFormData.commentAutoComplete
-          //   //   ? fullFormData.commentAutoComplete?.join(", ")
-          //   //   : "",
-          //   comment: fullFormData.comment,
-          // };
-          // console.log("<>LOG<>",fullFormData.price,fullFormData.itemPrice)
           setBillData((perv) => ({
             ...perv,
             subTotal: Math.ceil(billData.subTotal + fullFormData.price),
@@ -4134,7 +4477,6 @@ const PickUp = () => {
                       (1 - billData.discountValue / 100)
                 )
                 : 0,
-            // settledAmount: Math.ceil(billData.subTotal + fullFormData.price),
           }));
           setItems((prevItems) =>
             prevItems?.map((data, index) =>
@@ -4271,7 +4613,7 @@ const PickUp = () => {
     }));
   };
   const handleIncreaseQuantity = (index, currentQty) => {
-    const newQty = parseFloat(currentQty) + 1;
+    const newQty = parseFloat(currentQty ? currentQty : 0) + 1;
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
       updatedItems[index].qty = newQty;
@@ -4515,6 +4857,8 @@ const PickUp = () => {
         setCustomerData={setCustomerData}
         setButtonCLicked={setButtonCLicked}
         setHotelFormData={setHotelFormData}
+        setDueFormData={setDueFormData}
+        setUpiId={setUpiId}
       />
       <section className="right_section ">
         <div className="right_top_header gap-6 p-2 flex paddinAnother w-full">
@@ -5287,7 +5631,7 @@ const PickUp = () => {
                   </div> */}
                   <div
                     onClick={() => {
-                      if (items.length <= 0 || isEdit == false) {
+                      if (isEdit == false) {
                         setButtonCLicked("Delivery");
                         setBillError((perv) => ({
                           ...perv,
@@ -5302,8 +5646,9 @@ const PickUp = () => {
                           billPayType: 'cash'
                         }))
                         setValidationError(false);
-                        getData(billTypeCategory?.Delivery?.menuId);
+                        (billTypeCategory['Delivery'].menuId != billTypeCategory[buttonCLicked].menuId) && getData(billTypeCategory?.Delivery?.menuId);
                         first.current.focus();
+                        ((billTypeCategory['Delivery'].menuId != billTypeCategory[buttonCLicked].menuId) && items.length > 0) && changeCategoryUpdate(billTypeCategory['Delivery'].menuId);
                       }
                     }}
                     className={
@@ -5337,8 +5682,9 @@ const PickUp = () => {
                           billPayType: 'cash'
                         }))
                         setValidationError(false);
-                        getData(billTypeCategory["Pick Up"]?.menuId);
+                        (billTypeCategory['Pick Up'].menuId != billTypeCategory[buttonCLicked].menuId) && getData(billTypeCategory["Pick Up"]?.menuId);
                         first.current.focus();
+                        ((billTypeCategory['Pick Up'].menuId != billTypeCategory[buttonCLicked].menuId) && items.length > 0) && changeCategoryUpdate(billTypeCategory['Pick Up'].menuId);
                       }
                     }}
                     className={
@@ -5378,7 +5724,8 @@ const PickUp = () => {
                           roomNo: ''
                         }))
                         setValidationError(false);
-                        getData(billTypeCategory?.Hotel?.menuId);
+                        (billTypeCategory['Hotel'].menuId != billTypeCategory[buttonCLicked].menuId) && getData(billTypeCategory?.Hotel?.menuId);
+                        ((billTypeCategory['Hotel'].menuId != billTypeCategory[buttonCLicked].menuId) && items.length > 0) && changeCategoryUpdate(billTypeCategory['Hotel'].menuId);
                         setTimeout(() => {
                           hotelName.current && hotelName.current.focus();
                         }, 100)
@@ -5504,10 +5851,14 @@ const PickUp = () => {
                         onChange={(e) => {
                           console.log("radio", e.target.value);
                           if (!(isEdit && buttonCLicked == 'Hotel')) {
-                            setBillData((perv) => ({
-                              ...perv,
-                              billPayType: e.target.value,
-                            }));
+                            if (e.target.value == 'due') {
+                              // setOpenDue(true);
+                            } else {
+                              setBillData((perv) => ({
+                                ...perv,
+                                billPayType: e.target.value,
+                              }));
+                            }
                           }
                         }}
                       >
@@ -5535,6 +5886,9 @@ const PickUp = () => {
                               control={
                                 <Radio
                                   name="radio"
+                                  onClick={() => {
+                                    setOpenDue(true);
+                                  }}
                                   sx={{
                                     color: "#fff",
                                     "&.Mui-checked": {
@@ -6028,6 +6382,161 @@ const PickUp = () => {
         </div>
         {/* <Typography sx={{ p: 2 }}>The content of the Popover.</Typography> */}
       </Popover >
+      <Modal
+        open={openDue}
+        onClose={handleCloseDue}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" className="flex justify-between" variant="h6" component="h2">
+            <div>Select Account</div><div className="flex" style={{ marginTop: '-2px', cursor: 'pointer' }} onClick={() => handleCloseDue()}><Close className="self-center" /></div>
+          </Typography>
+          <div className="gap-4 grid mt-6 mb-4">
+            {addAccount ?
+              <>
+                <div>
+                  <TextField
+                    // className="sarchTextTEST"
+                    value={accountFormData.customerName}
+                    name="customerName"
+                    id="customerName"
+                    placeholder='Enter Customer Name'
+                    variant="outlined"
+                    onChange={(e) => {
+                      setAccountFormData((prev) => ({
+                        ...prev,
+                        customerName: e.target.value
+                      }))
+                    }}
+                    fullWidth
+                  />
+                </div>
+                <div>
+                  <TextField
+                    // className="sarchTextTEST"
+                    value={accountFormData.customerNumber}
+                    name="customerNumber"
+                    id="customerNumber"
+                    placeholder='Enter Customer Number'
+                    variant="outlined"
+                    onChange={(e) => {
+                      if ((regexMobile.test(e.target.value) || e.target.value == '') && e.target.value.length < 11) {
+                        setAccountFormData((prev) => ({
+                          ...prev,
+                          customerNumber: e.target.value
+                        }))
+                      }
+                    }}
+                    fullWidth
+                  />
+                </div>
+                <div className="flex gap-4 justify-end">
+                  <div>
+                    <button
+                      className="text-base button px-2 py-1 rounded-md text-white"
+                      onClick={() => handleSaveAccount()}
+                    >
+                      Save
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      className="another_2 button text-base px-2 py-1 rounded-md text-white"
+                      onClick={() => {
+                        setAccountFormData({
+                          customerName: "",
+                          customerNumber: ""
+                        });
+                        setAddAccount(false);
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </>
+              :
+              <>
+                <div className="flex gap-4 justify-end">
+                  <div>
+                    <button
+                      className="text-base button px-2 py-1 rounded-md text-white"
+                      onClick={() => clickAddAccount()}
+                    >
+                      Add Account
+                    </button>
+                  </div>
+                </div>
+                <div>
+                  <Autocomplete
+                    options={accountList ? accountList : []}
+                    defaultValue={null}
+                    getOptionLabel={(options) =>
+                      options.customerName ? options.customerName : ""
+                    }
+                    value={dueFormData.selectedAccount}
+                    onChange={handleAccountChange}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        placeholder="Accounts"
+                        variant="outlined"
+                      />
+                    )}
+                  />
+                </div>
+                <div>
+                  <TextField
+                    // className="sarchTextTEST"
+                    value={dueFormData.dueNote}
+                    name="dueNote"
+                    id="dueNote"
+                    placeholder='Enter Note'
+                    variant="outlined"
+                    onChange={(e) => {
+                      setDueFormData((prev) => ({
+                        ...prev,
+                        dueNote: e.target.value
+                      }))
+                    }}
+                    // InputLabelProps={{ style: { fontSize: 16 } }}
+                    fullWidth
+                  />
+                </div>
+                <div className="flex gap-4 justify-end">
+                  {/* <div>
+                    <button
+                      className="text-base button px-2 py-1 rounded-md text-white"
+                      onClick={() => justDue()}
+                    >
+                      Just Due
+                    </button>
+                  </div> */}
+                  <div>
+                    <button
+                      className="text-base button px-2 py-1 rounded-md text-white"
+                      onClick={() => saveDue()}
+                    >
+                      Save
+                    </button>
+                  </div>
+                  <div>
+                    <button
+                      className="another_2 button text-base px-2 py-1 rounded-md text-white"
+                      onClick={() => {
+                        handleCloseDue();
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              </>
+            }
+          </div>
+        </Box>
+      </Modal>
     </div >
   );
 };

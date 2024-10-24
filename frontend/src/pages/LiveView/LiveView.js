@@ -18,6 +18,7 @@ import ApartmentIcon from '@mui/icons-material/Apartment';
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import CancelIcon from "@mui/icons-material/Cancel";
 import importedData from "./Data";
+import TableBarIcon from '@mui/icons-material/TableBar';
 import { Badge, Divider, Switch } from "@mui/material";
 import axios from "axios";
 import { BACKEND_BASE_URL } from "../../url";
@@ -169,22 +170,6 @@ const LiveView = () => {
                   <p className="mt-1">All</p>
                 </div>
               </div>
-              {/* <div
-                className="tab cursor-pointer"
-                onClick={() => handleTabChange("Dine In")}
-              >
-                <div
-                  className={`text-center w-fit px-8 border-b-4 ${selectedTab === "Dine In"
-                    ? "border-red-600"
-                    : "border-transparent"
-                    } rounded-sm`}
-                >
-                  <div>
-                    <RestaurantMenuIcon />
-                  </div>
-                  <p className="mt-1">Dine In</p>
-                </div>
-              </div> */}
               <div
                 className="tab cursor-pointer"
                 onClick={() => handleTabChange("Delivery")}
@@ -233,6 +218,22 @@ const LiveView = () => {
                   <p className="mt-1">Hotel</p>
                 </div>
               </div>
+              <div
+                className="tab cursor-pointer"
+                onClick={() => handleTabChange("Dine In")}
+              >
+                <div
+                  className={`text-center w-fit px-8 border-b-4 ${selectedTab === "Dine In"
+                    ? "border-red-600"
+                    : "border-transparent"
+                    } rounded-sm`}
+                >
+                  <div>
+                    <RestaurantMenuIcon />
+                  </div>
+                  <p className="mt-1">Dine In</p>
+                </div>
+              </div>
               {/* <div
                 className="tab cursor-pointer"
                 onClick={() => handleTabChange("Online")}
@@ -266,10 +267,10 @@ const LiveView = () => {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap gap-6  w-full fiedCardsHeight gapFor20Inch  px-2 py-6 pb-14">
+      <div className="flex flex-wrap gap-x-5 gap-y-8 w-full fiedCardsHeight gapFor20Inch ml-3 px-2 py-6 pb-14">
         {filteredData.length > 0 ? (
           filteredData.map((item, index) => (
-            <div key={index} className=" px-2 my-2 minWidth">
+            <div key={index} className="my-2 minWidth">
               <Cards data={item} />
             </div>
           ))

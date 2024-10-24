@@ -20,6 +20,7 @@ import Dashboard from "./pages/tempDashboard/dashboard";
 import LiveView from "./pages/LiveView/LiveView"
 import { SOCKET_URL } from "./url";
 import io from "socket.io-client";
+import DineIn from "./pages/dineIn";
 const { ipcRenderer } = window.require("electron");
 // import TestPage from "./testPage";
 // import Test from './pages/Test';
@@ -106,7 +107,8 @@ const App = () => {
   return (
     <Provider store={store}>
       <Routes>
-        <Route path="/main/:tab/:billId" element={<MainComponent />} />
+        <Route path="/main/:tab/:billId" element={<PickUp />} />
+        <Route path="/main/DineIn/:table/:billId/:status" element={<DineIn />} />
         {/* <Route path="/" element={<TestPage />} /> */}
         <Route path="/" element={<LoginPage />} />
         <Route path="/" element={<RestaurantBill />} />

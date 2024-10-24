@@ -10,10 +10,14 @@ import ApartmentIcon from '@mui/icons-material/Apartment';
 import DeliveryDiningIcon from "@mui/icons-material/DeliveryDining";
 import "./css/Cards.css";
 import StorefrontIcon from "@mui/icons-material/Storefront";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
 import Timer from "./Timer";
-
+import DirectionsBikeIcon from '@mui/icons-material/DirectionsBike';
+import { Tooltip } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Cards = ({ data }) => {
+  const navigate = useNavigate();
   const [infoPopUpOpen, setInfoPopUpOpen] = useState(false);
   const [infoPopUpData, setInfoPopUpData] = useState()
   const style = {
@@ -34,19 +38,26 @@ const Cards = ({ data }) => {
       >
         <CardContent sx={{ padding: 0 }} className="CardContent h-full">
           <div className="absolute" style={{ left: '46%', top: '-7%' }}>
-            <div className={` ${data.billType === 'Delivery' ? 'DeliveryColorIcon' : data.billType === 'Hotel' ? 'HotelColorIcon' : data.billType === 'Pick Up' ? 'PickUpColorIcon' : ''} rounded-full p-2 flex items-center justify-center`}>
+            <div className={` ${data.billType === 'Delivery' ? 'DeliveryColorIcon' : data.billType === 'Hotel' ? 'HotelColorIcon' : data.billType === 'Pick Up' ? 'PickUpColorIcon' : data.billType === 'Dine In' ? 'DineInColorIcon' : ''} rounded-full p-2 flex items-center justify-center`}>
               {data.billType === 'Delivery' ? <DeliveryDiningIcon className="text-2xl textColorIcon" /> :
                 data.billType === 'Hotel' ? <ApartmentIcon className="text-2xl textColorIcon" /> :
-                  data.billType === 'Pick Up' ? <StorefrontIcon className="text-2xl textColorIcon" /> : ''}
+                  data.billType === 'Pick Up' ? <StorefrontIcon className="text-2xl textColorIcon" /> :
+                    data.billType === 'Dine In' ? <RestaurantMenuIcon className="text-2xl textColorIcon" /> : ''}
             </div>
           </div>
           <div className="bg-white w-full rounded-lg overflow-hidden border ">
-            <div className={`pt-2 pb-1 px-2 flex justify-between text-start ${data.billType === 'Delivery' ? 'DeliveryColor' : data.billType === 'Hotel' ? 'HotelColor' : data.billType === 'Pick Up' ? 'PickUpColor' : ''}`}>
+            <div className={`pt-2 pb-1 px-2 cursor-pointer flex justify-between text-start ${data.billType === 'Delivery' ? 'DeliveryColor' : data.billType === 'Hotel' ? 'HotelColor' : data.billType === 'Pick Up' ? 'PickUpColor' : data.billType === 'Dine In' ? 'DineInColor' : ''}`}
+              onClick={() => {
+                data.billType === 'Dine In' ? navigate(`/main/DineIn/${data?.tableInfo?.tableNo}/${data.billId}/${data.billStatus}`) : navigate(`/main/${data.billType}/${data.billId}`)
+              }}>
               <div>
-                <div className="text-xs text-gray">{`${data?.firmData.firmName.slice(
+                <div className="text-xs text-gray">
+                  {/* {`${data?.firmData.firmName.slice(
                   0,
                   15
-                )}...`}</div>
+                )}...`} */}
+                  Shree Bhagwati
+                </div>
                 <div className="mt-2 text-xs">
                   {/* KOT: 71 | BILL: {data.billNumber} */}
                   Token No: {data?.tokenNo}
@@ -79,14 +90,26 @@ const Cards = ({ data }) => {
                   <div className="headr_icon">
                     <PersonIcon className="text-gray-700" />
                   </div>
-                  <div className="headr_icon">
-                    <p className="text-gray-700 text-sm ml-1">
+                  <div className="headr_icon w-full flex justify-between">
+                    <div className="text-gray-700 text-sm ml-1">
                       {" "}
                       {data.cashier}
-                    </p>
+                    </div>
                   </div>
                 </div>
               </div>
+              {data.billType === 'Dine In' &&
+                <div>
+                  <div className="flex  items-center">
+                    <div className="headr_icon w-full flex justify-between">
+                      <div className="text-gray-700 text-sm ml-1">
+                        {" "}
+                        Table No. {data.tableInfo.tableNo}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              }
               {/* <div>
                   <div className="flex items-center">
                     <div className="header_icon">
@@ -119,19 +142,19 @@ const Cards = ({ data }) => {
                     <p className="text-gray-700">Call Customer</p>
                   </div>
                   </div> */}
-                {(data?.hotelName) && (
+                {(data?.hotelDetails?.hotelName) && (
                   <div className="bg-gray-100 border-t-2 py-2">
                     <div>
-                      {data?.hotelName && (
+                      {data?.hotelDetails?.hotelName && (
                         <div className="headr_icon text-xs">
-                          <div className="text-xs font-medium">Hotel : <span className="font-thin ">{data?.hotelName} {data.roomNo}</span></div>
+                          <div className="text-xs font-medium">Hotel : <span className="font-thin ">{data?.hotelDetails?.hotelName} {data?.hotelDetails?.roomNo ? '- ' + data?.hotelDetails?.roomNo : ''}</span></div>
                         </div>
                       )}
-                      {(data.customerName || data.phoneNumber) && (
+                      {(data?.hotelDetails?.customerName || data?.hotelDetails?.phoneNumber) && (
                         <div className="header_icon text-xs ">
-                          {data.phoneNumber && `${data.phoneNumber}`}
-                          {data.phoneNumber && data.customerName && ' - '}
-                          {data.customerName}
+                          {data?.hotelDetails?.phoneNumber && `${data?.hotelDetails?.phoneNumber}`}
+                          {data?.hotelDetails?.phoneNumber && data?.hotelDetails?.customerName && ' - '}
+                          {data?.hotelDetails?.customerName}
                         </div>
                       )}
 
@@ -148,9 +171,9 @@ const Cards = ({ data }) => {
                       )}
                       {(data?.customerDetails?.address || data?.customerDetails?.customerName || data?.customerDetails?.locality) && (
                         <div className="headr_icon text-xs pb-2">
-                          {data?.customerDetails?.address ? data.customerDetails.address : ''}
-                          {data?.customerDetails?.customerName ? `, ${data.customerDetails.customerName}` : ''}
-                          {data?.customerDetails?.locality ? `, ${data.customerDetails.locality}` : ''}
+                          {[data?.customerDetails?.customerName ? ` ${data.customerDetails.customerName}` : '', data?.customerDetails?.address ? data.customerDetails.address : '', data?.customerDetails?.locality ? ` ${data.customerDetails.locality}` : ''].filter(data => data).join(', ')}
+                          {/* {data?.customerDetails?.customerName ? ` ${data.customerDetails.customerName},` : ''}
+                          {data?.customerDetails?.locality ? ` ${data.customerDetails.locality}` + ',' : ''} */}
                         </div>
                       )}
                     </div>
@@ -163,7 +186,7 @@ const Cards = ({ data }) => {
                   <div className=" my-2 text-sm w-2/4">1x Veg. Sandwich</div>
                   <div className=" my-2 text-sm w-2/4">2x Butter Pau Bhaji</div> */}
                 <div
-                  className={` ${data?.customerDetails?.address ? 'itemCustomheight my-2 px-2 border-gray-100' : data.hotelName ? 'HotelHeight my-2 px-2' : 'WithoutAddresHeight my-2 px-2'} ${data.customerName && data.billType === 'Hotel' ? 'HotelDetailsHeight my-2 px-2' : ''}`}
+                  className={` ${data?.customerDetails ? 'itemCustomheight my-2 px-2 border-gray-100' : data?.hotelDetails?.hotelInfoId ? 'HotelHeight my-2 px-2' : 'WithoutAddresHeight my-2 px-2'} ${(data?.hotelDetails?.customerName || data?.hotelDetails?.phoneNumber) && data.billType === 'Hotel' ? 'HotelDetailsHeight my-2 px-2' : ''}`}
                 >
 
                   <div className="flex flex-wrap items-start mb-2">
@@ -172,7 +195,7 @@ const Cards = ({ data }) => {
                         key={index}
                         className="my-2 text-sm font-meduim w-2/4"
                       >
-                        {item.qty}x {item.itemName} ({item.unit})
+                        {item.qty} x {item.itemName} ({item.unit})
                       </div>
                     ))}
                   </div>
@@ -188,18 +211,19 @@ const Cards = ({ data }) => {
                 </div> */}
                 <div className="ml-2 bg-white p-1 rounded-t-xl text-gray-500 border  border-b-0 shadow-md">
                   {" "}
-                  &#8377; {(data.totalAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  &#8377; {(data.settledAmount).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </div>
               </div>
             </div>
             <div className="flex items-center p-2 justify-between border-t">
-              <div>
-                {/* <div className="text-gray-700">Prepare In:</div>
-                <div className="ml-2 text-gray-500">03:43</div> */}
-              </div>
+              <Tooltip title={data.mobileNo} placement="top" arrow>
+                <div className={` ${data.deliveredBy ? "cursor-pointer" : ""} p-2 text-ellipsis rounded-md text-gray-700 text-sm`}>
+                  {data.deliveredBy ? <DirectionsBikeIcon fontSize="small" /> : ''} &nbsp;&nbsp;{data.deliveredBy ? data.deliveredBy : ''}
+                </div>
+              </Tooltip>
               <div className="flex">
                 <div
-                  className="text-gray-500  cursor-pointer p-2 bg-gray-300 rounded-md text-xs"
+                  className="text-gray-500 hover:bg-slate-200  cursor-pointer p-2 bg-gray-300 rounded-md text-xs"
                   onClick={() => {
                     setInfoPopUpOpen(true);
                     setInfoPopUpData(data);
@@ -207,8 +231,8 @@ const Cards = ({ data }) => {
                 >
                   Info
                 </div>
-                <div className=" ml-2 bg-orange-500 text-white p-2 rounded-md text-xs">
-                  Food Is Ready
+                <div className={`ml-2 cursor-pointer capitalize font-semibold text-white p-2 rounded-md text-xs ${data?.billStatus?.toLowerCase() == 'print' ? 'printStatus' : data?.billStatus?.toLowerCase() == 'complete' ? 'completeStatus' : data?.billStatus?.toLowerCase() == 'on delivery' ? 'onDeliveryStatus' : data?.billStatus?.toLowerCase() == 'cancel' ? 'cancelStatus' : data?.billStatus?.toLowerCase() == 'running' ? 'runningStatus' : data?.billStatus?.toLowerCase() == 'food ready' ? 'foodReadyStatus' : ''}`}>
+                  {data.billStatus}
                 </div>
               </div>
             </div>
@@ -234,29 +258,57 @@ const Cards = ({ data }) => {
               </div>
               <div className="flex justify-between px-2 items-center">
                 <div className="InfoBillType mt-2 ">{infoPopUpData?.billType}</div>
-                <div className="bg-gray-500 p-1 px-2 text-white mt-3 rounded-md text-md">
+                <div className={`${infoPopUpData?.billPayType == 'Cancel' ? 'bg-red-600' : 'bg-gray-500'} p-1 px-2 text-white mt-3 rounded-md text-md`}>
                   {infoPopUpData?.billPayType}
                 </div>
               </div>
             </div>
-            <div className="p-2 flex items-center gap-1">
-              <PersonIcon />{infoPopUpData?.cashier}
-            </div>
-            <div className="border w-full"></div>
-            <div className="customerDetails p-2">
-              <div className="text-md font-semibold">
-                Customer Details
+            <div className="flex justify-between">
+              <div className="p-2 flex items-center gap-1">
+                <PersonIcon />{infoPopUpData?.cashier}
               </div>
-              {infoPopUpData?.customerDetails && infoPopUpData?.customerDetails?.customerName && (
-                <div className="customerName my-1">{infoPopUpData?.customerDetails?.customerName}</div>
-              )}
-              {infoPopUpData?.customerDetails && infoPopUpData?.customerDetails?.mobileNo && (
-                <div className="customerName my-1">{infoPopUpData?.customerDetails?.mobileNo}</div>
-              )}
-              {infoPopUpData?.customerDetails && infoPopUpData?.customerDetails?.address && (
-                <div className="customerName my-1">{infoPopUpData?.customerDetails?.address}</div>
-              )}
+              <div className="p-2 flex items-center gap-1">
+                {infoPopUpData?.tableInfo?.tableNo ? "Table No. " + infoPopUpData?.tableInfo?.tableNo : ''}
+              </div>
             </div>
+            {infoPopUpData?.customerDetails &&
+              <>
+                <div className="border w-full"></div>
+                <div className="customerDetails p-2">
+                  <div className="text-md font-semibold">
+                    Customer Details
+                  </div>
+                  {infoPopUpData?.customerDetails && infoPopUpData?.customerDetails?.customerName && (
+                    <div className="customerName my-1">{infoPopUpData?.customerDetails?.customerName}</div>
+                  )}
+                  {infoPopUpData?.customerDetails && infoPopUpData?.customerDetails?.mobileNo && (
+                    <div className="customerName my-1">{infoPopUpData?.customerDetails?.mobileNo}</div>
+                  )}
+                  {infoPopUpData?.customerDetails && infoPopUpData?.customerDetails?.address && (
+                    <div className="customerName my-1">{infoPopUpData?.customerDetails?.address}</div>
+                  )}
+                </div>
+              </>
+            }
+            {infoPopUpData?.hotelDetails &&
+              <>
+                <div className="border w-full"></div>
+                <div className="customerDetails p-2">
+                  <div className="text-md font-semibold">
+                    Hotel Details
+                  </div>
+                  {infoPopUpData?.hotelDetails && infoPopUpData?.hotelDetails?.hotelName && (
+                    <div className="customerName my-1">{infoPopUpData?.hotelDetails?.hotelName} {infoPopUpData?.hotelDetails && infoPopUpData?.hotelDetails?.roomNo ? ' - ' + infoPopUpData?.hotelDetails?.roomNo : ''}</div>
+                  )}
+                  {infoPopUpData?.hotelDetails && infoPopUpData?.hotelDetails?.customerName && (
+                    <div className="customerName my-1">{infoPopUpData?.hotelDetails?.customerName}</div>
+                  )}
+                  {infoPopUpData?.hotelDetails && infoPopUpData?.hotelDetails?.phoneNumber && (
+                    <div className="customerName my-1">{infoPopUpData?.hotelDetails?.phoneNumber}</div>
+                  )}
+                </div>
+              </>
+            }
             <div className="border w-full"></div>
             <div className="ItemDetails p-2">
               <div className="text-md font-semibold">
@@ -274,18 +326,18 @@ const Cards = ({ data }) => {
                       key={index}
                       className="my-2 text-xs font-semibold w-2/4"
                     >
-                      <li>{item.qty}x {item.itemName} ({item.unit})</li>
+                      <li>{item.qty} x {item.itemName} ({item.unit})</li>
                     </div>
                   ))}
                 </div>
               </div>
             </div>
             <div className="border w-full"></div>
-            <div className="text-end flex items-center justify-end my-2 mt-4">Total Amount: <CurrencyRupeeIcon className="BackArrowIcon" />{infoPopUpData?.totalAmount}</div>
+            <div className="text-end flex items-center justify-end my-2 mt-4">Total Amount : <CurrencyRupeeIcon className="BackArrowIcon" />{parseFloat(infoPopUpData?.settledAmount).toLocaleString('en-In', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
             <div className="border w-full"></div>
             <div className="flex items-center justify-end mt-4">
               <div
-                className=" bg-white cursor-pointer border-black flex items-center justify-center BackArroIconDiv  w-20 gap-2 rounded-lg border"
+                className=" bg-white cursor-pointer border-black flex items-center hover:bg-gray-100 justify-center BackArroIconDiv w-20 gap-2 rounded-lg border"
                 onClick={() => setInfoPopUpOpen(false)}
               >
                 Close

@@ -3,9 +3,9 @@
 // export const BACKEND_BASE_URL = "http://192.168.1.224:8000/";
 // export const BACKEND_BASE_URL = "http://192.168.1.222:8000/api/";
 // export const BACKEND_BASE_URL = "http://106.201.146.151:8000/";
-export const SOCKET_URL = "http://192.168.1.10:8000";
+export const SOCKET_URL = "http://192.168.1.117:8000";
 // export const BACKEND_BASE_URL = "http://192.168.1.59:8000/";
-export const BACKEND_BASE_URL = "http://192.168.1.10:8000/";
+export const BACKEND_BASE_URL = "http://192.168.1.117:8000/";
 // export const BACKEND_BASE_URL = "http://106.201.147.131:8000/";
 // export const BACKEND_BASE_URL = "http://192.168.195.171:8000/";
 // export const BACKEND_BASE_URL = "https://admin.bhagwatifastfood.com/api/";
