@@ -98,9 +98,11 @@ const TokenBil = (props) => {
               <div style={{ marginTop: "6px", fontSize: "12px" }}>
                 Cashier : {props.data.cashier}
               </div>
-              <div style={{ marginTop: "6px", fontSize: "12px", maxWidth: '170px' }}>
-                subtokens : {props.data.subTokens}
-              </div>
+              {props?.data?.subTokens &&
+                <div style={{ marginTop: "6px", fontSize: "12px", maxWidth: '170px' }}>
+                  Sub Token : {props.data.subTokens}
+                </div>
+              }
             </div>
 
             <div

@@ -50,11 +50,12 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 
-import TokenBil from "./TokenBill";
+// import DineInBill from "./TokenBill";
 import { Switch } from "@mui/material";
 import HotelBill from "./HotelBill";
 import Close from "@mui/icons-material/Close";
 import { pad } from "crypto-js";
+import DineInBill from "./dineInBill";
 const style = {
     position: 'absolute',
     top: '50%',
@@ -821,7 +822,7 @@ const DineIn = () => {
                 //     res && res.data && res.data.isOfficial ? (
                 //         <RestaurantBill data={res.data} />
                 //     ) : (
-                //         <TokenBil data={res.data} />
+                //         <DineInBill data={res.data} />
                 //     )
                 // );
                 const printerDataKot = {
@@ -962,7 +963,7 @@ const DineIn = () => {
                     res && res.data && res.data.isOfficial ? (
                         <RestaurantBill data={res.data} />
                     ) : (
-                        <TokenBil data={res.data} />
+                        <DineInBill data={res.data} />
                     )
                 );
                 const printerDataKot = {
@@ -1062,7 +1063,7 @@ const DineIn = () => {
                 //     res && res.data && res.data.isOfficial ? (
                 //         <RestaurantBill data={res.data} />
                 //     ) : (
-                //         <TokenBil data={res.data} />
+                //         <DineInBill data={res.data} />
                 //     )
                 // );
                 // const printerDataKot = {
@@ -1163,7 +1164,7 @@ const DineIn = () => {
                 //     res && res.data && res.data.isOfficial ? (
                 //         <RestaurantBill data={res.data} />
                 //     ) : (
-                //         <TokenBil data={res.data} />
+                //         <DineInBill data={res.data} />
                 //     )
                 // );
                 const printerDataKot = {
@@ -1232,7 +1233,7 @@ const DineIn = () => {
                     billCommentAuto: [],
                 });
                 try {
-                    const pickupKotPrint = renderToString(<TokenBil data={res.data} />);
+                    const pickupKotPrint = renderToString(<DineInBill data={res.data} />);
                     const printerDataKot = {
                         printer: dineinbill[0],
                         data: pickupKotPrint,
@@ -1835,7 +1836,7 @@ const DineIn = () => {
                         res && res.data && res.data.isOfficial ? (
                             <RestaurantBill data={res.data} isEdit={true} />
                         ) : (
-                            <TokenBil data={res.data} isEdit={true} />
+                            <DineInBill data={res.data} isEdit={true} />
                         )
                     );
                     const printerDataKot = {
@@ -1954,7 +1955,7 @@ const DineIn = () => {
                         res && res.data && res.data.isOfficial ? (
                             <RestaurantBill data={res.data} isEdit={true} />
                         ) : (
-                            <TokenBil data={res.data} isEdit={true} />
+                            <DineInBill data={res.data} isEdit={true} />
                         )
                     );
                     const printerDataKot = {
