@@ -349,12 +349,11 @@ const TokenBil = (props) => {
                     fontSize: "13px",
                   }}
                 >
-                  <pre style={{ fontFamily: "Verdana" }}>
-                    <pre style={{ fontFamily: "Verdana", fontSize: "14px" }}>
-                      Total Qty: {itemList.length} Sub Total:{" "}
-                      {parseFloat(props.data.subTotal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </pre>
-                  </pre>
+                  <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "Verdana", marginLeft: "10px" }}>
+                    <span>Total Qty : {itemList.length}</span>
+                    <span>Sub Total:{" "}{parseFloat(props.data.subTotal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  </div>
+
                 </td>
               </tr>
               {props.data.billPayType != "complimentary" &&
@@ -437,6 +436,23 @@ const TokenBil = (props) => {
                   </td>
                 </tr>
               )}
+              {props?.data?.footerBill &&
+                <tr>
+                  <td
+                    colSpan="4"
+                    style={{
+                      textAlign: "center",
+                      fontWeight: "400",
+                      borderTop: "1px solid black",
+                      padding: "4px 0px 4px 0px",
+                      fontSize: "12px",
+                      lineHeight: "20px"
+                    }}
+                  >
+                    {props.data.footerBill}
+                  </td>
+                </tr>
+              }
               <tr>
                 <td
                   colSpan="3"
@@ -447,7 +463,7 @@ const TokenBil = (props) => {
                     padding: "4px 0px 4px 0px",
                   }}
                 >
-                  {props.data.footerBill}
+                  Thank You
                 </td>
               </tr>
             </tbody>

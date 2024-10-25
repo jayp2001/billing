@@ -329,8 +329,7 @@ const DineInBill = (props) => {
                                             fontSize: "13px",
                                         }}
                                     >
-                                        {item.qty}
-                                        {item.unit}
+                                        {item.qty} {item.unit}
                                     </td>
                                     <td
                                         style={{
@@ -375,10 +374,11 @@ const DineInBill = (props) => {
                                         fontSize: "14px",
                                     }}
                                 >
-                                    <pre style={{ fontFamily: "Verdana" }}>
-                                        Total Qty: {itemList.length}, Sub Total:{" "}
-                                        {parseFloat(props.data.subTotal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                    </pre>
+                                    <div style={{ display: "flex", justifyContent: "space-between", fontFamily: "Verdana", marginLeft: "10px" }}>
+                                        <span>Total Qty: {itemList.length}</span>
+                                        <span>Sub Total:{" "}{parseFloat(props.data.subTotal).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                    </div>
+
                                 </td>
                             </tr>
                             <tr className="">
@@ -467,9 +467,11 @@ const DineInBill = (props) => {
                                         colSpan="4"
                                         style={{
                                             textAlign: "center",
-                                            fontWeight: "700",
+                                            fontWeight: "400",
                                             borderTop: "1px solid black",
                                             padding: "4px 0px 4px 0px",
+                                            fontSize: "12px",
+                                            lineHeight: "20px"
                                         }}
                                     >
                                         {props.data.footerBill}
@@ -486,7 +488,7 @@ const DineInBill = (props) => {
                                         padding: "4px 0px 4px 0px",
                                     }}
                                 >
-                                    Thanks
+                                    Thank You
                                 </td>
                             </tr>
                         </tbody>
