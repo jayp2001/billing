@@ -5686,8 +5686,8 @@ const PickUp = () => {
                     }}
                     className={
                       buttonCLicked == "Pick Up"
-                        ? "clicked col-3 p-0  col-span-4 text-center"
-                        : "col-3 p-0 cursor-pointer  col-span-4 text-center"
+                        ? "clicked col-3 p-0  col-span-4 text-center border-x-2"
+                        : "col-3 p-0 cursor-pointer  col-span-4 text-center border-x-2"
                     }
                   >
                     <Button
