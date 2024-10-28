@@ -12,11 +12,11 @@ body{
     overflow: auto;
 }
 .HotelHeight{
-    height: 115px;
+    height: 120px;
     overflow: auto;
 }
 .HotelDetailsHeight{
-    height: 100px !important;
+    height: 105px !important;
     overflow: auto !important;
 }
 .WithoutAddresHeight{

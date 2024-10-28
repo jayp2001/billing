@@ -173,6 +173,13 @@ const DineInBill = (props) => {
                             <div style={{ marginTop: "6px", fontSize: "12px" }}>
                                 Cashier : {props.data.cashier}
                             </div>
+                            {props?.data?.tableNo &&
+                                <div style={{ marginTop: "6px", fontSize: "12px", maxWidth: '170px' }}>
+                                    Token No : {props.data.billType == "Pick Up"
+                                        ? props.data.justToken
+                                        : props.data.tokenNo}{" "}
+                                </div>
+                            }
                             {props?.data?.subTokens &&
                                 <div style={{ marginTop: "6px", fontSize: "12px", maxWidth: '170px' }}>
                                     Sub Token : {props.data.subTokens}
@@ -195,7 +202,7 @@ const DineInBill = (props) => {
                                     padding: "2px",
                                 }}
                             >
-                                TOKEN NO
+                                TABLE NO
                             </div>
                             <div
                                 style={{
@@ -212,9 +219,7 @@ const DineInBill = (props) => {
                                         lineHeight: "18px",
                                     }}
                                 >
-                                    {props.data.billType == "Pick Up"
-                                        ? props.data.justToken
-                                        : props.data.tokenNo}{" "}
+                                    {props.data.tableNo}
                                 </p>
                             </div>
                         </div>
@@ -303,22 +308,22 @@ const DineInBill = (props) => {
                                             width: "60%",
                                             padding: "8px 4px 8px 4px",
                                             textAlign: "start",
-                                            fontSize: "13px",
+                                            fontSize: "12px",
                                         }}
                                     >
-                                        {item.itemName} <br />
-                                        {item.comment && (
+                                        {item.itemName} ({item.unit}) <br />
+                                        {/* {item.comment && (
                                             <span
                                                 className="text-xs"
                                                 style={{
-                                                    fontSize: "14px",
+                                                    fontSize: "8px",
                                                     marginTop: "4px",
                                                     lineHeight: "27px",
                                                 }}
                                             >
                                                 ({item.comment})
                                             </span>
-                                        )}{" "}
+                                        )}{" "} */}
                                     </td>
                                     <td
                                         style={{
@@ -326,10 +331,10 @@ const DineInBill = (props) => {
                                             borderCollapse: "collapse",
                                             width: "20%",
                                             textAlign: "center",
-                                            fontSize: "13px",
+                                            fontSize: "12px",
                                         }}
                                     >
-                                        {item.qty} {item.unit}
+                                        {item.qty}
                                     </td>
                                     <td
                                         style={{
@@ -337,7 +342,7 @@ const DineInBill = (props) => {
                                             borderCollapse: "collapse",
                                             width: "20%",
                                             textAlign: "center",
-                                            fontSize: "13px",
+                                            fontSize: "12px",
                                         }}
                                     >
                                         {item.itemPrice.toFixed(2)}
@@ -354,7 +359,7 @@ const DineInBill = (props) => {
                                             textAlign: "end",
                                             paddingRight: "2px",
                                             paddingLeft: "2px",
-                                            fontSize: "13px",
+                                            fontSize: "12px",
                                         }}
                                     >
                                         {item.price.toFixed(2)}
@@ -488,7 +493,7 @@ const DineInBill = (props) => {
                                         padding: "4px 0px 4px 0px",
                                     }}
                                 >
-                                    Thank You
+                                    {props.data.appriciateLine ? props.data.appriciateLine : 'Thank You'}
                                 </td>
                             </tr>
                         </tbody>

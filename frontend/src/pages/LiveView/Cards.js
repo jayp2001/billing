@@ -161,7 +161,7 @@ const Cards = ({ data }) => {
                     </div>
                   </div>
                 )}
-                {(data?.customerDetails?.mobileNo || data?.customerDetails?.address) && (
+                {(data?.customerDetails?.mobileNo || data?.customerDetails?.customerName || data?.customerDetails?.address) && (
                   <div className="bg-gray-100 border-t-2 pt-2">
                     <div>
                       {data?.customerDetails?.mobileNo && (
@@ -252,7 +252,7 @@ const Cards = ({ data }) => {
               <div className="billData flex justify-between px-2 items-center">
                 <div className="InfoFirmName">{infoPopUpData?.firmData?.firmName}</div>
                 <div className="billInformation ">
-                  <div className="billNumber">BILL: {infoPopUpData?.billNumber}</div>
+                  <div className="billNumber">Token No : {infoPopUpData?.tokenNo}</div>
                   {/* <Divider orientation="vertical" flexItem /> */}
                 </div>
               </div>

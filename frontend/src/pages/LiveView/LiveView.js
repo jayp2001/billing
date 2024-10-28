@@ -22,6 +22,8 @@ import TableBarIcon from '@mui/icons-material/TableBar';
 import { Badge, Divider, Switch } from "@mui/material";
 import axios from "axios";
 import { BACKEND_BASE_URL } from "../../url";
+import { useNavigate } from "react-router-dom";
+
 
 const LiveView = () => {
   const [data, setData] = useState([]);
@@ -91,7 +93,7 @@ const LiveView = () => {
 
     setFilteredData(filtered);
   };
-
+  const navigate = useNavigate();
   return (
     <div className="CustomLiveViewHeight">
       <Header />
@@ -144,9 +146,12 @@ const LiveView = () => {
             <div className="border mx-2 cursor-pointer p-1 reloadIconDiv bg-white border-black rounded-md shadow-md">
               <CachedIcon className="topHeaderIcon" />
             </div>
-            <div className=" bg-white cursor-pointer border-black flex items-center BackArroIconDiv  gap-2 rounded-lg border">
+            <button className=" bg-white cursor-pointer border-black flex items-center BackArroIconDiv hover:bg-gray-200 gap-2 rounded-lg border"
+              onClick={() => {
+                navigate("/dashboard");
+              }}>
               <ArrowBackIcon className="BackArrowIcon" /> Back
-            </div>
+            </button>
           </div>
         </div>
         <div className="m-2 flex items-center justify-between bg-gray-200 p-2 rounded-md">

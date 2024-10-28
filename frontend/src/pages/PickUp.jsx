@@ -844,8 +844,8 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
+      appriciateLine: billTypeCategory["Pick Up"]?.appriciateLine
     };
     await axios
       .post(
@@ -951,8 +951,8 @@ const PickUp = () => {
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
       isOfficial: billTypeCategory?.Hotel?.isOfficial,
-      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
       footerBill: billTypeCategory?.Hotel?.billFooterNote,
+      appriciateLine: billTypeCategory?.Hotel?.appriciateLine
     };
     await axios
       .post(
@@ -1060,8 +1060,8 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
+      appriciateLine: billTypeCategory?.Delivery?.appriciateLine
     };
     await axios
       .post(
@@ -1772,7 +1772,6 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
     };
     await axios
@@ -1877,7 +1876,6 @@ const PickUp = () => {
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
       isOfficial: billTypeCategory?.Hotel?.isOfficial,
-      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
       footerBill: billTypeCategory?.Hotel?.billFooterNote,
     };
     await axios
@@ -1958,7 +1956,6 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
     };
     await axios
@@ -2057,7 +2054,7 @@ const PickUp = () => {
       printBill: true,
       printKot: true,
       firmId: billTypeCategory['Pick Up']?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -2066,8 +2063,8 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
+      appriciateLine: billTypeCategory["Pick Up"]?.appriciateLine
     };
     await axios
       .post(
@@ -2173,7 +2170,7 @@ const PickUp = () => {
       printBill: true,
       printKot: true,
       firmId: billTypeCategory?.Hotel?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -2184,8 +2181,8 @@ const PickUp = () => {
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
       isOfficial: billTypeCategory?.Hotel?.isOfficial,
-      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
       footerBill: billTypeCategory?.Hotel?.billFooterNote,
+      appriciateLine: billTypeCategory?.Hotel?.appriciateLine,
     };
     await axios
       .post(
@@ -2285,7 +2282,7 @@ const PickUp = () => {
       printBill: true,
       printKot: true,
       firmId: billTypeCategory?.Delivery?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -2294,8 +2291,8 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
+      appriciateLine: billTypeCategory?.Delivery?.appriciateLine
     };
     await axios
       .post(
@@ -2404,7 +2401,7 @@ const PickUp = () => {
       printBill: false,
       printKot: false,
       firmId: billTypeCategory['Pick Up']?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -2413,8 +2410,8 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
+      appriciateLine: billTypeCategory["Pick Up"]?.appriciateLine
     };
     await axios
       .post(
@@ -2485,7 +2482,7 @@ const PickUp = () => {
       printBill: false,
       printKot: false,
       firmId: billTypeCategory?.Hotel?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -2496,8 +2493,8 @@ const PickUp = () => {
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
       isOfficial: billTypeCategory?.Hotel?.isOfficial,
-      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
       footerBill: billTypeCategory?.Hotel?.billFooterNote,
+      appriciateLine: billTypeCategory?.Hotel?.appriciateLine
     };
     await axios
       .post(
@@ -2571,7 +2568,7 @@ const PickUp = () => {
       printBill: false,
       printKot: false,
       firmId: billTypeCategory?.Delivery?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -2580,8 +2577,8 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
+      appriciateLine: billTypeCategory?.Delivery?.appriciateLine,
     };
     await axios
       .post(
@@ -2656,7 +2653,7 @@ const PickUp = () => {
       printBill: true,
       printKot: false,
       firmId: billTypeCategory['Pick Up']?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -2665,8 +2662,8 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
+      appriciateLine: billTypeCategory["Pick Up"]?.appriciateLine
     };
     await axios
       .post(
@@ -2772,7 +2769,7 @@ const PickUp = () => {
       printBill: true,
       printKot: false,
       firmId: billTypeCategory?.Hotel?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -2783,8 +2780,8 @@ const PickUp = () => {
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
       isOfficial: billTypeCategory?.Hotel?.isOfficial,
-      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
       footerBill: billTypeCategory?.Hotel?.billFooterNote,
+      appriciateLine: billTypeCategory?.Hotel?.appriciateLine,
     };
     await axios
       .post(
@@ -2884,7 +2881,7 @@ const PickUp = () => {
       printBill: true,
       printKot: false,
       firmId: billTypeCategory?.Delivery?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -2893,8 +2890,8 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
+      appriciateLine: billTypeCategory?.Delivery?.appriciateLine,
     };
     await axios
       .post(
@@ -3003,7 +3000,7 @@ const PickUp = () => {
       printBill: false,
       printKot: true,
       firmId: billTypeCategory['Pick Up']?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -3012,8 +3009,8 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory["Pick Up"]?.kotFooterNote,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
+      appriciateLine: billTypeCategory["Pick Up"]?.appriciateLine,
     };
     await axios
       .post(
@@ -3120,7 +3117,7 @@ const PickUp = () => {
       printBill: false,
       printKot: true,
       firmId: billTypeCategory?.Hotel?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -3131,8 +3128,8 @@ const PickUp = () => {
       roomNo: hotelFormData?.roomNo,
       hotelDetails: hotelFormData?.selectedHotel,
       isOfficial: billTypeCategory?.Hotel?.isOfficial,
-      footerKot: billTypeCategory?.Hotel?.kotFooterNote,
       footerBill: billTypeCategory?.Hotel?.billFooterNote,
+      appriciateLine: billTypeCategory?.Hotel?.appriciateLine,
     };
     await axios
       .post(
@@ -3233,7 +3230,7 @@ const PickUp = () => {
       printBill: false,
       printKot: true,
       firmId: billTypeCategory?.Delivery?.firmId,
-      billStatus: "Print",
+      // billStatus: billData.billStatus,
       totalDiscount:
         billData.discountType == "none"
           ? 0
@@ -3242,8 +3239,8 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
-      footerKot: billTypeCategory?.Delivery?.kotFooterNote,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
+      appriciateLine: billTypeCategory?.Delivery?.appriciateLine,
     };
     await axios
       .post(

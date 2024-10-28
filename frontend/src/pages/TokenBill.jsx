@@ -463,7 +463,7 @@ const TokenBil = (props) => {
                     padding: "4px 0px 4px 0px",
                   }}
                 >
-                  Thank You
+                  {props?.data?.appriciateLine ? props.data.appriciateLine : 'Thank You'}
                 </td>
               </tr>
             </tbody>

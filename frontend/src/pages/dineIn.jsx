@@ -771,7 +771,7 @@ const DineIn = () => {
             billComment: billData.billCommentAuto?.join(", "),
             isOfficial: billTypeCategory['Dine In']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
             onlineId: upiId,
-            footerKot: billTypeCategory["Dine In"]?.kotFooterNote,
+            appriciateLine: billTypeCategory["Dine In"]?.appriciateLine,
             footerBill: billTypeCategory["Dine In"]?.billFooterNote,
         };
         await axios
@@ -911,7 +911,7 @@ const DineIn = () => {
             isOfficial: billTypeCategory['Dine In']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
             onlineId: upiId,
             tableNo: (table == 'null' || table == null) ? tempTable : table, assignCaptain: captain,
-            footerKot: billTypeCategory["Dine In"]?.kotFooterNote,
+            appriciateLine: billTypeCategory["Dine In"]?.appriciateLine,
             footerBill: billTypeCategory["Dine In"]?.billFooterNote,
         };
         console.log('customer', customData)
@@ -1012,7 +1012,7 @@ const DineIn = () => {
             isOfficial: billTypeCategory['Dine In']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
             onlineId: upiId,
             tableNo: (table == 'null' || table == null) ? tempTable : table, assignCaptain: captain,
-            footerKot: billTypeCategory["Dine In"]?.kotFooterNote,
+            appriciateLine: billTypeCategory["Dine In"]?.appriciateLine,
             footerBill: billTypeCategory["Dine In"]?.billFooterNote,
         };
         await axios
@@ -1113,7 +1113,7 @@ const DineIn = () => {
             billComment: billData.billCommentAuto?.join(", "),
             isOfficial: billTypeCategory['Dine In']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
             onlineId: upiId,
-            footerKot: billTypeCategory["Dine In"]?.kotFooterNote,
+            appriciateLine: billTypeCategory["Dine In"]?.appriciateLine,
             footerBill: billTypeCategory["Dine In"]?.billFooterNote,
         };
         await axios
@@ -1517,7 +1517,7 @@ const DineIn = () => {
             billComment: billData.billCommentAuto?.join(", "),
             isOfficial: billTypeCategory['Dine In']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
             onlineId: upiId,
-            footerKot: billTypeCategory["Dine In"]?.kotFooterNote,
+            appriciateLine: billTypeCategory["Dine In"]?.appriciateLine,
             footerBill: billTypeCategory["Dine In"]?.billFooterNote,
         };
         await axios
@@ -1598,7 +1598,7 @@ const DineIn = () => {
             onlineId: upiId,
             tableNo: table,
             assignCaptain: captain,
-            footerKot: billTypeCategory["Dine In"]?.kotFooterNote,
+            appriciateLine: billTypeCategory["Dine In"]?.appriciateLine,
             footerBill: billTypeCategory["Dine In"]?.billFooterNote,
         };
         await axios
@@ -1694,7 +1694,7 @@ const DineIn = () => {
             onlineId: upiId,
             tableNo: table,
             assignCaptain: captain,
-            footerKot: billTypeCategory["Dine In"]?.kotFooterNote,
+            appriciateLine: billTypeCategory["Dine In"]?.appriciateLine,
             footerBill: billTypeCategory["Dine In"]?.billFooterNote,
         };
         await axios
@@ -1780,7 +1780,7 @@ const DineIn = () => {
             isOfficial: billTypeCategory['Dine In']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
             onlineId: upiId,
             tableNo: (table == 'null' || table == null) ? tempTable : table, assignCaptain: captain,
-            footerKot: billTypeCategory["Dine In"]?.kotFooterNote,
+            appriciateLine: billTypeCategory["Dine In"]?.appriciateLine,
             footerBill: billTypeCategory["Dine In"]?.billFooterNote,
         };
         await axios
@@ -1900,7 +1900,7 @@ const DineIn = () => {
             isOfficial: billTypeCategory['Dine In']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
             onlineId: upiId,
             tableNo: (table == 'null' || table == null) ? tempTable : table, assignCaptain: captain,
-            footerKot: billTypeCategory["Dine In"]?.kotFooterNote,
+            appriciateLine: billTypeCategory["Dine In"]?.appriciateLine,
             footerBill: billTypeCategory["Dine In"]?.billFooterNote,
         };
         await axios

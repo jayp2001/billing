@@ -610,7 +610,7 @@ const HotelBill = (props) => {
                     borderLeft: "0px",
                   }}
                 >
-                  {props.data.footerBill}
+                  {props.data.appriciateLine ? props.data.appriciateLine : 'Thank You'}
                 </td>
               </tr>
             </tbody>
