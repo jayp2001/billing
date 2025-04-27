@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { ReactTransliterate } from "react-transliterate";
 import "react-transliterate/dist/index.css";
 import { renderToString } from 'react-dom/server';
@@ -12,7 +12,6 @@ const Test = () => {
     const [text, setText] = useState("");
     useEffect(() => {
         ipcRenderer.on('messageFromMain', (event, arg) => {
-            console.log('onrendereer', arg); // Output received message from main process
             // Do something with the received data
         })
 

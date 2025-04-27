@@ -93,7 +93,6 @@ const PrintSelectingPage = () => {
       setCategoryList(response.data);
       localStorage.setItem("printerPreference", JSON.stringify(response.data));
     } catch (error) {
-      console.log(error);
     }
   };
 
@@ -102,10 +101,10 @@ const PrintSelectingPage = () => {
       const updatedData = categoryList.map((data, index) =>
         selectPrinter.index === index
           ? {
-              ...data,
-              printerName: selectPrinter.printerName,
-              footer: selectPrinter.footer,
-            }
+            ...data,
+            printerName: selectPrinter.printerName,
+            footer: selectPrinter.footer,
+          }
           : data
       );
 
@@ -126,7 +125,7 @@ const PrintSelectingPage = () => {
       );
 
       if (response.data === 'Printer Updated Successfully') {
-        setSuccess(true); 
+        setSuccess(true);
         setCategoryList(updatedData);
         getAllData();
         handleClose();
@@ -142,7 +141,6 @@ const PrintSelectingPage = () => {
     setAssignPrinterPopUp(false);
   };
   if (loading) {
-    console.log(">>>>??");
     toast.loading("Please wait...", {
       toastId: "loading",
     });
@@ -196,8 +194,8 @@ const PrintSelectingPage = () => {
         <Table sx={{ "& tr > *:not(:first-child)": { textAlign: "right" } }}>
           <TableHead className="tableHead">
             <TableRow>
-              <TableCell style={{width:'10px'}}>No.</TableCell>
-              <TableCell style={{width:'13%'}}>Name</TableCell>
+              <TableCell style={{ width: '10px' }}>No.</TableCell>
+              <TableCell style={{ width: '13%' }}>Name</TableCell>
               <TableCell>Printer Name</TableCell>
               <TableCell>Top</TableCell>
               <TableCell>Right</TableCell>

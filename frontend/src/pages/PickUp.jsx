@@ -400,6 +400,7 @@ const PickUp = () => {
   };
   const handleCloseO = () => {
     setItemComment();
+    if (!upiId) setUpiId(upiList[0]?.onlineId)
     setAnchorElO(null);
   };
 
@@ -473,34 +474,37 @@ const PickUp = () => {
     }));
   };
   const handleShoetCutKey = (event) => {
-    if (event.key === "F12") {
-      buttonCLicked == "Hotel"
-        ? isEdit
-          ? editHotelBill()
-          : saveHotelBill() :
-        buttonCLicked === "Delivery"
+    if (loading || success) { } else {
+      if (event.key === "F12") {
+        // window.confirm('are you sure?')
+        buttonCLicked == "Hotel"
           ? isEdit
-            ? editBillDelivery()
-            : saveBillDelivery()
-          : isEdit
-            ? editBill()
-            : saveBill();
-    }
-    if (event.key === "F1") {
-      buttonCLicked == "Hotel"
-        ? isEdit
-          ? justEditHotelBill()
-          : justSaveHotelBill() :
-        buttonCLicked === "Delivery"
+            ? editHotelBill()
+            : saveHotelBill() :
+          buttonCLicked === "Delivery"
+            ? isEdit
+              ? editBillDelivery()
+              : saveBillDelivery()
+            : isEdit
+              ? editBill()
+              : saveBill();
+      }
+      if (event.key === "F1") {
+        buttonCLicked == "Hotel"
           ? isEdit
-            ? justEditBillDelivery()
-            : justSaveBillDelivery()
-          : isEdit
-            ? justEditBill()
-            : justSaveBill();
-    }
-    if (event.key === "F5") {
-      window.location.reload();
+            ? justEditHotelBill()
+            : justSaveHotelBill() :
+          buttonCLicked === "Delivery"
+            ? isEdit
+              ? justEditBillDelivery()
+              : justSaveBillDelivery()
+            : isEdit
+              ? justEditBill()
+              : justSaveBill();
+      }
+      if (event.key === "F5") {
+        window.location.reload();
+      }
     }
   };
   const getBbill = async (id) => {
@@ -552,7 +556,6 @@ const PickUp = () => {
           });
       })
       .catch((error) => {
-        console.log("ERRRORRR", error);
         setError(error.response ? error.response.data : "Network Error ...!!!");
       });
   };
@@ -655,7 +658,6 @@ const PickUp = () => {
     //   (item.itemShortKey && item.itemShortKey.toLowerCase().includes(value.toLowerCase())) ||
     //   (item.itemName && item.itemName.toLowerCase().includes(value.toLowerCase()))
     // ) : [];
-    console.log("filltered", value);
     if (value) {
       if (!value.status) {
         alert(
@@ -797,30 +799,6 @@ const PickUp = () => {
       }));
     }
   };
-  const handleFreeSoloChange = (e, value) => {
-    // const filtered = value ? data.filter(item =>
-    //   (item.itemShortKey && item.itemShortKey.toLowerCase().includes(value.toLowerCase())) ||
-    //   (item.itemName && item.itemName.toLowerCase().includes(value.toLowerCase()))
-    // ) : [];
-    console.log("freesoloonchange", value);
-    // setValidationError(false);
-    // setFullFormData((prevState) => ({
-    //   ...prevState,
-    //   inputName: value ? value : "",
-    //   selectedItem: value ? value : "",
-    //   itemId: value && value.itemId ? value.itemId : "",
-    // }));
-
-    // if (value) {
-    //   setFullFormData((prevState) => ({
-    //     ...prevState,
-    //     inputCode: value.itemCode.toString(),
-    //   }));
-    // }
-  };
-  const joinArray = (array) => {
-    return array.join(", ");
-  };
   const addBillData = async () => {
     setLoading(true);
     const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
@@ -843,6 +821,7 @@ const PickUp = () => {
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      upiJson: upiJson,
       onlineId: upiId,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
       appriciateLine: billTypeCategory["Pick Up"]?.appriciateLine
@@ -1029,7 +1008,6 @@ const PickUp = () => {
         // }, 1500)
       })
       .catch((error) => {
-        console.log("><<>???", error);
         setError(
           error.response && error.response.data
             ? error.response.data
@@ -1060,6 +1038,7 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
+      upiJson: upiJson,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
       appriciateLine: billTypeCategory?.Delivery?.appriciateLine
     };
@@ -1751,7 +1730,6 @@ const PickUp = () => {
   const justSaveBillData = async () => {
     setLoading(true);
     const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
-    console.log('upiid', upiJson);
     const customData = {
       customerDetails: {
         ...customerData,
@@ -1771,6 +1749,7 @@ const PickUp = () => {
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      upiJson: upiJson,
       onlineId: upiId,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
     };
@@ -1956,6 +1935,7 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
+      upiJson: upiJson,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
     };
     await axios
@@ -2062,6 +2042,7 @@ const PickUp = () => {
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      upiJson: upiJson,
       onlineId: upiId,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
       appriciateLine: billTypeCategory["Pick Up"]?.appriciateLine
@@ -2132,19 +2113,17 @@ const PickUp = () => {
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log(">>>edit all");
+
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log(">>>edit else", res.data.printBill, res.data.printKot);
+
         } catch (error) {
-          console.log("try catch errror", error);
+
         }
         setTimeout(() => {
           navigate("/dashboard");
@@ -2241,19 +2220,17 @@ const PickUp = () => {
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log(">>>edit all");
+
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log(">>>edit else", res.data.printBill, res.data.printKot);
+
         } catch (error) {
-          console.log("try catch errror", error);
+
         }
         setTimeout(() => {
           navigate("/dashboard");
@@ -2291,6 +2268,7 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
+      upiJson: upiJson,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
       appriciateLine: billTypeCategory?.Delivery?.appriciateLine
     };
@@ -2360,19 +2338,15 @@ const PickUp = () => {
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log(">>>edit all");
+
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log(">>>edit else", res.data.printBill, res.data.printKot);
         } catch (error) {
-          console.log("try catch errror", error);
         }
         setTimeout(() => {
           navigate("/dashboard");
@@ -2409,6 +2383,7 @@ const PickUp = () => {
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      upiJson: upiJson,
       onlineId: upiId,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
       appriciateLine: billTypeCategory["Pick Up"]?.appriciateLine
@@ -2577,6 +2552,7 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
+      upiJson: upiJson,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
       appriciateLine: billTypeCategory?.Delivery?.appriciateLine,
     };
@@ -2661,6 +2637,7 @@ const PickUp = () => {
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      upiJson: upiJson,
       onlineId: upiId,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
       appriciateLine: billTypeCategory["Pick Up"]?.appriciateLine
@@ -2731,19 +2708,14 @@ const PickUp = () => {
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log(">>>edit else", res.data.printBill, res.data.printKot);
         } catch (error) {
-          console.log("try catch errror", error);
         }
         setTimeout(() => {
           navigate("/dashboard");
@@ -2840,19 +2812,14 @@ const PickUp = () => {
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log(">>>edit else", res.data.printBill, res.data.printKot);
         } catch (error) {
-          console.log("try catch errror", error);
         }
         setTimeout(() => {
           navigate("/dashboard");
@@ -2890,6 +2857,7 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
+      upiJson: upiJson,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
       appriciateLine: billTypeCategory?.Delivery?.appriciateLine,
     };
@@ -2959,19 +2927,14 @@ const PickUp = () => {
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log(">>>edit else", res.data.printBill, res.data.printKot);
         } catch (error) {
-          console.log("try catch errror", error);
         }
         setTimeout(() => {
           navigate("/dashboard");
@@ -3008,6 +2971,7 @@ const PickUp = () => {
       itemsData: items,
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Pick Up']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
+      upiJson: upiJson,
       onlineId: upiId,
       footerBill: billTypeCategory["Pick Up"]?.billFooterNote,
       appriciateLine: billTypeCategory["Pick Up"]?.appriciateLine,
@@ -3078,20 +3042,15 @@ const PickUp = () => {
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log(">>>edit else", res.data.printBill, res.data.printKot);
           setIsEdit(false);
         } catch (error) {
-          console.log("try catch errror", error);
         }
         setTimeout(() => {
           navigate("/dashboard");
@@ -3187,20 +3146,15 @@ const PickUp = () => {
           };
           // const htmlString = renderToString(<RestaurantBill />)
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          console.log(">>>edit else", res.data.printBill, res.data.printKot);
           setIsEdit(false);
         } catch (error) {
-          console.log("try catch errror", error);
         }
         setTimeout(() => {
           navigate("/dashboard");
@@ -3239,6 +3193,7 @@ const PickUp = () => {
       billComment: billData.billCommentAuto?.join(", "),
       isOfficial: billTypeCategory['Delivery']?.isOfficial ? true : billData.billPayType == 'online' ? upiJson?.isOfficial ? true : upiId == 'other' ? true : false : false,
       onlineId: upiId,
+      upiJson: upiJson,
       footerBill: billTypeCategory?.Delivery?.billFooterNote,
       appriciateLine: billTypeCategory?.Delivery?.appriciateLine,
     };
@@ -3310,21 +3265,17 @@ const PickUp = () => {
 
 
           if (res && res.data && res.data.printBill && res.data.printKot) {
-            console.log(">>>edit all");
             ipcRenderer.send("set-title", printerDataKot);
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printBill) {
-            console.log(">>>edit one");
             ipcRenderer.send("set-title", printerDataBill);
           } else if (res && res.data && res.data.printKot) {
-            console.log(">>>edit two");
             ipcRenderer.send("set-title", printerDataKot);
           }
-          // console.log(">>>edit else", res.data.printBill, res.data.printKot);
+          // 
           setIsEdit(false);
 
         } catch (error) {
-          console.log("try catch errror", error);
         }
         setTimeout(() => {
           navigate("/dashboard");
@@ -3352,7 +3303,6 @@ const PickUp = () => {
   };
 
   const handleSearch = () => {
-    console.log(":::???:::", document.getElementById("searchWord").value);
     getSourceDDL(document.getElementById("searchWord").value);
   };
 
@@ -3391,7 +3341,7 @@ const PickUp = () => {
       )
       .then((res) => {
         setUpiList(res.data);
-        setUpiId(res?.data[0]?.onlineId)
+        // setUpiId(res?.data[0]?.onlineId)
       })
       .catch((error) => {
         setError(error.response ? error.response.data : "Network Error ...!!!");
@@ -4234,7 +4184,6 @@ const PickUp = () => {
             value.toString().toLocaleLowerCase()
         )
         : [];
-      console.log("Search Item", matchingProduct);
       if (matchingProduct && !matchingProduct.status) {
         alert(
           `${matchingProduct.itemName} is not Available`
@@ -4421,7 +4370,6 @@ const PickUp = () => {
             ? fullFormData.selectedItem.variantsList[0].price
             : 0) * fullFormData.qty,
       }));
-      console.log("name", fullFormData.inputName);
       e.preventDefault();
       if (
         fullFormData &&
@@ -4456,7 +4404,6 @@ const PickUp = () => {
             item.inputCode == fullFormData.inputCode &&
             item.unit == fullFormData.unit
         );
-        console.log("<LKLLKK>", isExist, items[isExist]);
         if (isExist != -1) {
           setBillData((perv) => ({
             ...perv,
@@ -4521,7 +4468,6 @@ const PickUp = () => {
             itemId: fullFormData.itemId,
             comment: fullFormData.comment,
           };
-          console.log("<>LOG<>", fullFormData.price, fullFormData.itemPrice);
           setBillData((perv) => ({
             ...perv,
             subTotal: Math.ceil(billData.subTotal + fullFormData.price),
@@ -4654,7 +4600,6 @@ const PickUp = () => {
     // }
   };
   const handleDecreaseQuantity = (index, qty1) => {
-    console.log("<QTY?>", qty1);
     setItems((prevItems) => {
       const updatedItems = [...prevItems];
       if (updatedItems[index].qty > 1) {
@@ -4722,7 +4667,6 @@ const PickUp = () => {
     }
   };
   if (loading) {
-    console.log(">>>>??");
     toast.loading("Please wait...", {
       toastId: "loading",
     });
@@ -4837,13 +4781,7 @@ const PickUp = () => {
       }
     }
   }, [suggestionIndex]);
-  console.log(
-    "TEMPPPP    DATA   IIII",
-    fullFormData,
-    customerData,
-    hotelFormData,
-    billData
-  );
+
   return (
     <div className="bg-gray-200 overfloe-hidden h-screen anotherHeight">
       <Header
@@ -4966,7 +4904,6 @@ const PickUp = () => {
                       (json[0] && json[0].price ? json[0].price : 0) *
                       fullFormData.qty,
                   }));
-                  console.log("<value>", e.target.value);
                 }}
                 value={fullFormData.unit}
                 onKeyDown={handleEnterPressThird}
@@ -5846,7 +5783,6 @@ const PickUp = () => {
                         className="radio_buttons text-base"
                         value={billData.billPayType}
                         onChange={(e) => {
-                          console.log("radio", e.target.value);
                           if (!(isEdit && buttonCLicked == 'Hotel')) {
                             if (e.target.value == 'due') {
                               // setOpenDue(true);
@@ -5975,7 +5911,6 @@ const PickUp = () => {
                     className="radio_buttons text-base"
                     value={billData.discountType}
                     onChange={(e) => {
-                      console.log("radio", e.target.value);
                       setBillData((perv) => ({
                         ...perv,
                         discountType: e.target.value,
@@ -6342,7 +6277,7 @@ const PickUp = () => {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                value={upiId}
+                value={upiId ? upiId : upiList[0]?.onlineId}
                 label="UPI id"
                 defaultValue={upiList[0]?.onlineId}
                 onChange={(e) => setUpiId(e.target.value)}

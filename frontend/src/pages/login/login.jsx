@@ -49,7 +49,6 @@ function LoginPage() {
   useEffect(() => {
     ipcRenderer.send("findPrinter");
     ipcRenderer.on("getPrinter", (event, arg) => {
-      console.log("onrendereer", arg); // Output received message from main process
       // Do something with the received data
       const printerList = arg?.filter((element) => element != "");
       localStorage.setItem("printers", JSON.stringify(printerList));
@@ -57,7 +56,6 @@ function LoginPage() {
     ipcRenderer.send("findMac");
     ipcRenderer.on("getMac", (event, arg) => {
       localStorage.setItem("macAddress", arg);
-      console.log("MACC", arg);
     });
 
     // Clean up the listener when the component unmounts
@@ -69,7 +67,7 @@ function LoginPage() {
   const macAddress = localStorage.getItem("macAddress");
   const submit = async (e) => {
     e.preventDefault();
-    console.log("login", userName, password);
+
     const data = {
       userName: userName,
       Password: password,
@@ -86,9 +84,7 @@ function LoginPage() {
       .post(`${BACKEND_BASE_URL}userrouter/authUser`, data, config)
       .then((res) => {
         setLoading(false);
-        console.log("success", res.data);
         if (res && res.data ? true : false) {
-          console.log("::::");
           setSuccess(true);
           const rights = res.data.userRights;
           res.data.userRights = res.data.userRights
@@ -129,7 +125,6 @@ function LoginPage() {
   React.useEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
     const role = user && user.userRights ? decryptData(user.userRights) : "";
-    console.log("role", role);
     // const role = '1'
     // if (userInfo && role == '1') {
     //     navigate('/list');

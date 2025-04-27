@@ -66,31 +66,14 @@ const PickUp1 = () => {
 
   useEffect(() => {
     if (dineInCustomerDetails || dineInOrderComment ||
-      deliveryCustomerDetails|| deliveryOrderComment ||
+      deliveryCustomerDetails || deliveryOrderComment ||
       pickUpCustomerDetails || pickUpOrderComment) {
       setnoItemsDesign(true);
     }
-    else{
+    else {
       setnoItemsDesign(false)
     }
   }, [dineInCustomerDetails, dineInOrderComment, deliveryCustomerDetails, deliveryOrderComment, pickUpCustomerDetails, pickUpOrderComment]);
-
-
-  const handleDineInSubmit = () => {
-    console.log('Dine In form submitted:', dineInCustomerDetails, dineInOrderComment);
-  };
-
-  const handleDeliverySubmit = () => {
-    console.log('Delivery form submitted:', deliveryCustomerDetails, deliveryOrderComment);
-  };
-
-  const handlePickUpSubmit = () => {
-    console.log('Pick Up form submitted:', pickUpCustomerDetails, pickUpOrderComment);
-  };
-
-  const handleHotelSubmit = () => {
-    console.log('Hotel form submitted:', hotelDetails);
-  };
   const toggleBillingMenu = () => {
     setBillineMenu(true);
     setDineInCustomerDetails(false)

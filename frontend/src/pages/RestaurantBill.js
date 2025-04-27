@@ -1,6 +1,7 @@
 import React from "react";
 import "./css/Bill.css";
 import "./css/RestaurantBill.css";
+import { QRCodeSVG } from "qrcode.react";
 
 const RestaurantBill = (props) => {
   const customerData =
@@ -526,9 +527,62 @@ const RestaurantBill = (props) => {
                   </pre>
                 </td>
               </tr>
+              {
+                props.data.upiJson && props.data.billPayType == "online" ? <>
+                  <tr style={{ width: '100%' }}>
+                    <td
+                      colSpan="6"
+                      align="center"
+                      style={{
+                        width: '100%',
+                        // display: 'flex',
+                        justifyContent: 'center',
+                        borderTop: "1px solid black",
+                        padding: "8px 0px 8px 0px",
+                      }}>
+                      <QRCodeSVG
+                        value={`upi://pay?pa=${props.data.upiJson.upiId}&pn=${props.data.upiJson.holderName}&tn=${'Restaurent Bill'}&am=${props.data.settledAmount}`}
+                        size={148}
+                        level="H"
+                      />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td
+                      colSpan={6}
+                      style={{
+                        textAlign: "center",
+                        fontWeight: "600",
+                        // borderTop: "1px solid black",
+                        padding: "4px 0px 4px 0px",
+                        fontSize: "18px",
+                        lineHeight: "20px"
+                      }}
+                    >
+                      Scan To Pay
+                    </td>
+                  </tr></> : <></>
+              }
+              {props?.data?.footerBill &&
+                <tr>
+                  <td
+                    colSpan={6}
+                    style={{
+                      textAlign: "center",
+                      fontWeight: "400",
+                      borderTop: "1px solid black",
+                      padding: "4px 0px 4px 0px",
+                      fontSize: "12px",
+                      lineHeight: "20px"
+                    }}
+                  >
+                    {props.data.footerBill}
+                  </td>
+                </tr>
+              }
               <tr>
                 <td
-                  colSpan="4"
+                  colSpan="6"
                   style={{
                     textAlign: "center",
                     fontWeight: "700",

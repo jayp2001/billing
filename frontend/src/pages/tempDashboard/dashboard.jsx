@@ -208,7 +208,6 @@ function Dashboard() {
     useEffect(() => {
         const socket = io(SOCKET_URL);
         socket.on("connect", () => {
-            console.log("Connected to server");
         });
         socket.on("updateTableView", (data) => {
             getTableList();
@@ -361,7 +360,6 @@ function Dashboard() {
                     };
                     ipcRenderer.send("set-title", printerDataKot);
                 } catch (rrr) {
-                    console.log('LLLLKKK', rrr)
                 }
                 // setTimeout(() => {
                 // setTimeout(() => {
@@ -402,7 +400,6 @@ function Dashboard() {
 
     }
     if (loading) {
-        console.log(">>>>??");
         toast.loading("Please wait...", {
             toastId: "loading",
         });
@@ -684,7 +681,6 @@ function Dashboard() {
                                         // fullWidth
                                         value={billData.discountType}
                                         onChange={(e) => {
-                                            console.log("radio", e.target.value);
                                             setBillData((perv) => ({
                                                 ...perv,
                                                 discountType: e.target.value,

@@ -61,15 +61,19 @@ body{
 }
 
 .recentBillRow:hover{
-    background-color: #e5e7eb;
+    transform: scale(1.02);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.7);
+    font-weight: 600;
 }
 
 .recentBillContainer{
     cursor: pointer;
     overflow-y: auto;
+    overflow-x: hidden;
 }
 .recentBillRow{
     border-bottom: 1px solid rgba(0, 0, 0, 0.7);
+    transition: transform 0.2s ease, background-color 0.2s ease;
 }
 .popoverSearch{
     padding: 5px;

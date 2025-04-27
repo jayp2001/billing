@@ -12,10 +12,6 @@ const KOTDineIn = (props) => {
   const itemList =
     props && props.data && props.data.itemsData ? props.data.itemsData : [];
 
-  useEffect(() => {
-    console.log(props);
-  }, []);
-
   return (
     <div
       style={{

@@ -21,6 +21,7 @@ import LiveView from "./pages/LiveView/LiveView"
 import { SOCKET_URL } from "./url";
 import io from "socket.io-client";
 import DineIn from "./pages/dineIn";
+import BillingTouchScreen from "./pages/billingTouchScreen";
 const { ipcRenderer } = window.require("electron");
 // import TestPage from "./testPage";
 // import Test from './pages/Test';
@@ -86,11 +87,9 @@ const App = () => {
   useEffect(() => {
     const socket = io(SOCKET_URL);
     socket.on("connect", () => {
-      console.log("Connected to server>>>>><<<<", macAddress);
     });
     socket.on(`print_Bill_${macAddress}`, (message) => {
       // setHoldCount(message);
-      console.log('Socket test', message);
       // alert('hello')
       const printerBill = {
         printer: getPrinter(message),
@@ -107,7 +106,8 @@ const App = () => {
   return (
     <Provider store={store}>
       <Routes>
-        <Route path="/main/:tab/:billId" element={<PickUp />} />
+        {/* <Route path="/main/:tab/:billId" element={<PickUp />} /> */}
+        <Route path="/main/:tab/:billId" element={<MainComponent />} />
         <Route path="/main/DineIn/:table/:billId/:status" element={<DineIn />} />
         {/* <Route path="/" element={<TestPage />} /> */}
         <Route path="/" element={<LoginPage />} />
@@ -126,15 +126,14 @@ const App = () => {
 const MainComponent = () => {
   const dispatch = useDispatch();
   const isSwitchOn = useSelector((state) => state.toggle.isSwitchOn);
-
   useEffect(() => {
-    const storedSwitchState = localStorage.getItem("isSwitchOn") === "true";
+    const storedSwitchState = localStorage.getItem("isSwitchOn") == "true";
     if (isSwitchOn !== storedSwitchState) {
       dispatch(toggleSwitch());
     }
   }, [dispatch, isSwitchOn]);
 
-  return isSwitchOn ? <PickUp1 /> : <PickUp />;
+  return isSwitchOn ? <BillingTouchScreen /> : <PickUp />;
 };
 
 export default App;

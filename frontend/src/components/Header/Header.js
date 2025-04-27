@@ -121,7 +121,7 @@ const Header = (props) => {
               dueNote: res?.data?.dueNote,
               selectedAccount: res?.data?.payInfo
             });
-            props.setUpiId(res?.data?.onlineId);
+            props.setUpiId(res.data.onlineId ? res.data.onlineId : '');
             props.setBillData({
               subTotal: res.data.totalAmount,
               discountType: res.data.discountType,
@@ -161,7 +161,6 @@ const Header = (props) => {
         }
       })
       .catch((error) => {
-        console.log("ERRRORRR", error);
         setError(error.response ? error.response.data : "Network Error ...!!!");
       });
   };
@@ -328,7 +327,6 @@ const Header = (props) => {
 
   const location = useLocation();
   const toggleDrawer = (anchor, open) => (event) => {
-    console.log(">>>path", location.pathname.split("/"));
     // if (location.pathname.split("/")[1] == "main") {
     if (
       event.type === "keydown" &&
@@ -353,7 +351,6 @@ const Header = (props) => {
     p: 3,
   };
   if (loading) {
-    console.log(">>>>??");
     toast.loading("Please wait...", {
       toastId: "loading",
     });
@@ -395,6 +392,13 @@ const Header = (props) => {
     });
     setError(false);
   }
+  const statusColors = {
+    "Cancel": 'bg-red-300',
+    "On Delivery": 'bg-orange-300',
+    "Food Ready": "bg-sky-300",
+    "Print": 'bg-green-300',
+    "complete": "bg-neutral-200"
+  };
 
   const filteredBills = recentBill.filter((val) =>
     val.tokenNo.toLowerCase().includes(searchTerm.toLowerCase())
@@ -501,7 +505,7 @@ const Header = (props) => {
         {filteredBills.length > 0 ? (
           filteredBills.map((data, index) => (
             <div
-              className="recentBillRow pb-2 pt-2 flex justify-between cursor-pointer"
+              className={`recentBillRow pb-2 pt-2 flex justify-between cursor-pointer ${statusColors[data.billStatus] || ''} `}
               key={index}
               onClick={() => {
                 getBbill(data.billId);
@@ -559,7 +563,7 @@ const Header = (props) => {
               <div>
                 <HourglassEmptyIcon className="noFoundIcon grayColor" />
               </div>
-              <p className="text-lg font-bold grayColor">No Data Found</p>
+              <p className="text-lg font-bold grayColor">No Token Found</p>
             </div>
           </div>
         )}
@@ -730,7 +734,6 @@ const Header = (props) => {
       )
       .then((res) => {
         if (location.pathname.split("/")[1] == 'main' && location.pathname.split("/")[2] != 'DineIn') {
-          console.log(res);
           props.setItems(res.data.itemData);
           props.setBillData({
             subTotal: res.data.totalAmount,

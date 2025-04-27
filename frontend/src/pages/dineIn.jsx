@@ -333,7 +333,7 @@ const DineIn = () => {
             })
             .catch((error) => {
                 setTempTable('')
-                tableREf.current.focus();
+                tableREf?.current?.focus();
                 setError(error.response ? error.response.data : "Table is not Available");
             });
     }
@@ -487,7 +487,6 @@ const DineIn = () => {
                     });
             })
             .catch((error) => {
-                console.log("ERRRORRR", error);
                 setError(error.response ? error.response.data : "Network Error ...!!!");
             });
     };
@@ -633,7 +632,6 @@ const DineIn = () => {
         //   (item.itemShortKey && item.itemShortKey.toLowerCase().includes(value.toLowerCase())) ||
         //   (item.itemName && item.itemName.toLowerCase().includes(value.toLowerCase()))
         // ) : [];
-        console.log("filltered", value);
         if (value) {
             if (!value.status) {
                 alert(
@@ -914,7 +912,6 @@ const DineIn = () => {
             appriciateLine: billTypeCategory["Dine In"]?.appriciateLine,
             footerBill: billTypeCategory["Dine In"]?.billFooterNote,
         };
-        console.log('customer', customData)
         await axios
             .post(
                 `${BACKEND_BASE_URL}billingrouter/updateDineInBillData`,
@@ -1240,7 +1237,6 @@ const DineIn = () => {
                     };
                     ipcRenderer.send("set-title", printerDataKot);
                 } catch (rrr) {
-                    console.log('LLLLKKK', rrr)
                 }
                 // setTimeout(() => {
                 setTimeout(() => {
@@ -1495,7 +1491,6 @@ const DineIn = () => {
     const justSaveBillData = async () => {
         setLoading(true);
         const upiJson = upiList?.filter((data) => data.onlineId == upiId)[0];
-        console.log('upiid', upiJson);
         const customData = {
             customerDetails: {
                 ...customerData,
@@ -1658,7 +1653,6 @@ const DineIn = () => {
                     ipcRenderer.send("set-title", printerDataKot);
                     // }
                 } catch (error) {
-                    console.log("try catch errror", error);
                 }
                 setTimeout(() => {
                     navigate("/dashboard");
@@ -1849,19 +1843,14 @@ const DineIn = () => {
                     };
                     // const htmlString = renderToString(<RestaurantBill />)
                     if (res && res.data && res.data.printBill && res.data.printKot) {
-                        console.log(">>>edit all");
                         ipcRenderer.send("set-title", printerDataKot);
                         ipcRenderer.send("set-title", printerDataBill);
                     } else if (res && res.data && res.data.printBill) {
-                        console.log(">>>edit one");
                         ipcRenderer.send("set-title", printerDataBill);
                     } else if (res && res.data && res.data.printKot) {
-                        console.log(">>>edit two");
                         ipcRenderer.send("set-title", printerDataKot);
                     }
-                    console.log(">>>edit else", res.data.printBill, res.data.printKot);
                 } catch (error) {
-                    console.log("try catch errror", error);
                 }
                 setTimeout(() => {
                     navigate("/dashboard");
@@ -1968,20 +1957,15 @@ const DineIn = () => {
                     };
                     // const htmlString = renderToString(<RestaurantBill />)
                     if (res && res.data && res.data.printBill && res.data.printKot) {
-                        console.log(">>>edit all");
                         ipcRenderer.send("set-title", printerDataKot);
                         ipcRenderer.send("set-title", printerDataBill);
                     } else if (res && res.data && res.data.printBill) {
-                        console.log(">>>edit one");
                         ipcRenderer.send("set-title", printerDataBill);
                     } else if (res && res.data && res.data.printKot) {
-                        console.log(">>>edit two");
                         ipcRenderer.send("set-title", printerDataKot);
                     }
-                    console.log(">>>edit else", res.data.printBill, res.data.printKot);
                     setIsEdit(false);
                 } catch (error) {
-                    console.log("try catch errror", error);
                 }
                 setTimeout(() => {
                     navigate("/dashboard");
@@ -2009,7 +1993,6 @@ const DineIn = () => {
     };
 
     const handleSearch = () => {
-        console.log(":::???:::", document.getElementById("searchWord").value);
         getSourceDDL(document.getElementById("searchWord").value);
     };
 
@@ -2309,7 +2292,6 @@ const DineIn = () => {
                         value.toString().toLocaleLowerCase()
                 )
                 : [];
-            console.log("Search Item", matchingProduct);
             if (matchingProduct && !matchingProduct.status) {
                 alert(
                     `${matchingProduct.itemName} is not Available`
@@ -2482,7 +2464,6 @@ const DineIn = () => {
                         ? fullFormData.selectedItem.variantsList[0].price
                         : 0) * fullFormData.qty,
             }));
-            console.log("name", fullFormData.inputName);
             e.preventDefault();
             if (
                 fullFormData &&
@@ -2517,7 +2498,6 @@ const DineIn = () => {
                         item.inputCode == fullFormData.inputCode &&
                         item.unit == fullFormData.unit
                 );
-                console.log("<LKLLKK>", isExist, items[isExist]);
                 if (isExist != -1) {
                     setBillData((perv) => ({
                         ...perv,
@@ -2583,7 +2563,6 @@ const DineIn = () => {
                         itemId: fullFormData.itemId,
                         comment: fullFormData.comment,
                     };
-                    console.log("<>LOG<>", fullFormData.price, fullFormData.itemPrice);
                     setBillData((perv) => ({
                         ...perv,
                         subTotal: Math.ceil(billData.subTotal + fullFormData.price),
@@ -2744,7 +2723,6 @@ const DineIn = () => {
 
     const [text, setText] = useState("");
     const handleDecreaseQuantity = (index, qty1) => {
-        console.log("<QTY?>", qty1);
         setItems((prevItems) => {
             const updatedItems = [...prevItems];
             if (updatedItems[index].qty > 1) {
@@ -2812,7 +2790,6 @@ const DineIn = () => {
         }
     };
     if (loading) {
-        console.log(">>>>??");
         toast.loading("Please wait...", {
             toastId: "loading",
         });
@@ -2913,13 +2890,6 @@ const DineIn = () => {
             }
         }
     }, [suggestionIndex]);
-    console.log(
-        "TEMPPPP    DATA   IIII",
-        fullFormData,
-        customerData,
-        hotelFormData,
-        billData
-    );
     return (
         <div className="bg-gray-200 overfloe-hidden h-screen anotherHeight">
             <Header
@@ -3027,7 +2997,6 @@ const DineIn = () => {
                                             (json[0] && json[0].price ? json[0].price : 0) *
                                             fullFormData.qty,
                                     }));
-                                    console.log("<value>", e.target.value);
                                 }}
                                 value={fullFormData.unit}
                                 onKeyDown={handleEnterPressThird}
@@ -3723,7 +3692,6 @@ const DineIn = () => {
                                                 className="radio_buttons text-base"
                                                 value={billData.discountType}
                                                 onChange={(e) => {
-                                                    console.log("radio", e.target.value);
                                                     setBillData((perv) => ({
                                                         ...perv,
                                                         discountType: e.target.value,
