@@ -78,8 +78,6 @@ function createWindow() {
   // contextBridge.exposeInMainWorld("electronAPI", {
   //   getMachineId: () => machineIdSync(),
   // });
-  console.log(">>>", machineIdSync());
-  console.log("<<<<<");
 
   getMacAddress();
 
@@ -98,7 +96,6 @@ function createWindow() {
   ipcMain.on("set-title", async (event, title) => {
     const printer = title.printer;
     const data = title.data;
-    console.log("titel");
     const printWindow = new BrowserWindow({ show: true });
     await printWindow.loadURL(`data:text/html,` + encodeURIComponent(data));
     // await printWindow.loadURL(`http://localhost:3000`);
@@ -116,7 +113,6 @@ function createWindow() {
         deviceName: printer.printerName,
       });
     } catch (error) {
-      console.log("catchError", error);
     }
     // getPrinterList()
     // .then(printers => {
