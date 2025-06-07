@@ -28,6 +28,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import io from "socket.io-client";
 import Badge from "@mui/material/Badge";
+import BrightnessAutoIcon from '@mui/icons-material/BrightnessAuto';
 // import io from 'socket.io-client';
 
 const Header = (props) => {
@@ -726,6 +727,12 @@ const Header = (props) => {
     </Box>
   );
   const navigate = useNavigate();
+  const handleMakeAdmin = async () => {
+    const password = window.confirm("Please enter the password to make this PC admin")
+    if (password) {
+
+    }
+  }
   const handleCommonSearch = async () => {
     await axios
       .get(
@@ -806,6 +813,14 @@ const Header = (props) => {
             </div> */}
           </div>
           <div className="flex h-full align-middle gap-6 mr-3">
+            <div
+              onClick={() => {
+                handleMakeAdmin()
+              }}
+              className="header_icon cursor-pointer  grid content-center"
+            >
+              <BrightnessAutoIcon />
+            </div>
             <div
               onClick={() => {
                 naviagate("/printSlectingPage");

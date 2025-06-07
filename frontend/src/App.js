@@ -22,6 +22,8 @@ import { SOCKET_URL } from "./url";
 import io from "socket.io-client";
 import DineIn from "./pages/dineIn";
 import BillingTouchScreen from "./pages/billingTouchScreen";
+import DineInBill from "./pages/dineInBill";
+import KOTDineIn from "./pages/printDesign/DineInKot";
 const { ipcRenderer } = window.require("electron");
 // import TestPage from "./testPage";
 // import Test from './pages/Test';
@@ -45,6 +47,12 @@ const App = () => {
   const hotelbill = systemPrinter?.filter(
     (printer) => printer.categoryId == "hotelBill"
   );
+  const dineinBill = systemPrinter?.filter(
+    (printer) => printer.categoryId == "dineinBill"
+  );
+  const dineinKot = systemPrinter?.filter(
+    (printer) => printer.categoryId == "dineinKot"
+  );
   const hotelkot = systemPrinter?.filter(
     (printer) => printer.categoryId == "hotelKot"
   );
@@ -56,11 +64,24 @@ const App = () => {
         return deliverybill[0];
       case 'Hotel':
         return hotelbill[0];
-      // case 'Dine In':
-      //   return hotelbill;
+      case 'Dine In':
+        return dineinBill[0];
       default:
         return pickupbill[0];
-      // return <CurrencyExchangeIcon fontSize='large' />;
+    }
+  }
+  const getKotPrinter = (data) => {
+    switch (data.billType) {
+      case 'Pick Up':
+        return pickupkot[0];
+      case 'Delivery':
+        return deliverykot[0];
+      case 'Hotel':
+        return hotelkot[0];
+      case 'Dine In':
+        return dineinKot[0];
+      default:
+        return pickupkot[0];
     }
   }
   const getPrintData = (data) => {
@@ -71,9 +92,24 @@ const App = () => {
         return renderToString(<RestaurantBill data={data} />);
       case 'Hotel':
         return renderToString(<HotelBill data={data} />);
+      case 'Dine In':
+        return renderToString(<DineInBill data={data} />);
       default:
         return renderToString(<RestaurantBill data={data} />);
-      // return <CurrencyExchangeIcon fontSize='large' />;
+    }
+  }
+  const getKotData = (data) => {
+    switch (data.billType) {
+      case 'Pick Up':
+        return renderToString(<KOT data={data} />);
+      case 'Delivery':
+        return renderToString(<KOT data={data} />);
+      case 'Hotel':
+        return renderToString(<KOT data={data} />);
+      case 'Dine In':
+        return renderToString(<KOTDineIn data={data} />);
+      default:
+        return renderToString(<KOT data={data} />);
     }
   }
   useEffect(() => {
@@ -88,16 +124,22 @@ const App = () => {
     const socket = io(SOCKET_URL);
     socket.on("connect", () => {
     });
-    socket.on(`print_Bill_${macAddress}`, (message) => {
+    socket.on(`print_Bill_123`, (message) => {
       // setHoldCount(message);
-      // alert('hello')
-      const printerBill = {
+      const printBill = {
         printer: getPrinter(message),
         data: getPrintData(message),
       };
-      ipcRenderer.send("set-title", printerBill);
+      ipcRenderer.send("set-title", printBill);
     });
-
+    socket.on(`print_Kot_123`, (message) => {
+      console.log('LLLL', message)
+      const printKot = {
+        printer: getKotPrinter(message),
+        data: getKotData(message),
+      };
+      ipcRenderer.send("set-title", printKot);
+    });
     return () => {
       socket.disconnect();
     };

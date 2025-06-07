@@ -909,7 +909,6 @@ const PickUp = () => {
       });
   };
   const addHotelBillData = async () => {
-    setLoading(true);
     const customData = {
       ...customerData,
       ...billData,
@@ -3411,6 +3410,7 @@ const PickUp = () => {
         setError("Sattle Amount can not be less than zero");
       } else {
         // console.log(">>", fullFormData, fullFormData.stockInDate, fullFormData.stockInDate != 'Invalid Date' ? 'ue' : 'false')
+        setLoading(true)
         addHotelBillData();
         setValidationError(false);
       }
