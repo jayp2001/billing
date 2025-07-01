@@ -5363,7 +5363,7 @@ const BillingTouchScreen = () => {
                                                     >
                                                         {item.itemName} {item?.unit?.toLocaleLowerCase() != 'no' ? `${'(' + item.unit + ')'}` : ''}
                                                         <br />
-                                                        <span className="text-xs">{item && item?.addons && item.addons.length != 0 ? '(' + Object.values(item?.addons).map(data => data.addonsName)?.join(', ') + ')' : ''}</span>
+                                                        <span className="text-xs">{item && item?.addons && Object.keys(item.addons).length != 0 ? '(' + Object.values(item?.addons).map(data => data.addonsName)?.join(', ') + ')' : ''}</span>
                                                     </p>
                                                 </div>
                                                 <div className="col-span-4 justify-self-center">
