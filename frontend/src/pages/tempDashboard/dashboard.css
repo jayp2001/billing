@@ -70,6 +70,19 @@
     border-radius: 10px;
     border: dashed 1px rgba(0, 0, 0, 0.5);
 }
+.tableIconCancelToken {
+    /* background: #ebebeb; */
+    cursor: pointer;
+    background: #feb6b6;
+    min-height: 95px;
+    min-width: 95px;
+    text-align: center;
+    /* padding-top: 38px; */
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 10px;
+    border: dashed 1px rgba(0, 0, 0, 0.5);
+}
 
 .tableWrapper{
     flex-direction: row;
@@ -104,6 +117,12 @@
         border-radius: 50%;
         width: 20px;
     background: #ffcd06;
+}
+.cancelColor {
+    height: 20px;
+    border-radius: 50%;
+    width: 20px;
+    background: #f98484;
 }
 .printedColor {
     height: 20px;

@@ -5,12 +5,10 @@ import React, { useState, useRef, useEffect } from "react";
 import {
     TextField,
     Button,
-    Input,
     RadioGroup,
     FormControlLabel,
     Radio,
     InputLabel,
-    NativeSelect,
     MenuItem,
     Modal,
     Box,
@@ -250,6 +248,7 @@ const BillingTouchScreen = () => {
     });
     const [upiList, setUpiList] = useState([])
     const [items, setItems] = useState([]);
+    console.log('>>', items)
     const [isEdit, setIsEdit] = useState(false);
     const [itemComment, setItemComment] = useState({
         itemComment: [],
@@ -5364,7 +5363,7 @@ const BillingTouchScreen = () => {
                                                     >
                                                         {item.itemName} {item?.unit?.toLocaleLowerCase() != 'no' ? `${'(' + item.unit + ')'}` : ''}
                                                         <br />
-                                                        <span className="text-xs">{item && item?.addons ? '(' + Object.values(item?.addons).map(data => data.addonsName)?.join(', ') + ')' : ''}</span>
+                                                        <span className="text-xs">{item && item?.addons && item.addons.length != 0 ? '(' + Object.values(item?.addons).map(data => data.addonsName)?.join(', ') + ')' : ''}</span>
                                                     </p>
                                                 </div>
                                                 <div className="col-span-4 justify-self-center">

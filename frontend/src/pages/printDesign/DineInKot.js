@@ -69,7 +69,8 @@ const KOTDineIn = (props) => {
               <div
                 style={{ fontWeight: "bold", fontSize: "16px", marginBottom: '5px' }}
               >
-                {props.data.billType}
+                {/* {props.data.billType} */}
+                Dine In
               </div>
               <div style={{ textAlign: "start", fontSize: "13px" }}>
                 {props.data.billDate} {props.data.billTime}

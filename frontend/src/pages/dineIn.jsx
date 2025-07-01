@@ -1426,7 +1426,7 @@ const DineIn = () => {
                         tableNo: (table == 'null' || table == null) ? tempTable : table,
                         itemsData: data.items,
                         billDate: data.subTokenDate,
-                        billTime: data.creatTime,
+                        billTime: data.createTime,
                         billType: 'Dine In',
                         assignCaptain: captain,
                         tokenNo: data.subTokenNumber,
@@ -2631,7 +2631,7 @@ const DineIn = () => {
             tableNo: (table == 'null' || table == null) ? tempTable : table,
             itemsData: data.items,
             billDate: data.subTokenDate,
-            billTime: data.creatTime,
+            billTime: data.createTime,
             billType: 'Dine In',
             assignCaptain: captain,
             tokenNo: data.subTokenNumber,
@@ -3387,9 +3387,9 @@ const DineIn = () => {
                                                                 <p className="">KOT - {data.subTokenNumber}</p>
                                                             </div>
                                                             <div>
-                                                                {data.creatTime}
+                                                                {data.createTime}
                                                             </div>
-                                                            {data.tokenStaus == 'cancelled' ?
+                                                            {data.tokenStatus == 'cancelled' ?
                                                                 <div className="text-red-600 font-semibold">
                                                                     Cancelled
                                                                 </div> :
@@ -3870,7 +3870,7 @@ const DineIn = () => {
                                     </div>
                                 </>
                             }
-                            {(editBillData && editBillData.billStatus == 'Cancel') ?
+                            {(editBillData && (editBillData.billStatus == 'Cancel')) || status == 'CancelToken' ?
                                 <div className="text-center mt-2 text-lg font-semibold text-red-500">
                                     This bill is canceled ...!
                                 </div> :

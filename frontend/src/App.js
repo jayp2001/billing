@@ -124,22 +124,21 @@ const App = () => {
     const socket = io(SOCKET_URL);
     socket.on("connect", () => {
     });
-    socket.on(`print_Bill_123`, (message) => {
-      // setHoldCount(message);
-      const printBill = {
-        printer: getPrinter(message),
-        data: getPrintData(message),
-      };
-      ipcRenderer.send("set-title", printBill);
-    });
-    socket.on(`print_Kot_123`, (message) => {
-      console.log('LLLL', message)
-      const printKot = {
-        printer: getKotPrinter(message),
-        data: getKotData(message),
-      };
-      ipcRenderer.send("set-title", printKot);
-    });
+    // socket.on(`print_Bill_${macAddress}`, (message) => {
+    //   // setHoldCount(message);
+    //   const printBill = {
+    //     printer: getPrinter(message),
+    //     data: getPrintData(message),
+    //   };
+    //   ipcRenderer.send("set-title", printBill);
+    // });
+    // socket.on(`print_Kot_${macAddress}`, (message) => {
+    //   const printKot = {
+    //     printer: getKotPrinter(message),
+    //     data: getKotData(message),
+    //   };
+    //   ipcRenderer.send("set-title", printKot);
+    // });
     return () => {
       socket.disconnect();
     };

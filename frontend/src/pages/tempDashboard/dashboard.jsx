@@ -26,6 +26,7 @@ import { renderToString } from "react-dom/server";
 import TokenBil from '../TokenBill';
 import Modal from "@mui/material/Modal";
 import TableBarIcon from '@mui/icons-material/TableBar';
+import ClearIcon from '@mui/icons-material/Clear';
 import { pad } from 'crypto-js';
 import { TbBorderRadius } from 'react-icons/tb';
 const { ipcRenderer } = window.require("electron");
@@ -139,6 +140,22 @@ function Dashboard() {
         setAnchorElO(event.currentTarget);
         // console.log('split', items && items[index] && items[index].comment ? items[index].comment?.split(/,\s*/) : [],)
     };
+    const handleCancel = async (billId) => {
+        setLoading(true);
+        try {
+            const response = await axios.get(
+                `${BACKEND_BASE_URL}billingrouter/sattledCancelTokenTable?billId=${billId}`,
+                config
+            );
+            if (response.data) {
+                setSuccess(true);
+                getTableList();
+            }
+        } catch (error) {
+            setLoading(false);
+            setError(error.response?.data?.message || "Failed to cancel table");
+        }
+    }
     const handleSettel = (data) => {
         setBillData(
             {
@@ -530,6 +547,9 @@ function Dashboard() {
                     <div className='flex gap-2 self-center'>
                         <div className='runningColor'></div> <div>Running Table</div>
                     </div>
+                    <div className='flex gap-2 self-center'>
+                        <div className='cancelColor'></div> <div>Cancelled Table</div>
+                    </div>
                 </div>
             </div>
             <div className='px-8 mt-6'>
@@ -540,7 +560,7 @@ function Dashboard() {
                     {tableList?.map((data, index) => (
                         <Tooltip title={data.assignCaptain} arrow placement="top" >
                             <div style={{ minHeight: '125px' }}>
-                                < div className={data.tableStatus == 'running' ? 'tableIconRunning' : data.tableStatus == 'print' ? 'tableIconPrint' : 'tableIcon'} onClick={() => {
+                                < div className={data.tableStatus == 'running' ? 'tableIconRunning' : data.tableStatus == 'print' ? 'tableIconPrint' : data.tableStatus == "CancelToken" ? "tableIconCancelToken" : 'tableIcon'} onClick={() => {
                                     navigate(`/main/DineIn/${data.tableId ? data.tableId : null}/${data.billId ? data.billId : null}/${data.tableStatus ? data.tableStatus : null}`)
                                 }}>
                                     <div className={data.tableStatus != 'blank' ? 'flex-col pt-1 justify-around gap-2' : 'grid blankIcon content-center'}>
@@ -564,11 +584,16 @@ function Dashboard() {
                                                     <VisibilityOutlinedIcon />
                                                 </div>
                                             </> :
-                                            <div className='print' onClick={() => {
-                                                handleSettel(data)
-                                            }}>
-                                                <SaveOutlinedIcon />
-                                            </div>
+                                            data.tableStatus == "CancelToken" ?
+                                                <div className='print' onClick={() => {
+                                                    handleCancel(data.billId)
+                                                }}>
+                                                    <ClearIcon />
+                                                </div> : <div className='print' onClick={() => {
+                                                    handleSettel(data)
+                                                }}>
+                                                    <SaveOutlinedIcon />
+                                                </div>
                                         }
                                     </div>
                                 }

@@ -42,6 +42,11 @@ const Header = (props) => {
   const [success, setSuccess] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [hoveredData, setHoveredData] = useState(null);
+  const [logOutPopup, setLogOutPopUp] = useState(false);
+  const [adminPasswordModal, setAdminPasswordModal] = useState(false);
+  const [adminPassword, setAdminPassword] = useState("");
+  const [adminPcId, setAdminPcId] = useState('');
+  const macAddress = localStorage.getItem("macAddress");
 
   const handlePopoverOpen = (event, data) => {
     setAnchorEl(event.currentTarget);
@@ -52,7 +57,6 @@ const Header = (props) => {
     "& .MuiBadge-badge": {
       right: 0,
       top: 5,
-      // border: `2px solid ${theme.palette.background.paper}`,
       padding: "0 4px",
       backgroundColor: "red",
       color: "white",
@@ -323,7 +327,6 @@ const Header = (props) => {
   const [recentBill, setRecentBill] = useState([]);
   const [holdCount, setHoldCount] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
-  const [logOutPopup, setLogOutPopUp] = useState(false);
   const [holdBills, setHoldBills] = useState([]);
 
   const location = useLocation();
@@ -728,11 +731,26 @@ const Header = (props) => {
   );
   const navigate = useNavigate();
   const handleMakeAdmin = async () => {
-    const password = window.confirm("Please enter the password to make this PC admin")
-    if (password) {
+    setAdminPasswordModal(true);
+  };
 
+  const handleAdminSubmit = async () => {
+    try {
+      const response = await axios.get(
+        `${BACKEND_BASE_URL}billingrouter/makeMeAdmin?macAddress=${macAddress}&adminPassword=${adminPassword}`,
+        config
+      );
+      if (response.data) {
+        toast.success("Successfully made admin!");
+        setAdminPasswordModal(false);
+        setAdminPassword("");
+        setAdminPcId(macAddress);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to make admin");
     }
-  }
+  };
+
   const handleCommonSearch = async () => {
     await axios
       .get(
@@ -770,6 +788,26 @@ const Header = (props) => {
         setError(error.response ? error.response.data : "Network Error ...!!!");
       });
   };
+
+  // Add useEffect to check admin status on component mount
+  useEffect(() => {
+    checkAdminStatus();
+  }, []);
+
+  const checkAdminStatus = async () => {
+    try {
+      const response = await axios.get(
+        `${BACKEND_BASE_URL}billingrouter/getAdminServerId`,
+        config
+      );
+      if (response.data && response.data.adminMacAddress) {
+        setAdminPcId(response.data.adminMacAddress);
+      }
+    } catch (error) {
+      console.error("Error checking admin status:", error);
+    }
+  };
+
   return (
     <>
       <div className="bg-gray-100 px-2 h-12 sticky top-0 z-50">
@@ -806,21 +844,34 @@ const Header = (props) => {
                 value={search}
               />
             </div>
-            {/* <div className="header_toggle ml-2 grid content-center ">
+            <div className="header_toggle ml-2 grid content-center ">
               <div>
                 OFF <Switch checked={isSwitchOn} onChange={handleToggle} /> ON
               </div>
-            </div> */}
+            </div>
           </div>
           <div className="flex h-full align-middle gap-6 mr-3">
-            <div
-              onClick={() => {
-                handleMakeAdmin()
-              }}
-              className="header_icon cursor-pointer  grid content-center"
+            <Tooltip
+              title={adminPcId === macAddress ? "This PC is main PC" : "Click to make this PC main"}
+              placement="bottom"
             >
-              <BrightnessAutoIcon />
-            </div>
+              <div
+                onClick={() => {
+                  if (adminPcId !== macAddress) {
+                    handleMakeAdmin();
+                  }
+                }}
+                className="header_icon cursor-pointer grid content-center"
+                style={{ pointerEvents: adminPcId === macAddress ? 'none' : 'auto' }}
+              >
+                <BrightnessAutoIcon
+                  sx={{
+                    color: adminPcId === macAddress ? '#22c55e' : 'inherit',
+                    fontSize: '1.5rem'
+                  }}
+                />
+              </div>
+            </Tooltip>
             <div
               onClick={() => {
                 naviagate("/printSlectingPage");
@@ -902,6 +953,55 @@ const Header = (props) => {
                   }}
                 >
                   No
+                </button>
+              </div>
+            </div>
+          </Box>
+        </Modal>
+        <Modal
+          open={adminPasswordModal}
+          onClose={() => {
+            setAdminPasswordModal(false);
+            setAdminPassword("");
+          }}
+          aria-labelledby="admin-modal-title"
+          aria-describedby="admin-modal-description"
+          disableAutoFocus
+        >
+          <Box sx={style} className="p-4 rounded-md">
+            <Typography id="admin-modal-title" variant="h6" component="h2" className="mb-4">
+              Enter Admin Password
+            </Typography>
+            <input
+              type="password"
+              value={adminPassword}
+              onChange={(e) => setAdminPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleAdminSubmit();
+                }
+              }}
+              className="w-full p-2 border rounded-md mb-4"
+              placeholder="Enter password"
+            />
+            <div className="w-full text-base flex gap-4 p-1">
+              <div className="w-full">
+                <button
+                  className="text-base button px-2 w-full py-1 rounded-md text-white"
+                  onClick={handleAdminSubmit}
+                >
+                  Submit
+                </button>
+              </div>
+              <div className="w-full">
+                <button
+                  className="another_2 button text-base w-full px-2 py-1 rounded-md text-white"
+                  onClick={() => {
+                    setAdminPasswordModal(false);
+                    setAdminPassword("");
+                  }}
+                >
+                  Cancel
                 </button>
               </div>
             </div>
